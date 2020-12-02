@@ -13,6 +13,7 @@ The 1Password Connect collection contains modules that interact with 1Password C
   + [Usage Examples](#examples)
 * [Testing](#testing)
 * [About 1Password](#about-1password)
+* [Security](#security)
 
 
 ### Requirements
@@ -24,15 +25,16 @@ The 1Password Connect collection contains modules that interact with 1Password C
 
 **Closed Beta Instructions**
 
-During Closed Beta the Ansible Collection can be installed via the Git URL: 
-
-`ansible-galaxy collection install git@github.com:1password/ansible-onepasswordconnect-collection.git,v0.1.0`
-
-For more information, see Ansible's documentation for [Installing a Collection from a Git Repository](https://docs.ansible.com/ansible/latest/user_guide/collections_using.html#installing-a-collection-from-a-git-repository)
+During _Closed Beta_ the Ansible Collection can be installed via Git: 
+```
+ansible-galaxy collection install \
+git@github.com:1password/ansible-onepasswordconnect-collection.git,v0.1.0
+```
+For more information, see Ansible's documentation: [Installing a Collection from a Git Repository](https://docs.ansible.com/ansible/latest/user_guide/collections_using.html#installing-a-collection-from-a-git-repository)
 
 ## Module Variables
 
-All modules support the following variable definitions. You may either explicitly define the value on the task or use the associated environment variable to use the same value across all tasks.
+All modules support the following variable definitions. You may either explicitly define the value on the task or let Ansible fallback to an environment variable to use the same value across all tasks.
 
 Environment variables are ignored if the module variable is defined for a task.
 
@@ -40,7 +42,7 @@ Module Variable | Environment Variable | Description
 ---: | --- | --- |
 `hostname` | `OP_CONNECT_HOST` | URL of the 1Password Connect API Server |
 `token` | `OP_CONNECT_TOKEN` | JWT used to authenticate requests to API Server |
-`vault_id`| `OP_VAULT_ID` | (Optional) UUID of a 1Password Vault the Service Account is allowed to access |
+`vault_id`| `OP_VAULT_ID` | (Optional) UUID of a 1Password Vault the Service Account JWT is allowed to access |
 
 
 ## `connect.generic_item` Module
@@ -218,7 +220,7 @@ See [tests/README.md](./tests/README.md)
 
 [**1Password**](https://1password.com) is a privacy-focused password manager that keeps you safe online.
 
-**1Password** is the world’s most-loved password manager. By combining industry-leading security and award-winning design, the company provides private, secure, and user-friendly password management to businesses and consumers globally. More than 60,000 business customers trust 1Password as their enterprise password manager.
+By combining industry-leading security and award-winning design, the company provides private, secure, and user-friendly password management to businesses and consumers globally. More than 60,000 business customers trust 1Password as their enterprise password manager.
 
 ## Security
 1Password requests you practice responsible disclosure if you discover a vulnerability. 
