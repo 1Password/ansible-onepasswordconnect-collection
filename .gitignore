@@ -1,0 +1,17 @@
+.venv
+.idea
+.code
+
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+*.code-workspace
+*.pyc
+**/__pycache__
+**/.DS_Store
+*.tar.gz
+
+/tests/output/

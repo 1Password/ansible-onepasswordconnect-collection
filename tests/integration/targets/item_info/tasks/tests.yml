@@ -1,0 +1,114 @@
+---
+
+- name: Create a test item
+  generic_item:
+    state: created
+    title: Test Item
+    category: server
+    tags:
+      - exampleTag
+    fields:
+      - label: Test
+        value: Hello
+  register: test_item
+
+- name: Create a second test item
+  generic_item:
+    state: created
+    title: Test Item 2
+    category: server
+    tags:
+      - exampleTag
+    fields:
+      - label: Test
+        value: Hello
+  register: test_item2
+
+- name: Get two items at once
+  item_info:
+      item: "{{ item }}"
+      vault: "{{test_item.op_item.vault.id}}"
+  register: found
+  with_items:
+    - "{{test_item.op_item.id}}"
+    - "{{test_item2.op_item.id}}"
+
+- name: Assert the two items have correct properties
+  assert:
+    that:
+      - found.results[0].op_item is defined
+      - found.results[0].op_item.title == test_item.op_item.title
+      - found.results[1].op_item is defined
+      - found.results[1].op_item.title == test_item2.op_item.title
+
+- name: Get item with Vault ID and Item ID
+  item_info:
+    item: "{{test_item.op_item.id}}"
+    vault: "{{test_item.op_item.vault.id}}"
+  register: result
+
+- name: Assert correct item properties
+  assert:
+    that:
+      - result.op_item is defined
+      - result.op_item.title == test_item.op_item.title
+
+- name: Get item field with Vault ID and Item ID
+  item_info:
+    item: "{{test_item.op_item.id}}"
+    vault: "{{test_item.op_item.vault.id}}"
+    field: Test
+  register: result
+
+- name: Assert correct item properties
+  assert:
+    that:
+      - result.field is defined
+      - result.field == 'Hello'
+
+- name: Get item with Item ID and without providing Vault
+  item_info:
+    item: "{{test_item.op_item.id}}"
+  register: result
+
+- name: Assert correct item properties
+  assert:
+    that:
+      - result.op_item is defined
+      - result.op_item.title == test_item.op_item.title
+
+- name: Get item field with Vault ID and Item Name
+  item_info:
+    item: "{{test_item.op_item.title}}"
+    vault: "{{test_item.op_item.vault.id}}"
+  register: result
+
+- name: Assert correct item properties
+  assert:
+    that:
+      - result.op_item is defined
+      - result.op_item.title == test_item.op_item.title
+
+#If you wish to run this test, remove the comments and add the correct vault name
+#- name: Get item with Vault name and Item name
+#  item_info:
+#    item: "{{test_item.op_item.title}}"
+#    vault: <Insert Vault Name>
+#  register: result
+
+#- name: Assert correct item properties
+#  assert:
+#    that:
+#      - result.op_item is defined
+#      - result.op_item.title == test_item.op_item.title
+
+- name: Delete test item
+  generic_item:
+    state: absent
+    uuid: "{{test_item.op_item.id}}"
+
+
+- name: Delete test item
+  generic_item:
+    state: absent
+    uuid: "{{test_item2.op_item.id}}"

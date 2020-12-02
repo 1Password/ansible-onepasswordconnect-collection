@@ -1,0 +1,65 @@
+---
+
+- name: Create new item
+  generic_item:
+    state: created
+    title: Example Item
+    category: server
+    tags:
+      - exampleTag
+    fields:
+      - label: mypassword
+        field_type: concealed
+        generate_value: true
+        generator_recipe:
+          include_digits: no
+      - label: Test
+        value: Hello
+  register: result
+
+- name: Assert updated item properties
+  assert:
+    that:
+      - result.op_item is defined
+      - result.op_item.id is defined
+
+- name: Upsert item
+  generic_item:
+    state: upserted
+    title: Test Item UPDATED
+    uuid: "{{ result['op_item']['id'] }}"
+    category: server
+    tags:
+      - exampleTag
+      - another-tag
+    fields:
+      - label: mypassword
+        field_type: concealed
+        overwrite: no  # don't change - keep the value returned by the server
+        generate_value: true
+        generator_recipe:
+          include_digits: no
+      - label: Different label this time
+        value: Hello
+      - label: Another field
+        value: qwertyuiop[]
+  register: updated_1p_item
+
+- name: Assert updated item properties
+  assert:
+    that:
+      - updated_1p_item.op_item.id == result.op_item.id
+      - updated_1p_item.op_item.title == 'Test Item UPDATED'
+
+- name: Assert tags updated
+  assert:
+    that:
+      - "'{{ item }}' in updated_1p_item.op_item.tags"
+  with_items:
+    - exampleTag
+    - another-tag
+
+- name: Cleanup
+  generic_item:
+    state: absent
+    uuid: "{{result['op_item']['id']}}"
