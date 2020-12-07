@@ -1,14 +1,20 @@
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.onepassword.connect.plugins.module_utils import specs, api, errors, fields
-from ansible.module_utils.common.text.converters import to_native
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+#
+# (c) 2020, 1Password & Agilebits (@1Password)
+
+
+from __future__ import (absolute_import, division, print_function)
+
+__metaclass__ = type
 
 DOCUMENTATION = '''
 module: item_info
 author:
   - 1Password (@1Password)
-requirements:
+requirements: []
 notes:
-short_description: Gets infomation on an 1Password Item
+short_description: Gets information on an 1Password Item
 description:
   - Get an Item in a Vault using the Service Account associated with the JWT.
   - The name or ID of an item can be given.
@@ -20,50 +26,51 @@ options:
     required: True
     description:
       - Name or ID of the item as displayed in the 1Password UI.
-  field: str
+  field:
     type: str
     description:
       - Name of specific field for the Item
-  vault: str
+  vault:
     type: str
     description:
       - Name or ID of the Vault in which the Item is located.
-      - If not specified, will look through every Vault associated to the Service Account. 
+      - If not specified, will look through every Vault associated to the Service Account.
 extends_documentation_fragment:
   - onepassword.connect.api_params
 '''
 
 EXAMPLES = '''
+---
 - name: Find and return Item details for "Dev-Database" in vault with ID "2zbeu4smcibizsuxmyvhdh57b6"
   onepassword.connect.item_info:
-    item: Dev-Database 
-    vault= 2zbeu4smcibizsuxmyvhdh57b6
+    item: Dev-Database
+    vault: 2zbeu4smcibizsuxmyvhdh57b6
 
 - name: Find and return Item details for Item with ID "lixyh6993asdfq9njdzf221d3z" in vault with ID "2zbeu4smcibizsuxmyvhdh57b6"
   onepassword.connect.item_info:
-    item: lixyh6993asdfq9njdzf221d3z 
+    item: lixyh6993asdfq9njdzf221d3z
     vault: 2zbeu4smcibizsuxmyvhdh57b6
 
 - name: Find and return Item details for Item with ID "lixyh6993asdfq9njdzf221d3z" without specifying the vault
   onepassword.connect.item_info:
-    item: lixyh6993asdfq9njdzf221d3z 
-    
+    item: lixyh6993asdfq9njdzf221d3z
+
 - name: Return 'key' field for Item "Dev-Database" in vault with ID "2zbeu4smcibizsuxmyvhdh57b6"
   onepassword.connect.item_info:
-    item: Dev-Database 
-    field: key 
+    item: Dev-Database
+    field: key
     vault: 2zbeu4smcibizsuxmyvhdh57b6
 
 - name: Return 'secretKey' field for Item with ID 'lixyh6993asdfq9njdzf221d3z' in vault with ID "2zbeu4smcibizsuxmyvhdh57b6"
   onepassword.connect.item_info:
     item: lixyh6993asdfq9njdzf221d3z
-    field: secretKey 
+    field: secretKey
     vault: 2zbeu4smcibizsuxmyvhdh57b6
 
 - name: Return 'ccNumber' field for Item 'Business Visa' in Vault 'Office Expenses'
   onepassword.connect.item_info:
     item: Business Visa
-    field: ccNumber 
+    field: ccNumber
     vault: Office Expenses
 '''
 
@@ -77,6 +84,10 @@ field:
   type: string
   returned: when field option is set
 '''
+
+from ansible.module_utils.basic import AnsibleModule
+from ansible_collections.onepassword.connect.plugins.module_utils import specs, api, errors, fields
+from ansible.module_utils.common.text.converters import to_native
 
 
 def _get_item(op, item, vault_id):

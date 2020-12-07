@@ -14,10 +14,9 @@ fi
 
 # Only allow test types of "units" or "integration"
 if [[ -z ${1+x} ]]; then
-  echo "${1}"
   echo "[ERROR] Usage: run-tests.sh units|integration"
   exit 1
-elif [[ "$1" == "units" || "$1" == "integration" ]]; then
+elif [[ "$1" == "units" || "$1" == "integration" || "$1" == "sanity" ]]; then
   TEST_SUITE="$1"
 else
   echo "[ERROR] Usage: run-tests.sh units|integration"

@@ -107,8 +107,7 @@ class OnePassword:
         for vault in resp:
             if vault["name"] == vault_name:
                 return vault["id"]
-        else:
-            raise errors.NotFoundError
+        raise errors.NotFoundError
 
     def _get_item_id_by_name(self, vault_id, item_name):
         """Find the Item ID associated with the given Item Name
