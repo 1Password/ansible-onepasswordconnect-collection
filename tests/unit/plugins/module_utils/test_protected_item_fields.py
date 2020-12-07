@@ -66,10 +66,10 @@ def mixed_protection_item_fields():
 
 
 @pytest.mark.parametrize("fieldset, expected", (
-        ([{"label": "test", "overwrite": False}], True),
-        ([], True),
-        ([{"label": "", "overwrite": False}], False),
-        ([{"label": "", "overwrite": True}], True)
+    ([{"label": "test", "overwrite": False}], True),
+    ([], True),
+    ([{"label": "", "overwrite": False}], False),
+    ([{"label": "", "overwrite": True}], True)
 ))
 def test_protected_field_must_have_label(fieldset, expected):
     assert fields.protected_fields_have_label(fieldset) == expected
@@ -128,7 +128,7 @@ def test_unprotected_fields_unaffected_by_protected_setting(fieldset_from_server
         "overwrite": True
     }
 
-    playbook_fieldset_with_unprotected_field = [*protected_fields_from_playbook, *[unprotected_field]]
+    playbook_fieldset_with_unprotected_field = protected_fields_from_playbook + [unprotected_field]
 
     updated_fieldset = fields.update_fieldset(
         fieldset_from_server,

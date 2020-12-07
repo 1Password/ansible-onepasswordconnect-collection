@@ -2,28 +2,26 @@
 # -*- coding: utf-8 -*-
 #
 # (c) 2020, 1Password & Agilebits (@1Password)
-
-
 from __future__ import (absolute_import, division, print_function)
 
 __metaclass__ = type
-
-from ansible.module_utils.common.text.converters import to_native
 
 DOCUMENTATION = '''
 module: generic_item
 author:
   - 1Password (@1Password)
-requirements:
+requirements: []
 notes:
 short_description: Creates a customizable 1Password Item
 description:
   - Create or update an Item in a Vault.
-  - Fully customizable using the Fields option
-  - B(NOTE): When I(state=upsert) be aware that any Item fields without labels are removed during the update process.
+  - Fully customizable using the Fields option.
+  - B(NOTE) When I(state=upsert) be aware that any Item fields without labels are removed during the update process.
 options:
   name:
     type: str
+    aliases:
+        - title
     description:
       - Name of the Item. Displayed in the 1Password UI.
       - If C(state) is not C(created) and C(uuid) is defined, this value will overwrite previously-stored Item name.
@@ -36,6 +34,7 @@ options:
   category:
     type: str
     default: password
+    description: Instructs 1Password to configure the Item using the specified template.
     choices:
       - login
       - password
@@ -48,16 +47,19 @@ options:
       - email_account
   urls:
     type: list
-    elements: string
+    elements: str
     description:
       - Stores one or more URLs on an item
       - URLs are clickable in the 1Password UI
   favorite:
     type: bool
     default: false
+    description: Toggles the 'favorite' attribute for an Item
 
   fields:
     description: List of fields associated with the Item
+    type: list
+    elements: dict
     suboptions:
       label:
         type: str
@@ -77,7 +79,7 @@ options:
         description:
             - Always replace the field's value when updating the Item.
             - Preserve the field value returned by 1Password if not undefined. 
-            - B(NOTE): Only valid on fields with a non-empty C(label).
+            - B(NOTE) Only valid on fields with a non-empty C(label).
       section:
         type: str
         description:
@@ -86,6 +88,7 @@ options:
       field_type:
         type: str
         default: string
+        description: Sets expected value type for the field.
         choices:
           - string
           - email
@@ -192,7 +195,59 @@ op_item:
   description: Dictionary containing Item properties or an empty dictionary if I(state=absent). See 1Password API specs for complete structure.
   type: complex
   returned: always
+  contains:
+    category:
+        description: The Item template used when creating or modifying the item
+        returned: success
+        type: str
+        sample: LOGIN
+    created_at:
+        description: Timestamp that reports when the Item was originally created
+        returned: success
+        type: str
+        sample: "2020-11-23T15:29:07.312397-08:00"
+    updated_at:
+        description: Timestamp that reports when the Item was last modified.
+        returned: success
+        type: str
+        sample: "2020-11-23T15:29:07.312397-08:00"
+    id:
+        description: Unique ID for the Item.
+        returned: success
+        type: str
+        sample: "bactwEXAMPLEpxhpjxymh7yy"
+    tags:
+        description: All unique tag values associated with the item
+        type: list
+        elements: str
+        returned: success
+        sample:
+            - tag1
+            - tag2
+    title:
+        description: User-provided name for the Item. Displayed in 1Password clients.
+        type: str
+        returned: success
+        sample: My Test Item
+    vault:
+        description: Information about the Vault containing this Item.
+        type: dict
+        returned: success
+        sample:
+            - id: abc1234EXAMPLEvault5678
+    fields:
+        type: dict
+        description: Lists all defined fields for the Item. The key for each field is the field's label.
+        returned: success
+        sample: {"ExampleField": {"id": "123example", "label": "Test", "type": "STRING", "value": "exampleValue"}}
+msg:
+    description: Information returned when an error occurs.
+    type: str
+    returned: failure
+    sample: Invalid Vault ID
 '''
+
+from ansible.module_utils.common.text.converters import to_native
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.onepassword.connect.plugins.module_utils import specs, api, vault, errors

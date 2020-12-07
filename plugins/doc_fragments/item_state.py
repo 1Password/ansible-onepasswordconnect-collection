@@ -9,7 +9,7 @@ options:
     state:
         type: str
         default: created
-        choices: 
+        choices:
             - created
             - upserted
             - absent

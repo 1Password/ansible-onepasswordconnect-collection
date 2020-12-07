@@ -60,7 +60,8 @@ def op_item_info():
     """
     item_spec = dict(
         item=dict(
-            type="str"
+            type="str",
+            required=True
         ),
         field=dict(
             type="str"

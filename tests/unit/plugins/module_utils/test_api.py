@@ -21,7 +21,8 @@ URL_SEGMENTS = (
     ("http://1password.com/", "example", "v1", None, "http://1password.com/v1/example"),
     ("http://1password.com", "example", None, None, "http://1password.com/{0}/example".format(api.OnePassword.API_VERSION)),
     ("http://localhost:8080", "/item/with space", "v1", None, "http://localhost:8080/v1/item/with%20space"),
-    ("http://localhost:8080", "/item/with space", "v1", {"filter": "example eq 'test'"}, "http://localhost:8080/v1/item/with%20space?filter=example+eq+%27test%27"),
+    ("http://localhost:8080", "/item/with space", "v1", {"filter": "example eq 'test'"},
+     "http://localhost:8080/v1/item/with%20space?filter=example+eq+%27test%27"),
 )
 
 
@@ -31,12 +32,12 @@ def test_building_api_endpoint(hostname, path, version, params, expected):
 
 
 @pytest.mark.parametrize("response_info, expected_exception", (
-        (_format_error({"status": 500, "body": "serverError"}), errors.ServerError),
-        (_format_error({"status": 404, "body": "notFound"}), errors.NotFoundError),
-        (_format_error({"status": 401, "body": "unauthenticated"}), errors.AccessDeniedError),
-        (_format_error({"status": 403, "body": "unauthorized"}), errors.AccessDeniedError),
-        (_format_error({"status": 400, "body": "badRequest"}), errors.BadRequestError),
-        (_format_error({"status": 499, "body": "generalCatchAll"}), errors.APIError), # Any 4XX except the 4XX errors above
+    (_format_error({"status": 500, "body": "serverError"}), errors.ServerError),
+    (_format_error({"status": 404, "body": "notFound"}), errors.NotFoundError),
+    (_format_error({"status": 401, "body": "unauthenticated"}), errors.AccessDeniedError),
+    (_format_error({"status": 403, "body": "unauthorized"}), errors.AccessDeniedError),
+    (_format_error({"status": 400, "body": "badRequest"}), errors.BadRequestError),
+    (_format_error({"status": 499, "body": "generalCatchAll"}), errors.APIError),  # Any 4XX except the 4XX errors
 ))
 def test_raise_for_error(response_info, expected_exception):
     with pytest.raises(expected_exception) as exc:
@@ -56,12 +57,12 @@ def test_api_client_factory_error_when_config_not_found(mocker):
 
 
 def test_api_client_factory_creates_client(mocker):
-    API_CLIENT_PARAMS = {"hostname": "http://localhost:8000", "token": "exampleToken"}
+    api_client_params = {"hostname": "http://localhost:8000", "token": "exampleToken"}
 
     module = mocker.MagicMock()
-    module.params = API_CLIENT_PARAMS
+    module.params = api_client_params
 
     op_api_client = api.create_client(module)
 
-    assert op_api_client.hostname == API_CLIENT_PARAMS["hostname"]
-    assert op_api_client.token == API_CLIENT_PARAMS["token"]
+    assert op_api_client.hostname == api_client_params["hostname"]
+    assert op_api_client.token == api_client_params["token"]
