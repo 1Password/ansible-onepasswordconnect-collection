@@ -3,7 +3,7 @@
 - name: Create a test item
   generic_item:
     state: created
-    title: Test Item
+    title: Test Item - ANSIBLETEST
     category: server
     tags:
       - exampleTag
@@ -15,7 +15,7 @@
 - name: Create a second test item
   generic_item:
     state: created
-    title: Test Item 2
+    title: Test Item 2 - ANSIBLETEST
     category: server
     tags:
       - exampleTag

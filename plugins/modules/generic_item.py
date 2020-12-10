@@ -18,7 +18,7 @@ requirements:
 notes:
 short_description: Creates a customizable 1Password Item
 description:
-  - Create or update an Item in a Vault using the Service Account associated with the JWT.
+  - Create or update an Item in a Vault.
   - Fully customizable using the Fields option
   - B(NOTE): When I(state=upsert) be aware that any Item fields without labels are removed during the update process.
 options:
@@ -61,6 +61,7 @@ options:
     suboptions:
       label:
         type: str
+        required: true
         description: The name of the field
       value:
         type: str
@@ -69,13 +70,13 @@ options:
             - If C(generate_value) is C(true), this attribute is ignored.
       overwrite:
         type: bool
-        default: no
+        default: yes
         choices:
             - yes
             - no
         description:
-            - Always replaces the field's value on the server when updating the Item.
-            - Ignore changes to the field's value after creating the item.
+            - Always replace the field's value when updating the Item.
+            - Preserve the field value returned by 1Password if not undefined. 
             - B(NOTE): Only valid on fields with a non-empty C(label).
       section:
         type: str

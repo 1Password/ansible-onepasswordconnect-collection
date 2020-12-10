@@ -3,7 +3,7 @@
 - name: Create new item
   generic_item:
     state: created
-    title: Example Item
+    title: Example Item - ANSIBLE TEST
     category: server
     tags:
       - exampleTag
@@ -26,7 +26,7 @@
 - name: Upsert item
   generic_item:
     state: upserted
-    title: Test Item UPDATED
+    title: Example Item UPDATED - ANSIBLE TEST
     uuid: "{{ result['op_item']['id'] }}"
     category: server
     tags:
@@ -49,7 +49,7 @@
   assert:
     that:
       - updated_1p_item.op_item.id == result.op_item.id
-      - updated_1p_item.op_item.title == 'Test Item UPDATED'
+      - updated_1p_item.op_item.title == 'Example Item UPDATED - ANSIBLE TEST'
 
 - name: Assert tags updated
   assert:

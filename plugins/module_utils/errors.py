@@ -36,5 +36,5 @@ class ServerError(APIError):
 
 
 class AccessDeniedError(APIError):
-    DEFAULT_MSG = "Token invalid or Vault not in scope for Service Account"
+    DEFAULT_MSG = "Token invalid or access to Vault not granted by token."
     STATUS_CODE = 403

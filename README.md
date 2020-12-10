@@ -40,9 +40,9 @@ Environment variables are ignored if the module variable is defined for a task.
 
 Module Variable | Environment Variable | Description
 ---: | --- | --- |
-`hostname` | `OP_CONNECT_HOST` | URL of the 1Password Connect API Server |
-`token` | `OP_CONNECT_TOKEN` | JWT used to authenticate requests to API Server |
-`vault_id`| `OP_VAULT_ID` | (Optional) UUID of a 1Password Vault the Service Account JWT is allowed to access |
+`hostname` | `OP_CONNECT_HOST` | URL of a 1Password Connect API Server |
+`token` | `OP_CONNECT_TOKEN` | JWT used to authenticate 1Password Connect API requests |
+`vault_id`| `OP_VAULT_ID` | (Optional) UUID of a 1Password Vault the API token is allowed to access |
 
 
 ## `connect.generic_item` Module
@@ -57,7 +57,7 @@ Module Variable | Environment Variable | Description
   hosts: localhost
   environment:
     OP_CONNECT_HOST: http://localhost:8001
-    OP_CONNECT_TOKEN: "serviceaccount.jwt.here"
+    OP_CONNECT_TOKEN: "api.jwt.here"
   tasks:
     - onepassword.connect.generic_item:
         vault_id: "qwerty56789asdf"
@@ -77,12 +77,12 @@ Module Variable | Environment Variable | Description
 1Password can generate a field's value on the user's behalf when creating or updating an Item. Because generating random values is not idempotent, the module uses 3 different state values when working with Items:
 
 - `created` => Create a **new** Item every time Ansible runs the task.
-- `updated` => Upsert (update or create if not exists) the item every time Ansible runs the task.
+- `upserted` => Upsert (update or create if not exists) the item every time Ansible runs the task.
 - `deleted` => Remove the item. Ignores errors if Item does not exist.
 
-In most cases the `updated` state is the recommended setting if you want to ensure an Item exists. 
+In most cases the `upserted` state is the recommended setting if you want to ensure an Item exists. 
 
-To preserve values across playbook executions, add `overwrite: no` to the field. This instructs the module to copy the field's existing value as-is during the update operation. 
+⭐️ You can preserve field values by adding the `overwrite: no` property to a field. This instructs the module to copy the field's existing value as-is during the update operation. 
 
 ---
 
@@ -90,9 +90,9 @@ To preserve values across playbook executions, add `overwrite: no` to the field.
 
 Updating an Item is an **"upsert"** operation. If an item matching the given Item ID or Item Name is not found, the module will create a new Item using the provided task configuration.
 
-> ❗️**Note**❗The upsert operation will remove any Item attributes and fields not defined in the task definition. 
+> ❗️Note❗**The upsert operation will completely replace the Item matching the `title` or `uuid` field.** Any properties not provided in the task definition will be lost. 
 > 
-> We recommend storing the Items created by Ansible in a Vault that only the Service Account may access.
+> We recommend storing the Items created by Ansible in a Vault that only 1Password Connect may access.
 
 ```yaml
 ---
@@ -110,7 +110,7 @@ Updating an Item is an **"upsert"** operation. If an item matching the given Ite
         fields:
           - label: Codeword
             field_type: concealed
-            overwrite: no   # This field reuses the stored value from the existing field with the same label
+            overwrite: no   # Preserves the stored value for "Codeword" if value is defined
           - label: Dashboard Password
             generate_value: yes
             generator_recipe:

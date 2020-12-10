@@ -8,18 +8,17 @@ author:
   - 1Password (@1Password)
 requirements:
 notes:
-short_description: Gets infomation on an 1Password Item
+short_description: Returns information about a 1Password Item
 description:
-  - Get an Item in a Vault using the Service Account associated with the JWT.
   - The name or ID of an item can be given.
-  - It is possible to specify a particular field.
-  - If no vaults are specified, every vault associated to the Service Account will be searched through.
+  - It is possible to return information about a specific field instead of an item.
+  - If no vaults are specified, the module searches every vault accessible by the API token.
 options:
   item:
     type: str
     required: True
     description:
-      - Name or ID of the item as displayed in the 1Password UI.
+      - Name or ID of the item as shown in the 1Password UI.
   field: str
     type: str
     description:
@@ -27,8 +26,8 @@ options:
   vault: str
     type: str
     description:
-      - Name or ID of the Vault in which the Item is located.
-      - If not specified, will look through every Vault associated to the Service Account. 
+      - Name or ID of the Vault in which the Item is stored.
+      - If not specified, the module searches through every vault accessible by the API token. 
 extends_documentation_fragment:
   - onepassword.connect.api_params
 '''

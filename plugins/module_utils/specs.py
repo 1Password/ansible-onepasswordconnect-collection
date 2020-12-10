@@ -109,9 +109,9 @@ API_CONFIG = dict(
 
 # User-configurable attributes for one or more fields on an Item
 FIELD = dict(
-    label=dict(type="str"),
+    label=dict(type="str", required=True),
     value=dict(type="str", no_log=True),
-    overwrite=dict(type="bool", default=False),
+    overwrite=dict(type="bool", default=True),
     section=dict(type="str"),
     field_type=dict(
         type="str",
