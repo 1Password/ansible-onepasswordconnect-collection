@@ -28,7 +28,7 @@ The 1Password Connect collection contains modules that interact with 1Password C
 During _Closed Beta_ the Ansible Collection can be installed via Git: 
 ```
 ansible-galaxy collection install \
-git@github.com:1password/ansible-onepasswordconnect-collection.git,v0.1.0
+git@github.com:1password/ansible-onepasswordconnect-collection.git,v0.2.0
 ```
 For more information, see Ansible's documentation: [Installing a Collection from a Git Repository](https://docs.ansible.com/ansible/latest/user_guide/collections_using.html#installing-a-collection-from-a-git-repository)
 
