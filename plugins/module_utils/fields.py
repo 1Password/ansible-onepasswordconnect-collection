@@ -74,9 +74,9 @@ def update_fieldset(old_fields, new_fields):
 
 
 def _merge_fields(old_fields, new_fields):
-    """Replace field value with value returned by the server.
+    """Replace a field's value with value returned by the server.
 
-    'Protected' field values should remain unchanged when running Ansible play
+    'Protected' field values should remain unchanged when running Ansible playbook
 
     :param list of dict old_fields: Item fields returned by the server
     :param list of dict new_fields: Item fields as defined in the playbook
@@ -85,20 +85,29 @@ def _merge_fields(old_fields, new_fields):
 
     # TODO: Should Ansible ignore fields w/o labels?
     old = {f["label"].strip(): f for f in old_fields if f.get("label")}
+    old_field_labels = old.keys()
 
     if const.NOTES_FIELD_LABEL in old:
         # Don't make changes to the notesField - not supported
         yield old[const.NOTES_FIELD_LABEL]
 
-    for field in new_fields:
+    for new_field in new_fields:
+
+        if new_field.get("label") == const.NOTES_FIELD_LABEL:
+            # Modifications to `notesField` are not allowed via Ansible
+            continue
+
         immutable = all((
-            not field.get("overwrite"),
-            field.get("label"),
-            field["label"] in old.keys()))
+            not new_field.get("overwrite"),
+            new_field.get("label"),
+            new_field["label"] in old_field_labels
+        ))
         if immutable:
-            yield _field_with_old_value(field, old[field["label"]].get("value"))
+            yield _field_with_old_value(
+                new_field, old[new_field["label"]].get("value")
+            )
         else:
-            yield field
+            yield new_field
 
 
 def _field_with_old_value(field_config, old_value):
