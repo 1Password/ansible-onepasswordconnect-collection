@@ -80,7 +80,7 @@ op_item:
   returned: when field option is not set
 field:
   description: Value of the field for the Item.
-  type: string
+  type: str
   returned: when field option is set
 '''
 
