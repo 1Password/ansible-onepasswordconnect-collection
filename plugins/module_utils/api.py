@@ -7,7 +7,7 @@ import sys
 from urllib import parse
 
 from ansible.module_utils.urls import fetch_url
-from ansible_collections.onepassword.connect.plugins.module_utils import errors
+from ansible_collections.onepassword.connect.plugins.module_utils import errors, const
 
 
 def create_client(module):
@@ -29,6 +29,11 @@ class OnePassword:
         self.hostname = hostname
         self.token = token
         self._module = module
+        self._user_agent = _format_user_agent(
+            const.COLLECTION_VERSION,
+            python_version=".".join(str(i) for i in sys.version_info[:3]),
+            ansible_version=self._module.ansible_version
+        )
 
     def _send_request(self, path, method="GET", data=None, params=None):
         fetch_kwargs = {
@@ -63,10 +68,7 @@ class OnePassword:
     def _build_headers(self):
         return {
             "Authorization": "Bearer {token}".format(token=self.token),
-            "User-Agent": "op-ansible-collection/py-{py_version}_ansible-{ansible}".format(
-                py_version=".".join(str(i) for i in sys.version_info[:3]),
-                ansible=self._module.ansible_version
-            ),
+            "User-Agent": self._user_agent,
             "Content-Type": "application/json",
             "Accept": "application/json"
         }
@@ -174,3 +176,11 @@ def raise_for_error(response_info):
         raise errors.BadRequestError(**err_details)
     else:
         raise errors.APIError(**err_details)
+
+
+def _format_user_agent(collection_version, python_version=None, ansible_version=None):
+    return "op-connect-ansible/{version} Python/{py_version} Ansible/{ansible}".format(
+        version=collection_version,
+        py_version=python_version or "unknown",
+        ansible=ansible_version or "unknown"
+    )
