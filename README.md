@@ -214,7 +214,13 @@ When `field` is defined, the module will perform a case-sensitive search for a f
 
 ## Testing
 
-See [tests/README.md](./tests/README.md)
+Use the `test` Makefile target to run unit tests:
+
+```shell
+make test
+```
+
+For more information about testing, see [tests/README.md](./tests/README.md)
 
 ## About 1Password
 

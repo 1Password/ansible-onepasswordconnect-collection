@@ -4,7 +4,7 @@
 - Docker is running locally
 - The `ansible` Python package & its binaries are installed on the test runner (i.e. your computer, the CI container). 
 
-From the repository root, run `./scripts/runtest.sh`
+From the repository root, run `./scripts/runtest.sh <units|integration>`
 
 The script will:
 - create a temporary directory (using [mktemp](https://linux.die.net/man/1/mktemp))
