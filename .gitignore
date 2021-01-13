@@ -15,3 +15,5 @@
 *.tar.gz
 
 /tests/output/
+
+dist/
