@@ -1,8 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
-# (c) 2020, 1Password & Agilebits (@1Password)
-
+# (c) 2021, 1Password & Agilebits (@1Password)
 
 from __future__ import (absolute_import, division, print_function)
 
@@ -78,10 +77,71 @@ op_item:
   description: Dictionary containing Item properties. See 1Password API specs for complete structure.
   type: complex
   returned: when field option is not set
+  contains:
+    category:
+        description: The Item template used when creating or modifying the item
+        returned: success
+        type: str
+        sample: LOGIN
+    created_at:
+        description: Timestamp that reports when the Item was originally created
+        returned: success
+        type: str
+        sample: "2020-11-23T15:29:07.312397-08:00"
+    updated_at:
+        description: Timestamp that reports when the Item was last modified.
+        returned: success
+        type: str
+        sample: "2020-11-23T15:29:07.312397-08:00"
+    id:
+        description: Unique ID for the Item.
+        returned: success
+        type: str
+        sample: "bactwEXAMPLEpxhpjxymh7yy"
+    tags:
+        description: All unique tag values associated with the item
+        type: list
+        elements: str
+        returned: success
+        sample:
+            - tag1
+            - tag2
+    title:
+        description: User-provided name for the Item. Displayed in 1Password clients.
+        type: str
+        returned: success
+        sample: My Test Item
+    vault:
+        description: Information about the Vault containing this Item.
+        type: dict
+        returned: success
+        sample:
+            - id: abc1234EXAMPLEvault5678
+    fields:
+        type: dict
+        description: Lists all defined fields for the Item. The key for each field is the field's label.
+        returned: success
 field:
   description: Value of the field for the Item.
   type: str
   returned: when field option is set
+  contains:
+    label:
+        type: str
+        description: User-provided name for a field
+        returned: success
+    value:
+        type: str
+        description: Value stored under this field
+        returned: success
+    section:
+        type: str
+        description: The section name or identifier that the field is under
+    field_type:
+        type: str
+        returned: success
+        description: Type identifier for the field
+        sample: "concealed"
 '''
 
 from ansible.module_utils.basic import AnsibleModule

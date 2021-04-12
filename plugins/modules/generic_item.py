@@ -1,7 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
-# (c) 2020, 1Password & Agilebits (@1Password)
+# (c) 2021, 1Password & Agilebits (@1Password)
+
 from __future__ import (absolute_import, division, print_function)
 
 __metaclass__ = type
@@ -72,13 +73,10 @@ options:
             - If C(generate_value) is C(true), this attribute is ignored.
       overwrite:
         type: bool
-        default: yes
-        choices:
-            - yes
-            - no
+        default: true
         description:
             - Always replace the field's value when updating the Item.
-            - Preserve the field value returned by 1Password if not undefined. 
+            - Preserve the field value returned by 1Password if not undefined.
             - B(NOTE) Only valid on fields with a non-empty C(label).
       section:
         type: str

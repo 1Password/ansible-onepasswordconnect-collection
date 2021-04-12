@@ -75,7 +75,7 @@ function do_tests() {
 
   # `zz` is a throwaway value here
   # When the `if` cond sees `zz` it goes into the `else` block.
-  if [ -z "${ANSIBLE_COLLECTIONS_PATHS+zz}" ]; then
+  if [ -z "${ANSIBLE_COLLECTIONS_PATH+zz}" ]; then
     collection_path="${TMP_DIR_PATH}"
   else
     collection_path="${ANSIBLE_COLLECTIONS_PATH}:${TMP_DIR_PATH}"
