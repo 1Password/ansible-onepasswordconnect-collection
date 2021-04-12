@@ -18,7 +18,7 @@ license:
 
 license_file: 'LICENSE.md'
 
-tags: ['onepassword', 'secrets', '1password', 'onepasswordconnect', '1passwordconnect']
+tags: ['onepassword', 'secrets', 'onepasswordconnect', 'connect']
 
 dependencies: {}
 
