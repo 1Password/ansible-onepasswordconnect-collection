@@ -4,14 +4,14 @@ namespace: onepassword
 name: connect
 
 # The version of the collection. Must be compatible with semantic versioning
-version: 0.1.0
+version: "1.0.0"
 
 readme: README.md
 
 authors:
 - 1Password <support@1password.com>
 
-description: Modules for managing and reading 1Password Vaults via 1Password Connect.
+description: Modules for managing and reading 1Password Vaults with 1Password Connect.
 
 license:
   - MIT
@@ -28,7 +28,7 @@ repository: https://github.com/1Password/ansible-onepasswordconnect-collection
 documentation: https://github.com/1Password/ansible-onepasswordconnect-collection/README.md
 
 # The URL to the homepage of the collection/project
-homepage: http://1password.com
+homepage: https://1password.com
 
 # The URL to the collection issue tracker
 issues: https://github.com/1Password/ansible-onepasswordconnect-collection/issues

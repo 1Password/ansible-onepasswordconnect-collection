@@ -8,7 +8,7 @@ NOTES_FIELD_LABEL = "notesPlain"
 
 # 1Password Connect Ansible Collection Version
 # Auto-updated during release process
-COLLECTION_VERSION = "0.2.0"
+COLLECTION_VERSION = "1.0.0"
 
 
 class FieldType:
