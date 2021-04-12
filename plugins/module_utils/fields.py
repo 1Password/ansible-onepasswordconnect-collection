@@ -84,7 +84,7 @@ def _merge_fields(old_fields, new_fields):
     """
 
     # TODO: Should Ansible ignore fields w/o labels?
-    old = {f["label"].strip(): f for f in old_fields if f.get("label")}
+    old = dict((f["label"].strip(), f) for f in old_fields if f.get("label"))
     old_field_labels = old.keys()
 
     if const.NOTES_FIELD_LABEL in old:
@@ -112,7 +112,9 @@ def _merge_fields(old_fields, new_fields):
 
 def _field_with_old_value(field_config, old_value):
     """Creates copy of a field, replacing its value with value from the server"""
-    field = {**field_config, "value": old_value}
+    # Can't use dict expansion while support for py2.6/2.7 is required
+    field = dict(field_config)
+    field.update({"value": old_value})
 
     # Remove generator config when preserving the old value
     field.pop("generate_value", None)
@@ -178,4 +180,3 @@ def flatten_fieldset(fieldset):
         flattened[key] = field
 
     return flattened
-

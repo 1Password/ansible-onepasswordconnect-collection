@@ -16,7 +16,7 @@ options:
             - URL of 1Password Connect.
     token:
         type: str
-        no_log: true
         description:
             - The token to authenticate 1Password Connect calls.
+            - Ansible should never log or display this value.
     '''

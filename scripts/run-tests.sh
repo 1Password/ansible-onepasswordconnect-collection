@@ -14,13 +14,12 @@ fi
 
 # Only allow test types of "units" or "integration"
 if [[ -z ${1+x} ]]; then
-  echo "${1}"
-  echo "[ERROR] Usage: run-tests.sh units|integration"
+  echo "[ERROR] Usage: run-tests.sh units|integration|sanity"
   exit 1
-elif [[ "$1" == "units" || "$1" == "integration" ]]; then
+elif [[ "$1" == "units" || "$1" == "integration" || "$1" == "sanity" ]]; then
   TEST_SUITE="$1"
 else
-  echo "[ERROR] Usage: run-tests.sh units|integration"
+  echo "[ERROR] Usage: run-tests.sh units|integration|sanity"
   exit 1
 fi
 
@@ -39,12 +38,12 @@ PATH_TO_PACKAGES="$(git rev-parse --show-toplevel)"
 DOCKER_IMG="ubuntu1804"
 
 function _cleanup() {
-  rm -r ${TMP_DIR_PATH}
+  rm -r "${TMP_DIR_PATH}"
 }
 
 function inject_env_vars() {
 
-  if [ ${TEST_SUITE} != "integration" ]; then
+  if [ "${TEST_SUITE}" != "integration" ]; then
     return
   fi
 
@@ -76,7 +75,7 @@ function do_tests() {
 
   # `zz` is a throwaway value here
   # When the `if` cond sees `zz` it goes into the `else` block.
-  if [ -z "${ANSIBLE_COLLECTIONS_PATHS+zz}" ]; then
+  if [ -z "${ANSIBLE_COLLECTIONS_PATH+zz}" ]; then
     collection_path="${TMP_DIR_PATH}"
   else
     collection_path="${ANSIBLE_COLLECTIONS_PATH}:${TMP_DIR_PATH}"
