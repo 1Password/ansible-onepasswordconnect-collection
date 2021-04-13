@@ -9,12 +9,9 @@ version: "1.0.0"
 readme: README.md
 
 authors:
-- 1Password <support@1password.com>
+  - 1Password <support@1password.com>
 
 description: Modules for managing and reading 1Password Vaults with 1Password Connect.
-
-license:
-  - MIT
 
 license_file: 'LICENSE.md'
 
@@ -25,14 +22,14 @@ dependencies: {}
 repository: https://github.com/1Password/ansible-onepasswordconnect-collection
 
 # The URL to any online docs
-documentation: https://github.com/1Password/ansible-onepasswordconnect-collection/README.md
+documentation: https://github.com/1Password/ansible-onepasswordconnect-collection
 
 # The URL to the homepage of the collection/project
-homepage: https://1password.com
+homepage: https://1password.com/secrets
 
 # The URL to the collection issue tracker
 issues: https://github.com/1Password/ansible-onepasswordconnect-collection/issues
 
 # A list of file glob-like patterns used to filter any files or directories that should not be included in the build
 # artifact.
-build_ignore: ['scripts', '.venv', '.*']
+build_ignore: ['scripts', '.venv', '.*', 'tests']
