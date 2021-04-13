@@ -12,6 +12,22 @@
 
 ---
 
+[//]: # (START/v1.0.1)
+# v1.0.1
+
+## Features
+[//]: # (* A user-friendly description of a new feature. {issue-number})
+
+## Fixes
+[//]: # (* A user-friendly description of a fix. {issue-number})
+* Resolves small issues with the Ansible Galaxy manifest file
+* Exclude the `test/` directory from the build artifact.
+
+## Security
+[//]: # (* A user-friendly description of a security fix. {issue-number})
+
+---
+
 [//]: # (START/v1.0.0)
 # v1.0.0
 
