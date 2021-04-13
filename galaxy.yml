@@ -25,7 +25,7 @@ repository: https://github.com/1Password/ansible-onepasswordconnect-collection
 documentation: https://github.com/1Password/ansible-onepasswordconnect-collection
 
 # The URL to the homepage of the collection/project
-homepage: https://1password.com
+homepage: https://1password.com/secrets
 
 # The URL to the collection issue tracker
 issues: https://github.com/1Password/ansible-onepasswordconnect-collection/issues
