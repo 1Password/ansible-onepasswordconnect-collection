@@ -11,10 +11,10 @@ curVersion := $$(sed -n -E 's/^version: ([0-9]+\.[0-9]+\.[0-9]+)$/\1/p' galaxy.y
 
 test: test/unit ## Run unit tests in a Docker container
 test/unit:
-	$(SCRIPTS_DIR)/run_tests.sh units
+	$(SCRIPTS_DIR)/run-tests.sh units
 
 test/integration:	## Run integration tests inside a Docker container
-	$(SCRIPTS_DIR)/run_tests.sh integration
+	$(SCRIPTS_DIR)/run-tests.sh integration
 
 build: clean	## Build collection artifact
 	ansible-galaxy collection build --output-path dist/
