@@ -23,6 +23,10 @@ def op_item():
     :return dict
     """
     item_spec = dict(
+        vault_id=dict(
+            required=True,
+            fallback=(env_fallback, ['OP_VAULT_ID'])
+        ),
         name=dict(
             type="str",
             aliases=["title"]
@@ -96,9 +100,6 @@ GENERATOR_RECIPE_OPTIONS = dict(
 
 # API config options for all modules
 API_CONFIG = dict(
-    vault_id=dict(
-        fallback=(env_fallback, ['OP_VAULT_ID'])
-    ),
     hostname=dict(
         fallback=(env_fallback, ['OP_CONNECT_HOST'])
     ),
@@ -112,14 +113,17 @@ API_CONFIG = dict(
 FIELD = dict(
     label=dict(type="str", required=True),
     value=dict(type="str", no_log=True),
-    overwrite=dict(type="bool", default=True),
     section=dict(type="str"),
     field_type=dict(
         type="str",
         default="string",
         choices=list(map(str.lower, const.FieldType.choices()))
     ),
-    generate_value=dict(type="bool", default=False),
+    generate_value=dict(
+        type="str",
+        default=const.GENERATE_NEVER,
+        choices=list(const.GENERATE_VALUE_CHOICES)
+    ),
     generator_recipe=dict(
         type="dict",
         options=GENERATOR_RECIPE_OPTIONS
@@ -131,20 +135,12 @@ FIELD = dict(
 # Resource Create/Update/Delete statuses
 STATE = dict(
     type="str",
-    default="created",
-    choices=["created", "upserted", "absent"]
+    default="present",
+    choices=["present", "absent"]
 )
 
 # 1Password item tags
 TAGS = dict(
     type="list",
     elements="str"
-)
-
-# Common config for a password option.
-# Always allow the end user to delegate password creation to
-# the generator.
-password_opts = dict(
-    value=dict(type="str", no_log=True),
-    generate=dict(type="bool", default=False)
 )
