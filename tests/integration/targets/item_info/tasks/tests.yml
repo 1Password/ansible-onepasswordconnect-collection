@@ -2,8 +2,8 @@
 
 - name: Create a test item
   generic_item:
-    state: created
-    title: Test Item - ANSIBLETEST
+    state: present
+    title: "Test Item - ANSIBLETEST {{ 9999 | random }}"
     category: server
     tags:
       - exampleTag
@@ -14,8 +14,8 @@
 
 - name: Create a second test item
   generic_item:
-    state: created
-    title: Test Item 2 - ANSIBLETEST
+    state: present
+    title: "Test Item 2 - ANSIBLETEST {{ 9999 | random }}"
     category: server
     tags:
       - exampleTag
