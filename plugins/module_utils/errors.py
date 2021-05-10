@@ -11,6 +11,10 @@ class Error(Exception):
         super().__init__(message)
 
 
+class MissingVaultID(Error):
+    DEFAULT_MSG = "A Vault ID is required to use this module."
+
+
 class APIError(Error):
     DEFAULT_MSG = "Error while communicating with Secrets Server"
     STATUS_CODE = 400
