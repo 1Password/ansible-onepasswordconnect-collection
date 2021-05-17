@@ -21,7 +21,7 @@ def field_from_params(field_params, generate_field_value=False):
 
 def create(field_params, previous_fields=None):
     if not field_params:
-        raise StopIteration
+        return
 
     # TODO: Should Ansible ignore fields w/o labels?
     if not previous_fields:

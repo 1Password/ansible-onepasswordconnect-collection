@@ -8,13 +8,13 @@ class ModuleDocFragment:
 options:
     state:
         type: str
-        default: created
+        default: present
         choices:
-            - created
-            - upserted
+            - present
             - absent
         description:
-            - Creates a new Item every time Ansible runs the task. Does not check for duplicates.
-            - Performs replacement if matching Item is found, otherwise creates new Item if Item matching "name" value is not found.
-            - Deletes Item if exists. Skips task if matching Item not found.
+            - I(present) will try to find the item using its vault ID and provided C(name) or C(UUID).
+              If the item with a matching name or UUID is not found, the item is created.
+            - To change the C(name) of an item, a C(uuid) MUST be provided. See C(name) for additional details.
+            - I(absent) will delete the item if it exists. No change are made if the item is not found.
     '''

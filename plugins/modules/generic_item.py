@@ -19,6 +19,12 @@ description:
   - Fully customizable using the Fields option.
   - B(NOTE) Any item fields without C(label) are removed when updating an existing item.
 options:
+  vault_id:
+    type: str
+    required: True
+    description:
+        - ID of the 1Password vault that will be accessed.
+        - Uses environment variable C(OP_VAULT_ID) if not explicitly defined in the playbook.
   name:
     type: str
     aliases:
@@ -26,14 +32,14 @@ options:
     description:
       - Name of the Item
       - If C(state) is C(present) and c(uuid) is defined, the given value will overwrite previous Item name
-      - If C(state) is C(present) and c(uuid) is NOT defined, the module will try to find an item with the same name. 
+      - If C(state) is C(present) and c(uuid) is NOT defined, the module will try to find an item with the same name.
         If an item cannot be found, a new item with the given name is created and the old item is not deleted.
   uuid:
     type: str
     description:
       - Unique ID for a single Item.
       - Ignored if C(state) is C(present) and the item doesn't exist.
-      - If C(state) is C(present) and c(uuid) is NOT defined, the module will try to find an item using C(name). 
+      - If C(state) is C(present) and c(uuid) is NOT defined, the module will try to find an item using C(name).
         If an item cannot be found, a new item is created with the C(name) value and the old item is not changed.
   category:
     type: str
@@ -98,10 +104,10 @@ options:
           - Overrides C(value) if I(generate_value=on_create) and field does not exist or if I(generate_value=always).
           - I(generate_value=never) will use the data in C(value).
           - I(generate_value=always) will assign a new value to this field every time Ansible runs the module.
-          - I(generate_value=on_create) will generate a new value and ignore C(value) if the field does not exist. 
-            If the field does exist, the module will use the previously generated value and ignore 
+          - I(generate_value=on_create) will generate a new value and ignore C(value) if the field does not exist.
+            If the field does exist, the module will use the previously generated value and ignore
             the C(value).
-          - The module searches for field by using a case-insensitive match for the C(label) 
+          - The module searches for field by using a case-insensitive match for the C(label)
             within the field's C(section).
       generator_recipe:
         type: dict

@@ -44,7 +44,8 @@ def op_item():
             elements="str"
         ),
         favorite=dict(
-            type="bool"
+            type="bool",
+            default=False
         ),
         fields=dict(
             type="list",

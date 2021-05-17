@@ -6,10 +6,6 @@ class ModuleDocFragment:
 
     DOCUMENTATION = r'''
 options:
-    vault_id:
-        type: str
-        description:
-            - ID of the 1Password vault that will be accessed.
     hostname:
         type: str
         description:

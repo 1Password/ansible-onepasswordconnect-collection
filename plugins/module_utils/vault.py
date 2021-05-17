@@ -209,7 +209,7 @@ def assemble_item(
     if sections:
         item["sections"] = [
             {"id": section.id, "label": section.label}
-            for _, section in sections.items()
+            for _id, section in sections.items()
         ]
 
     return item
