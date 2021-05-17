@@ -21,6 +21,9 @@ def find_item(params, api_client):
     :return: dict | None
     """
     vault_id = params.get("vault_id")
+    if not vault_id:
+        raise errors.MissingVaultID
+
     item_name = params.get("title")
     item_id = params.get("uuid")
 
@@ -43,10 +46,14 @@ def create_item(params, api_client, check_mode=False):
     :return: (bool, dict) Where bool represents whether action created an Item in 1Password.
     """
 
+    vault_id = params.get("vault_id")
+    if not vault_id:
+        raise errors.MissingVaultID
+
     item_fields = fields.create(params.get("fields"))
 
     op_item = assemble_item(
-        vault_id=params["vault_id"],
+        vault_id=vault_id,
         category=params["category"],
         title=params.get("name"),
         urls=params.get("urls"),
@@ -75,13 +82,18 @@ def update_item(params, original_item, api_client, check_mode=False):
     :return: (bool, dict) Where bool represents whether action modified an Item in 1Password.
     """
 
+    try:
+        vault_id = original_item["vault"]["id"]
+    except KeyError:
+        raise errors.MissingVaultID("Original item missing Vault ID")
+
     item_fields = fields.create(
         params.get("fields"),
         previous_fields=original_item.get("fields")
     )
 
     updated_item = assemble_item(
-        vault_id=original_item["vault"]["id"],
+        vault_id=vault_id,
         category=params["category"],
         title=params.get("name"),
         urls=params.get("urls"),
