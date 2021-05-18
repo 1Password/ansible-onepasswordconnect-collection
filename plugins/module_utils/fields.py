@@ -5,130 +5,76 @@ __metaclass__ = type
 from ansible_collections.onepassword.connect.plugins.module_utils import const
 
 
-def create_field(
-        field_type,
-        item_type,
-        label=None,
-        value=None,
-        generate_value=False,
-        generator_recipe=None,
-        section_id=None,
-        purpose=None
-):
-    """
-    Creates a single Field dictionary from given configuration
+def field_from_params(field_params, generate_field_value=False):
+    if "field_type" not in field_params:
+        raise TypeError("Field is missing type value")
 
-    :param str field_type: Type ID for this field
-    :param str item_type: Category value for the Item this field belongs to
-    :param str label: Human-readable name for this field
-    :param value: Value of the field
-    :param bool generate_value: Indicate whether field is generated server-side
-    :param dict generator_recipe: Customizations for value generator
-    :param str section_id: Unique ID for the Item section the field should be placed into
-    :param purpose: Specify field purpose if applicable
-    :return: dict
-    :rtype: dict
-    """
-    if not field_type or not item_type:
-        raise TypeError("field_type and parent_item_type are required")
-
-    field = {
-        "label": label,
-        "value": value,
-        "type": field_type.upper(),
-        "generate": bool(generate_value),
-        "section": {"id": section_id} if section_id else None,
-        "purpose": purpose or ""
+    return {
+        "type": field_params["field_type"].upper(),
+        "label": field_params.get("label"),
+        "section": field_params.get("section"),
+        "recipe": _get_generator_recipe(field_params.get("generator_recipe")) if generate_field_value else None,
+        "generate": generate_field_value,
+        "value": None if generate_field_value else field_params.get("value")
     }
 
-    if item_type.upper() in [const.ItemType.LOGIN, const.ItemType.PASSWORD]:
-        # TODO: Username purpose handling?
-        if field["type"] == const.FieldType.CONCEALED:
-            field["purpose"] = "PASSWORD"
 
-    if generate_value:
-        field["recipe"] = _get_generator_recipe(generator_recipe)
-        # Always ignore the provided value if user is requesting a generated value
-        field["value"] = None
-
-    return field
-
-
-def update_fieldset(old_fields, new_fields):
-    """Create new set of fields from the playbook params.
-
-    Users may declare "overwrite=False" to reuse the field's value from the server
-    IF AND ONLY IF the field has a label
-
-    :param list of dict old_fields: Item fields returned by the server
-    :param list of dict new_fields: Item fields as defined in the playbook
-    :return list of dict
-    """
-
-    if not old_fields:
-        # old item has no fields, skip processing
-        # in most cases there will be at least ONE field (`notesField`)
-        return new_fields
-
-    return list(_merge_fields(old_fields, new_fields))
-
-
-def _merge_fields(old_fields, new_fields):
-    """Replace a field's value with value returned by the server.
-
-    'Protected' field values should remain unchanged when running Ansible playbook
-
-    :param list of dict old_fields: Item fields returned by the server
-    :param list of dict new_fields: Item fields as defined in the playbook
-    :return generator of dict
-    """
+def create(field_params, previous_fields=None):
+    if not field_params:
+        return
 
     # TODO: Should Ansible ignore fields w/o labels?
-    old = dict((f["label"].strip(), f) for f in old_fields if f.get("label"))
-    old_field_labels = old.keys()
+    if not previous_fields:
+        previous_fields = []
 
-    if const.NOTES_FIELD_LABEL in old:
-        # Don't make changes to the notesField - not supported
-        yield old[const.NOTES_FIELD_LABEL]
-
-    for new_field in new_fields:
-
-        if new_field.get("label") == const.NOTES_FIELD_LABEL:
-            # Modifications to `notesField` are not allowed via Ansible
+    for params in field_params:
+        if params.get("label") == const.NOTES_FIELD_LABEL:
+            # The Notes field should not be editable by Ansible,
+            # and the old value is preserved if it exists
+            existing_notes_field = _get_field_by_label(
+                previous_fields, const.NOTES_FIELD_LABEL
+            )
+            if existing_notes_field:
+                yield existing_notes_field
             continue
 
-        immutable = all((
-            not new_field.get("overwrite"),
-            new_field.get("label"),
-            new_field["label"] in old_field_labels
-        ))
-        if immutable:
-            yield _field_with_old_value(
-                new_field, old[new_field["label"]].get("value")
+        should_generate_value = False
+
+        if params.get("generate_value") == const.GENERATE_ALWAYS:
+            should_generate_value = True
+        elif params.get("generate_value") == const.GENERATE_ON_CREATE:
+            old_field = _get_field_by_label(
+                previous_fields, params.get("label")
             )
-        else:
-            yield new_field
+            if not old_field:
+                should_generate_value = True
+            else:
+                params.update({
+                    "value": old_field.get("value"),
+                    # Don't allow user to change the preserved value's type
+                    "field_type": old_field.get("type")
+                })
+
+        yield field_from_params(
+            params,
+            generate_field_value=should_generate_value
+        )
 
 
-def _field_with_old_value(field_config, old_value):
-    """Creates copy of a field, replacing its value with value from the server"""
-    # Can't use dict expansion while support for py2.6/2.7 is required
-    field = dict(field_config)
-    field.update({"value": old_value})
+def _get_field_by_label(previous_fields, field_label):
+    if not previous_fields or not field_label:
+        return None
 
-    # Remove generator config when preserving the old value
-    field.pop("generate_value", None)
-    field.pop("generator_recipe", None)
+    # Assert previous_fields is a real iterable
+    try:
+        iter(previous_fields)
+    except TypeError:
+        return None
 
-    return field
-
-
-def protected_fields_have_label(fields):
-    """Check for a field label when a field should persist old value"""
-    if not fields:
-        return True
-
-    return all(field.get("label") for field in fields if field["overwrite"] is False)
+    return next((
+        field for field in previous_fields
+        if field.get("label") == field_label
+    ), None)
 
 
 def _get_generator_recipe(config):

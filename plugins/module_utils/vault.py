@@ -5,117 +5,148 @@ __metaclass__ = type
 from collections import namedtuple
 from uuid import uuid4
 
-from ansible_collections.onepassword.connect.plugins.module_utils import errors, fields
+from ansible.module_utils.common.dict_transformations import recursive_diff
+from ansible_collections.onepassword.connect.plugins.module_utils import errors, fields, const
 
 Section = namedtuple("Section", ["id", "label"])
 
 
-def create_item(params, api_client):
+def find_item(params, api_client):
     """
-    Creates a new Item in the designated Vault.
+    Searches for an item by its title or UUID.
 
-    :param params: dict
-    :param api_client:
-    :return: (bool, dict) Where bool represents whether action created an Item in 1Password.
+    The search is limited to the vault_id passed by the module parameters.
+    :param params: Module parameters dictionary
+    :param api_client: Connect API client instance
+    :return: dict | None
     """
-    vault_id = params["vault_id"]
-    op_item = assemble_item(
-        vault_id=params["vault_id"],
-        category=params["category"],
-        title=params.get("name") or params.get("title"),
-        urls=params.get("urls"),
-        favorite=params.get("favorite"),
-        fieldset=params.get("fields"),
-        tags=params.get("tags")
-    )
-    new_item = api_client.create_item(vault_id, item=op_item)
-    new_item["fields"] = fields.flatten_fieldset(new_item.get("fields"))
-
-    return True, new_item
-
-
-def upsert_item(params, api_client):
-    """If Item with matching UUID or name exists, replaces all old Item properties. If Item not found, creates new Item.
-
-    If the replacement Item is equal to the "original" item, no action is taken by Ansible.
-
-    :param params: dict
-    :param api_client:
-    :return: (bool, dict) Where bool represents whether action modified an Item in 1Password.
-    """
-    if not fields.protected_fields_have_label(params.get("fields")):
-        raise errors.Error("Fields with overwrite=False must have a label")
-
     vault_id = params.get("vault_id")
+    if not vault_id:
+        raise errors.MissingVaultID
+
     item_name = params.get("title")
     item_id = params.get("uuid")
 
     try:
         if item_id:
-            original = api_client.get_item_by_id(vault_id, item_id)
+            return api_client.get_item_by_id(vault_id, item_id)
         else:
-            original = api_client.get_item_by_name(vault_id, item_name)
+            return api_client.get_item_by_name(vault_id, item_name)
     except errors.NotFoundError:
-        return create_item(params, api_client)
-
-    changed, updated_item = _update_item(original, params)
-
-    if not changed:
-        original["fields"] = fields.flatten_fields(original["fields"])
-        return False, original
-
-    item = api_client.update_item(updated_item["vault"]["id"], item=updated_item)
-    item["fields"] = fields.flatten_fieldset(item.get("fields"))
-    return changed, item
+        return None
 
 
-def delete_item(params, api_client):
+def create_item(params, api_client, check_mode=False):
     """
-    Deletes an item or returns an empty dict if Item not found.
+    Creates a new Item in the designated Vault.
 
-    :param params: dict Module parameters
-    :param api_client:
-    :return: (bool, dict) Where bool represents whether action modified an Item in 1Password.
+    :param params: dict Values and fields for the new item
+    :param api_client: Connect API client
+    :param check_mode: Whether Ansible is running in check mode.  No changes saved if True.
+    :return: (bool, dict) Where bool represents whether action created an Item in 1Password.
     """
 
     vault_id = params.get("vault_id")
+    if not vault_id:
+        raise errors.MissingVaultID
 
-    item_id = params.get("uuid")
+    item_fields = fields.create(params.get("fields"))
 
-    if not item_id:
-        try:
-            op_item = api_client.get_item_by_name(vault_id, item_name=params.get("title"))
-            item_id = op_item.get("id")
-        except errors.NotFoundError:
-            # Nothing to do, item does not exist
-            return False, {}
+    op_item = assemble_item(
+        vault_id=vault_id,
+        category=params["category"],
+        title=params.get("name"),
+        urls=params.get("urls"),
+        favorite=params.get("favorite"),
+        fieldset=item_fields,
+        tags=params.get("tags")
+    )
+    if check_mode:
+        op_item["fields"] = fields.flatten_fieldset(op_item.get("fields"))
+        return True, op_item
+
+    new_item = api_client.create_item(params["vault_id"], item=op_item)
+    new_item["fields"] = fields.flatten_fieldset(new_item.get("fields"))
+    return True, new_item
+
+
+def update_item(params, original_item, api_client, check_mode=False):
+    """If Item with matching UUID or name exists, replaces all old Item properties. If Item not found, creates new Item.
+
+    If the replacement Item is equal to the "original" item, no action is taken by Ansible.
+
+    :param params: dict Values to replace the existing values.
+    :param original_item The item returned by the server. Values may be copied from this item while updating.
+    :param api_client: Connect API client
+    :param check_mode: Whether Ansible is running in check mode.  No changes saved if True.
+    :return: (bool, dict) Where bool represents whether action modified an Item in 1Password.
+    """
 
     try:
-        return True, api_client.delete_item(vault_id, item_id=item_id)
-    except errors.NotFoundError:
-        return False, {}
+        vault_id = original_item["vault"]["id"]
+    except KeyError:
+        raise errors.MissingVaultID("Original item missing Vault ID")
 
-
-def _update_item(original_item, updated_item_params):
-    item_fields = fields.update_fieldset(
-        original_item.get("fields"),
-        updated_item_params.get("fields")
+    item_fields = fields.create(
+        params.get("fields"),
+        previous_fields=original_item.get("fields")
     )
 
     updated_item = assemble_item(
-        vault_id=original_item["vault"]["id"],
-        category=updated_item_params["category"],
-        title=updated_item_params.get("name") or updated_item_params.get("title"),
-        urls=updated_item_params.get("urls"),
-        favorite=updated_item_params.get("favorite"),
-        tags=updated_item_params.get("tags"),
+        vault_id=vault_id,
+        category=params["category"],
+        title=params.get("name"),
+        urls=params.get("urls"),
+        favorite=params.get("favorite"),
+        tags=params.get("tags"),
         fieldset=item_fields
     )
 
     updated_item.update({
         "id": original_item["id"],
     })
-    return True, updated_item
+
+    changed = recursive_diff(original_item, updated_item)
+
+    if not bool(changed):
+        original_item["fields"] = fields.flatten_fields(original_item["fields"])
+        return False, original_item
+
+    if check_mode:
+        updated_item["fields"] = fields.flatten_fieldset(updated_item.get("fields"))
+        return changed, updated_item
+
+    item = api_client.update_item(updated_item["vault"]["id"], item=updated_item)
+    item["fields"] = fields.flatten_fieldset(item.get("fields"))
+    return bool(changed), item
+
+
+def delete_item(item, api_client, check_mode=False):
+    """
+    Deletes an item or returns an empty dict if Item not found.
+
+    :param item: dict Item to be deleted
+    :param api_client: Connect API client
+    :param check_mode: Whether Ansible is running in check_mode. No changes saved if True.
+    :return: (bool, dict) Where bool represents whether action modified an Item in 1Password.
+    """
+
+    if not item:
+        # Nothing to do if item not given
+        return False, {}
+
+    vault_id = item.get("vault", {}).get("id")
+    if not vault_id:
+        raise errors.MissingVaultID
+
+    if check_mode:
+        return True, {}
+
+    try:
+        return True, api_client.delete_item(vault_id, item_id=item["id"])
+    except errors.NotFoundError:
+        # Item does not exist, nothing to do
+        return False, {}
 
 
 def assemble_item(
@@ -149,18 +180,16 @@ def assemble_item(
         "category": category.upper(),
         "urls": [{"href": url} for url in urls or []],
         "tags": tags or [],
-        "fields": []
+        "fields": [],
+        "favorite": bool(favorite)
     }
 
-    if favorite:
-        item["favorite"] = bool(favorite)
-
-    if fieldset:
-        for field_config in fieldset:
-            if field_config.get("section"):
+    if fieldset is not None:
+        for field in fieldset:
+            if field.get("section"):
                 # Squash sections with identical names
                 # but continue respecting name casing
-                section_name = field_config["section"].strip()
+                section_name = field["section"].strip()
 
                 section = sections.setdefault(
                     section_name,
@@ -169,24 +198,26 @@ def assemble_item(
             else:
                 section = None
 
-            item["fields"].append(
-                fields.create_field(
-                    field_type=field_config.get("field_type") or field_config.get("type"),
-                    item_type=item["category"],
-                    label=field_config.get("label"),
-                    value=field_config.get("value"),
-                    generate_value=field_config.get("generate_value"),
-                    generator_recipe=field_config.get("generator_recipe"),
-                    section_id=section.id if section else None,
-                    purpose=field_config.get("purpose")
-                )
-            )
+            field.update({
+                "section": {"id": section.id} if section else None,
+                "purpose": _get_field_purpose(category, field["type"])
+            })
+
+            item["fields"].append(field)
 
     # Remap unique sections to expected schema format
     if sections:
         item["sections"] = [
             {"id": section.id, "label": section.label}
-            for n, section in sections.items()
+            for _id, section in sections.items()
         ]
 
     return item
+
+
+def _get_field_purpose(item_type, field_type):
+    if item_type in (const.ItemType.LOGIN, const.ItemType.PASSWORD,):
+        # TODO: Username purpose handling?
+        if field_type == const.FieldType.CONCEALED:
+            return "PASSWORD"
+        return ""

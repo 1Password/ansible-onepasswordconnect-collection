@@ -9,36 +9,36 @@ from ansible_collections.onepassword.connect.plugins.module_utils import vault, 
 
 def test_field_creation_defaults():
     params = {
-        "field_type": const.FieldType.STRING,
-        "item_type": "login",
-        "label": "Test Item",
-        "value": "MySecretValue",
-        "generate_value": False
+            "field_type": const.FieldType.STRING,
+            "label": "Test Item",
+            "value": "MySecretValue",
+            "generate_value": "never"
     }
 
-    field = fields.create_field(**params)
-
+    field = list(fields.create([params])).pop()
     assert field["label"] == params["label"]
     assert field["type"] == params["field_type"].upper()
-    assert field["generate"] == params["generate_value"]
+    assert field["generate"] is False
     assert field["value"] == params["value"]
     assert field.get("recipe") is None
     assert field.get("section") is None
-    assert field.get("purpose") == ""
+    assert field.get("purpose") is None
 
 
 def test_field_minimum_config():
-    params = {}
+    incomplete_field_defn = [{"label": "should fail, missing field type"}]
 
     with pytest.raises(TypeError):
-        fields.create_field(**params)
+        list(fields.create(incomplete_field_defn))
 
-    field = fields.create_field(
-        field_type=const.FieldType.STRING,
-        item_type="login"
-    )
+    field_defns = [{
+        "field_type": const.FieldType.STRING,
+        "item_type": "login"
+    }]
+
+    field = list(fields.create(field_defns)).pop()
+
     assert field["type"] is not None
-
     assert field["label"] is None
     assert field["value"] is None
     assert field["generate"] is False
@@ -46,59 +46,58 @@ def test_field_minimum_config():
 
 
 def test_field_value_generation_config_generate_is_false():
-    params = {
+    field_params = {
         "field_type": const.FieldType.STRING,
         "item_type": "login",
         "value": "MySecretValue",
-        "generate_value": False,
+        "generate_value": const.GENERATE_NEVER,
         "generator_recipe": {
             "length": 6,
             "include_letters": False
         }
     }
 
-    field = fields.create_field(**params)
+    field = list(fields.create([field_params])).pop()
 
     # Generate false ==> don't overwrite value
-    assert field["value"] == params["value"]
+    assert field["value"] == field_params["value"]
     assert field.get("recipe") is None
 
 
 def test_field_value_generation_config_generate_is_true():
-    params = {
+    field_params = {
         "field_type": const.FieldType.STRING,
         "item_type": "login",
         "value": "MySecretValue",
-        "generate_value": True,
+        "generate_value": const.GENERATE_ALWAYS,
         "generator_recipe": {
             "length": 6
         }
     }
 
-    field = fields.create_field(**params)
+    field = list(fields.create([field_params])).pop()
 
     # Generate false ==> don't overwrite value
     assert field["value"] is None
     assert field.get("recipe") is not None
     assert field["recipe"]["length"] == 6
+    assert field["generate"] is True
 
 
 def test_field_value_generation_character_settings():
-    params = {
+    params = [{
         "field_type": const.FieldType.STRING,
-        "item_type": "login",
-        "generate_value": True,
+        "generate_value": const.GENERATE_ALWAYS,
         "generator_recipe": {
             "length": 6,
             "include_letters": True,
             "include_symbols": False,
             "include_digits": None  # setting to None will NOT exclude the charset
         }
-    }
+    }]
 
-    field = fields.create_field(**params)
+    field = list(fields.create(params)).pop()
 
-    # Generate false ==> don't overwrite value
     assert field.get("recipe") is not None
     assert field["recipe"]["length"] == 6
     assert sorted(field["recipe"]["characterSets"]) == sorted(["LETTERS", "DIGITS"])
@@ -128,18 +127,21 @@ def test_item_with_fields_in_sections():
             "label": "Example1",
             "section": "Odds Section",
             "value": "test1",
-            "field_type": const.FieldType.STRING
+            "type": const.FieldType.STRING,
+            "generate_field": const.GENERATE_NEVER,
         },
         {
             "label": "Example2",
             "section": "Evens Section",
             "value": "test2",
-            "field_type": const.FieldType.CONCEALED
+            "generate_field": const.GENERATE_NEVER,
+            "type": const.FieldType.CONCEALED
         },
         {
             "label": "Example 3",
             "section": "Odds Section",
-            "field_type": const.FieldType.STRING
+            "type": const.FieldType.STRING,
+            "generate_field": const.GENERATE_NEVER,
         }
     ]
 
@@ -153,7 +155,50 @@ def test_item_with_fields_in_sections():
     )
 
     assert item.get("sections") is not None
+    # Expect duplicate section names to be combined
     assert len(item.get("sections")) == 2
 
     section_names = sorted((section["label"] for section in item.get("sections")))
     assert section_names == sorted(["Evens Section", "Odds Section"])
+
+
+def test_field_value_generation_on_create_only():
+    previous_fields = [{
+        "label": "EXAMPLE 123",
+        "value": "example/value/test",
+        "type": const.FieldType.STRING,
+    }]
+
+    params = [{
+        "label": "EXAMPLE 123",
+        "field_type": const.FieldType.STRING,
+        "generate_value": const.GENERATE_ON_CREATE,
+        "generator_recipe": {
+            "length": 6,
+            "include_letters": True,
+            "include_symbols": False,
+        }
+    }]
+
+    field = list(fields.create(params, previous_fields=previous_fields)).pop()
+
+    assert field.get("value") == previous_fields[0]["value"]
+
+
+def test_notes_field_is_not_updated():
+    previous_fields = [{
+        "id": "123xyz",
+        "label": const.NOTES_FIELD_LABEL,
+        "value": "i am a note field"
+    }]
+
+    params = [{
+        "label": const.NOTES_FIELD_LABEL,
+        "field_type": const.FieldType.CONCEALED,
+        "value": "updated notes field value"
+    }]
+
+    field = list(fields.create(params, previous_fields=previous_fields)).pop()
+
+    assert field.get("value") == "i am a note field"
+    assert field.get("id") == "123xyz"

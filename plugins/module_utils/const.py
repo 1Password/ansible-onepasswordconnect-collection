@@ -10,6 +10,16 @@ NOTES_FIELD_LABEL = "notesPlain"
 # Auto-updated during release process
 COLLECTION_VERSION = "1.0.1"
 
+GENERATE_NEVER = "never"
+GENERATE_ALWAYS = "always"
+GENERATE_ON_CREATE = "on_create"
+
+GENERATE_VALUE_CHOICES = (
+    GENERATE_NEVER,
+    GENERATE_ALWAYS,
+    GENERATE_ON_CREATE,
+)
+
 
 class FieldType:
     STRING = "STRING"
