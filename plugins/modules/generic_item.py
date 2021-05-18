@@ -39,12 +39,12 @@ options:
     description:
       - Unique ID for a single Item.
       - Ignored if C(state) is C(present) and the item doesn't exist.
-      - If C(state) is C(present) and c(uuid) is NOT defined, the module will try to find an item using C(name).
+      - If C(state) is C(present) and C(uuid) is NOT defined, the module will try to find an item using C(name).
         If an item cannot be found, a new item is created with the C(name) value and the old item is not changed.
   category:
     type: str
     default: password
-    description: Instructs 1Password to configure the Item using the specified template.
+    description: Applies the selected category template to the item.
     choices:
       - login
       - password
@@ -55,11 +55,12 @@ options:
       - wireless_router
       - bank_account
       - email_account
+      - api_credential
   urls:
     type: list
     elements: str
     description:
-      - Stores one or more URLs on an item
+      - Store one or more URLs on an item
       - URLs are clickable in the 1Password UI
   favorite:
     type: bool

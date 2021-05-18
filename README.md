@@ -1,6 +1,6 @@
 # 1Password Connect Ansible Collection
 
-The 1Password Connect collection contains modules that interact with 1Password Connect. The modules communicate with 1Password Connect to support Vault Item create/read/update/delete operations.
+The 1Password Connect collection contains modules that interact with your 1Password Connect API server. The modules communicate with 1Password Connect to support Vault Item create/read/update/delete operations.
 
 ## Table of Contents
 
@@ -19,7 +19,7 @@ The 1Password Connect collection contains modules that interact with 1Password C
 ### Requirements
 - ansible >= 2.9
 - Python >= 3.6.0
-- 1Password Connect
+- 1Password Connect >= 1.0.0
     
 ## Installation
 

@@ -36,8 +36,6 @@ class FieldType:
 
 
 class ItemType:
-
-    # Item Types
     LOGIN = "LOGIN"
     PASSWORD = "PASSWORD"
     SERVER = "SERVER"
@@ -47,6 +45,7 @@ class ItemType:
     WIRELESS_ROUTER = "WIRELESS_ROUTER"
     BANK_ACCOUNT = "BANK_ACCOUNT"
     EMAIL_ACCOUNT = "EMAIL_ACCOUNT"
+    API_CREDENTIAL = "API_CREDENTIAL"
 
     @classmethod
     def choices(cls):
