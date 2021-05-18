@@ -4,7 +4,7 @@ __metaclass__ = type
 
 import pytest
 
-from ansible_collections.onepassword.connect.plugins.module_utils import vault, api, errors, const
+from ansible_collections.onepassword.connect.plugins.module_utils import vault, const
 
 
 def test_create_item(mocker):
@@ -86,7 +86,7 @@ def test_delete_item_when_does_not_exist(mocker):
     assert not mock_api.delete_item.called
 
 
-def test_update_item_create_when_not_exists(mocker):
+def test_update_item(mocker):
     vault_id = "Abc123"
     original_item = {
         "id": "XYZ123def456",
@@ -126,3 +126,4 @@ def test_update_item_create_when_not_exists(mocker):
     assert modified is True
     assert updated_item["favorite"] == params["favorite"]
     assert updated_item["title"] == params["title"]
+    assert updated_item["vault"]["id"] == original_item["vault"]["id"]

@@ -8,20 +8,18 @@ from ansible_collections.onepassword.connect.plugins.module_utils import vault, 
 
 
 def test_field_creation_defaults():
-    params = [
-        {
+    params = {
             "field_type": const.FieldType.STRING,
             "label": "Test Item",
             "value": "MySecretValue",
             "generate_value": "never"
-        }
-    ]
+    }
 
-    field = list(fields.create(params)).pop()
-    assert field["label"] == params[0]["label"]
-    assert field["type"] == params[0]["field_type"].upper()
+    field = list(fields.create([params])).pop()
+    assert field["label"] == params["label"]
+    assert field["type"] == params["field_type"].upper()
     assert field["generate"] is False
-    assert field["value"] == params[0]["value"]
+    assert field["value"] == params["value"]
     assert field.get("recipe") is None
     assert field.get("section") is None
     assert field.get("purpose") is None
@@ -48,7 +46,7 @@ def test_field_minimum_config():
 
 
 def test_field_value_generation_config_generate_is_false():
-    field_defns = [{
+    field_params = {
         "field_type": const.FieldType.STRING,
         "item_type": "login",
         "value": "MySecretValue",
@@ -57,17 +55,17 @@ def test_field_value_generation_config_generate_is_false():
             "length": 6,
             "include_letters": False
         }
-    }]
+    }
 
-    field = list(fields.create(field_defns)).pop()
+    field = list(fields.create([field_params])).pop()
 
     # Generate false ==> don't overwrite value
-    assert field["value"] == field_defns[0]["value"]
+    assert field["value"] == field_params["value"]
     assert field.get("recipe") is None
 
 
 def test_field_value_generation_config_generate_is_true():
-    field_defns = [{
+    field_params = {
         "field_type": const.FieldType.STRING,
         "item_type": "login",
         "value": "MySecretValue",
@@ -75,14 +73,15 @@ def test_field_value_generation_config_generate_is_true():
         "generator_recipe": {
             "length": 6
         }
-    }]
+    }
 
-    field = list(fields.create(field_defns)).pop()
+    field = list(fields.create([field_params])).pop()
 
     # Generate false ==> don't overwrite value
     assert field["value"] is None
     assert field.get("recipe") is not None
     assert field["recipe"]["length"] == 6
+    assert field["generate"] is True
 
 
 def test_field_value_generation_character_settings():
@@ -99,7 +98,6 @@ def test_field_value_generation_character_settings():
 
     field = list(fields.create(params)).pop()
 
-    # Generate false ==> don't overwrite value
     assert field.get("recipe") is not None
     assert field["recipe"]["length"] == 6
     assert sorted(field["recipe"]["characterSets"]) == sorted(["LETTERS", "DIGITS"])
@@ -157,6 +155,7 @@ def test_item_with_fields_in_sections():
     )
 
     assert item.get("sections") is not None
+    # Expect duplicate section names to be combined
     assert len(item.get("sections")) == 2
 
     section_names = sorted((section["label"] for section in item.get("sections")))
@@ -188,16 +187,18 @@ def test_field_value_generation_on_create_only():
 
 def test_notes_field_is_not_updated():
     previous_fields = [{
+        "id": "123xyz",
         "label": const.NOTES_FIELD_LABEL,
         "value": "i am a note field"
     }]
 
     params = [{
         "label": const.NOTES_FIELD_LABEL,
-        "field_type": const.FieldType.STRING,
+        "field_type": const.FieldType.CONCEALED,
         "value": "updated notes field value"
     }]
 
     field = list(fields.create(params, previous_fields=previous_fields)).pop()
 
     assert field.get("value") == "i am a note field"
+    assert field.get("id") == "123xyz"
