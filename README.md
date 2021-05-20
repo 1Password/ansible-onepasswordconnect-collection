@@ -1,6 +1,8 @@
 # 1Password Connect Ansible Collection
 
-The 1Password Connect collection contains modules that interact with your 1Password Connect API server. The modules communicate with 1Password Connect to support Vault Item create/read/update/delete operations.
+The 1Password Connect collection contains modules that interact with your 1Password Connect deployment. The modules communicate with the 1Password Connect API to support Vault Item create/read/update/delete operations.
+
+You can learn more about [Secrets Automation and 1Password Connect](https://1password.com/secrets/) on our website.
 
 ## Table of Contents
 
@@ -23,7 +25,7 @@ The 1Password Connect collection contains modules that interact with your 1Passw
     
 ## Installation
 
-You can install the Ansible collection from the [Ansible Galaxy](https://galaxy.ansible.com/onepassword/connect):
+You can install the Ansible collection from [Ansible Galaxy](https://galaxy.ansible.com/onepassword/connect):
 
 ```
 ansible-galaxy collection install onepassword.connect
@@ -59,37 +61,55 @@ Module Variable | Environment Variable | Description
     - onepassword.connect.generic_item:
         vault_id: "qwerty56789asdf"
         title: Club Membership
-        state: created
+        state: present
         fields:
           - label: Codeword
             value: "hunter2"
             section: "Personal Info"
             field_type: concealed
+          - label: Random Code
+            generate_value: on_create
+            generator_recipe:
+                length: 16
+                include_letters: yes
+                include_digits: yes
+                include_symbols: no
       no_log: true
       register: op_item
 ```
 
 ### A note about `state`
 
-1Password can generate a field's value on the user's behalf when creating or updating an Item. Because generating random values is not idempotent, the module uses 3 different state values when working with Items:
+The `generic_item` module follows Ansible's `present/absent` state pattern.
 
-- `created` => Create a **new** Item every time Ansible runs the task.
-- `upserted` => Upsert (update or create if not exists) the item every time Ansible runs the task.
-- `deleted` => Remove the item. Ignores errors if Item does not exist.
+- `state: present`
+    - If the module _cannot find a matching Item_ by its `uuid` or `title`, a new item is created with the defined values.
+    - If the module _finds a matching Item_ on the server, it will completely replace the old Item with a new Item defined by the playbook values.
+- `state:absent`
+    - If the Item cannot be found, no action is taken.
+    - If the Item is found, it is deleted. Otherwise, no action is taken.
 
-In most cases the `upserted` state is the recommended setting if you want to ensure an Item exists. 
+**Search order for an existing Item**
+1. Search by the Item's `uuid`, if provided.
+2. Search by `title`, using a case-sensitive, exact-match query.
 
-⭐️ You can preserve field values by adding the `overwrite: no` property to a field. This instructs the module to copy the field's existing value as-is during the update operation. 
 
+### Generating field values
+
+1Password can generate a field's value on the user's behalf when creating or updating an Item. Because generating random values is not idempotent, the user can specify one of three settings for `generate_value`:
+
+`generate_value` setting  | Effect |
+---: | --- |
+`never` | **(Default)** The field value is not generated; uses `value` parameter instead.
+`on_create` | Generate the field's value if the field does not already exist. The field's stored value is preserved across playbook executions.
+`always` | Generate a new value for the field everytime the playbook is run. Overwrites `value` parameter.
 ---
 
 **Update an Item**
 
-Updating an Item is an **"upsert"** operation. If an item matching the given Item ID or Item Name is not found, the module will create a new Item using the provided task configuration.
+**❗️Note❗** The update operation will completely replace the Item matching the `title` or `uuid` field. Any properties not provided in the task definition will be lost.
 
-> ❗️Note❗**The upsert operation will completely replace the Item matching the `title` or `uuid` field.** Any properties not provided in the task definition will be lost. 
-> 
-> We recommend storing the Items created by Ansible in a Vault that only 1Password Connect may access.
+We recommend storing the Items created by Ansible in a Vault that only 1Password Connect may access.
 
 ```yaml
 ---
@@ -103,13 +123,12 @@ Updating an Item is an **"upsert"** operation. If an item matching the given Ite
     - onepassword.connect.generic_item:
         title: Club Membership
       # uuid: 1ff75fa9fexample  -- or use an Item ID to locate an item instead
-        state: upserted
+        state: present
         fields:
           - label: Codeword
             field_type: concealed
-            overwrite: no   # Preserves the stored value for "Codeword" if value is defined
           - label: Dashboard Password
-            generate_value: yes
+            generate_value: always  # new value is generated every time playbook is run
             generator_recipe:
                 length: 16
                 include_symbols: no
