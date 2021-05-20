@@ -9,10 +9,10 @@ from ansible_collections.onepassword.connect.plugins.module_utils import vault, 
 
 def test_field_creation_defaults():
     params = {
-            "field_type": const.FieldType.STRING,
-            "label": "Test Item",
-            "value": "MySecretValue",
-            "generate_value": "never"
+        "field_type": const.FieldType.STRING,
+        "label": "Test Item",
+        "value": "MySecretValue",
+        "generate_value": "never"
     }
 
     field = list(fields.create([params])).pop()
