@@ -21,7 +21,7 @@ You can learn more about [Secrets Automation and 1Password Connect](https://1pas
 ### Requirements
 - ansible >= 2.9
 - Python >= 3.6.0
-- 1Password Connect
+- 1Password Connect >= 1.0.0
     
 ## Installation
 
