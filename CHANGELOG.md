@@ -2,10 +2,36 @@
 # Latest
 
 ## Features
+ * 
+
+## Fixes
+ * 
+
+## Security
+ * 
+
+---
+
+[//]: # (START/v2.0.0)
+# v2.0.0
+
+This release introduces two breaking changes to the `generic_item` module:
+
+- The Item options `state: upserted` and `state: created` have been replaced by `state: present`. Please refer to the README for usage details.
+
+- You now have fine-grained controls for defining when 1Password Connect should generate a field's value. The `generate_value` setting now accepts `on_create`, `always`, and `never` (default).
+
+## Features
 [//]: # (* A user-friendly description of a new feature. {issue-number})
+  * You can now use the familiar `state: absent` and `state: present` when defining 1Password vault items in your playbooks. (#15)
+  * Introduce `on_create` / `always` / `never` options for a field's `generate_value` setting (#15).
+  * Add support for API_CREDENTIAL item type (#17)
+
 
 ## Fixes
 [//]: # (* A user-friendly description of a fix. {issue-number})
+
+ * Makefile now uses the correct path to the testing script. (#14)
 
 ## Security
 [//]: # (* A user-friendly description of a security fix. {issue-number})
