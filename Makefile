@@ -7,7 +7,7 @@ GIT_BRANCH := $(shell git symbolic-ref --short HEAD)
 WORKTREE_CLEAN := $(shell git status --porcelain 1>/dev/null 2>&1; echo $$?)
 SCRIPTS_DIR := $(CURDIR)/scripts
 
-curVersion := $$(sed -n -E 's/^version: ([0-9]+\.[0-9]+\.[0-9]+)$/\1/p' galaxy.yml)
+curVersion := $$(sed -n -E 's/^version: "([0-9]+\.[0-9]+\.[0-9]+)"$$/\1/p' galaxy.yml)
 
 test: test/unit ## Run unit tests in a Docker container
 test/unit:
