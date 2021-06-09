@@ -2,7 +2,6 @@ from __future__ import (absolute_import, division, print_function)
 
 __metaclass__ = type
 
-
 # Server-generated name for the Notes field
 NOTES_FIELD_LABEL = "notesPlain"
 
@@ -46,6 +45,14 @@ class ItemType:
     BANK_ACCOUNT = "BANK_ACCOUNT"
     EMAIL_ACCOUNT = "EMAIL_ACCOUNT"
     API_CREDENTIAL = "API_CREDENTIAL"
+    CREDIT_CARD = "CREDIT_CARD"
+    MEMBERSHIP = "MEMBERSHIP"
+    PASSPORT = "PASSPORT"
+    OUTDOOR_LICENSE = "OUTDOOR_LICENSE"
+    DRIVER_LICENSE = "DRIVER_LICENSE"
+    IDENTITY = "IDENTITY"
+    REWARD_PROGRAM = "REWARD_PROGRAM"
+    SOCIAL_SECURITY_NUMBER = "SOCIAL_SECURITY_NUMBER"
 
     @classmethod
     def choices(cls):

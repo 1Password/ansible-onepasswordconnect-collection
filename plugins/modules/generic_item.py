@@ -50,12 +50,20 @@ options:
       - password
       - server
       - database
+      - api_credential
       - software_license
       - secure_note
       - wireless_router
       - bank_account
       - email_account
-      - api_credential
+      - credit_card
+      - membership
+      - passport
+      - outdoor_license
+      - driver_license
+      - identity
+      - reward_program
+      - social_security_number
   urls:
     type: list
     elements: str
