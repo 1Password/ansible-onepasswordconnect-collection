@@ -2,6 +2,7 @@ from __future__ import (absolute_import, division, print_function)
 
 __metaclass__ = type
 
+import unicodedata
 from ansible_collections.onepassword.connect.plugins.module_utils import const
 
 
@@ -27,15 +28,16 @@ def create(field_params, previous_fields=None):
     if not previous_fields:
         previous_fields = []
 
+    # The Notes field should not be editable by Ansible,
+    # and the old value is preserved if it exists
+    notes_field = _get_field_by_label(
+        previous_fields, const.NOTES_FIELD_LABEL
+    )
+    if notes_field:
+        yield notes_field
+
     for params in field_params:
         if params.get("label") == const.NOTES_FIELD_LABEL:
-            # The Notes field should not be editable by Ansible,
-            # and the old value is preserved if it exists
-            existing_notes_field = _get_field_by_label(
-                previous_fields, const.NOTES_FIELD_LABEL
-            )
-            if existing_notes_field:
-                yield existing_notes_field
             continue
 
         should_generate_value = False
@@ -61,20 +63,31 @@ def create(field_params, previous_fields=None):
         )
 
 
-def _get_field_by_label(previous_fields, field_label):
-    if not previous_fields or not field_label:
+def _get_field_by_label(fields, label):
+    if not fields or not label:
         return None
 
-    # Assert previous_fields is a real iterable
     try:
-        iter(previous_fields)
+        iter(fields)
     except TypeError:
         return None
 
+    label = normalize_label(label)
+
     return next((
-        field for field in previous_fields
-        if field.get("label") == field_label
+        field for field in fields
+        if normalize_label(field.get("label")) == label
     ), None)
+
+
+def normalize_label(raw_str):
+    """Standardizes utf-8 encoding for comparison
+     and removes leading/trailing spaces"""
+    if not raw_str:
+        return None
+
+    unicode_normalized = unicodedata.normalize("NFKD", raw_str)
+    return unicode_normalized.strip()
 
 
 def _get_generator_recipe(config):
@@ -104,9 +117,11 @@ def _get_generator_recipe(config):
 
 
 def flatten_fieldset(fieldset):
-    """Remap the list of fields to a dict of fields, where the key is the field label or id.
+    """Remap the list of fields to a dict of fields, where the key is the field label.
+    If label is undefined, use the field UUID instead.
 
-    Returns nicer format for pulling fields out of items.
+    Remapping provides a nicer interface for the user when
+    accessing fields within Ansible playbooks.
 
     :param list of dict fieldset: List of field dictionaries
     :return dict
@@ -117,12 +132,9 @@ def flatten_fieldset(fieldset):
     flattened = {}
 
     for field in fieldset:
-
-        try:
-            key = field["label"]
-        except KeyError:
+        key = field.get("label")
+        if not key:
             key = field["id"]
-
         flattened[key] = field
 
     return flattened
