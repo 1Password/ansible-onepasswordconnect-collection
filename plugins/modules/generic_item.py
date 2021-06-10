@@ -47,6 +47,8 @@ options:
     description: 
       - Applies the selected category template to the item. Other 1Password clients use category templates to help organize fields when rendering an item. 
       - The category cannot be changed after creating an item. To change an item's category, recreate it with the new category.
+      - If the category is C(login) or C(password) and the item has a field named C(password), that field will be the primary password when the item is displayed in 1Password clients.
+      - If the category is C(login) and the item has a field named C(username), that field becomes the primary username when the item is displayed in 1Password clients.
     choices:
       - login
       - password
