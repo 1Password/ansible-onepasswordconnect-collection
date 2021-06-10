@@ -54,13 +54,14 @@ def create_item(params, api_client, check_mode=False):
 
     op_item = assemble_item(
         vault_id=vault_id,
-        category=params["category"],
+        category=params["category"].upper(),
         title=params.get("name"),
         urls=params.get("urls"),
         favorite=params.get("favorite"),
         fieldset=item_fields,
         tags=params.get("tags")
     )
+
     if check_mode:
         op_item["fields"] = fields.flatten_fieldset(op_item.get("fields"))
         return True, op_item
@@ -94,7 +95,7 @@ def update_item(params, original_item, api_client, check_mode=False):
 
     updated_item = assemble_item(
         vault_id=vault_id,
-        category=params["category"],
+        category=params["category"].upper(),
         title=params.get("name"),
         urls=params.get("urls"),
         favorite=params.get("favorite"),
@@ -105,7 +106,6 @@ def update_item(params, original_item, api_client, check_mode=False):
     updated_item.update({
         "id": original_item["id"],
     })
-
     changed = recursive_diff(original_item, updated_item)
 
     if not bool(changed):
@@ -172,23 +172,23 @@ def assemble_item(
     :rtype: dict
     """
 
-    sections = {}
-
     item = {
         "title": title,
         "vault": {"id": vault_id},
-        "category": category.upper(),
+        "category": category,
         "urls": [{"href": url} for url in urls or []],
         "tags": tags or [],
         "fields": [],
         "favorite": bool(favorite)
     }
 
+    sections = {}
+
     if fieldset is not None:
         for field in fieldset:
             if field.get("section"):
                 # Squash sections with identical names
-                # but continue respecting name casing
+                # with case-sensitive lookup
                 section_name = field["section"].strip()
 
                 section = sections.setdefault(
@@ -200,12 +200,11 @@ def assemble_item(
 
             field.update({
                 "section": {"id": section.id} if section else None,
-                "purpose": _get_field_purpose(category, field["type"])
+                "purpose": _get_field_purpose(field, category)
             })
 
             item["fields"].append(field)
 
-    # Remap unique sections to expected schema format
     if sections:
         item["sections"] = [
             {"id": section.id, "label": section.label}
@@ -215,9 +214,36 @@ def assemble_item(
     return item
 
 
-def _get_field_purpose(item_type, field_type):
-    if item_type in (const.ItemType.LOGIN, const.ItemType.PASSWORD,):
-        # TODO: Username purpose handling?
-        if field_type == const.FieldType.CONCEALED:
-            return "PASSWORD"
-        return ""
+def _get_field_purpose(field, item_category):
+    """
+    Assign a field purpose based on the item category and the field's type.
+
+    PURPOSE_USERNAME and PURPOSE_PASSWORD apply to the last seen field in the item
+    that matches the criteria in this function.
+    :param field: Field definition
+    :param item_category: ItemType The category assigned to the item for this field
+    :return: string
+    """
+    field_label = field.get("label")
+    field_type = field.get("type", "").upper()
+
+    if not field_label:
+        return const.PURPOSE_NONE
+
+    # Only expect an exact match for the notes field
+    if field_type == const.FieldType.STRING and field_label == const.NOTES_FIELD_LABEL:
+        return const.PURPOSE_NOTES
+
+    field_label = field_label.lower()
+
+    if item_category == const.ItemType.LOGIN:
+        if field_type == const.FieldType.STRING and field_label == "username":
+            return const.PURPOSE_USERNAME
+        if field_type == const.FieldType.CONCEALED and field_label == "password":
+            return const.PURPOSE_PASSWORD
+
+    if item_category == const.ItemType.PASSWORD:
+        if field_type == const.FieldType.CONCEALED and field_label == "password":
+            return const.PURPOSE_PASSWORD
+
+    return const.PURPOSE_NONE
