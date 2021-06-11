@@ -28,15 +28,16 @@ def create(field_params, previous_fields=None):
     if not previous_fields:
         previous_fields = []
 
+    # The Notes field should not be editable by Ansible,
+    # and the old value is preserved if it exists
+    notes_field = _get_field_by_label(
+        previous_fields, const.NOTES_FIELD_LABEL
+    )
+    if notes_field:
+        yield notes_field
+
     for params in field_params:
         if params.get("label") == const.NOTES_FIELD_LABEL:
-            # The Notes field should not be editable by Ansible,
-            # and the old value is preserved if it exists
-            existing_notes_field = _get_field_by_label(
-                previous_fields, const.NOTES_FIELD_LABEL
-            )
-            if existing_notes_field:
-                yield existing_notes_field
             continue
 
         should_generate_value = False
