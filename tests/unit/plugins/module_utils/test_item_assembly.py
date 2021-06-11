@@ -33,7 +33,6 @@ def test_field_minimum_config():
 
     field_defns = [{
         "field_type": const.FieldType.STRING,
-        "item_type": "login"
     }]
 
     field = list(fields.create(field_defns)).pop()
@@ -48,7 +47,6 @@ def test_field_minimum_config():
 def test_field_value_generation_config_generate_is_false():
     field_params = {
         "field_type": const.FieldType.STRING,
-        "item_type": "login",
         "value": "MySecretValue",
         "generate_value": const.GENERATE_NEVER,
         "generator_recipe": {
@@ -77,7 +75,7 @@ def test_field_value_generation_config_generate_is_true():
 
     field = list(fields.create([field_params])).pop()
 
-    # Generate false ==> don't overwrite value
+    # Generate true ==> clear value, the generator will overwrite it
     assert field["value"] is None
     assert field.get("recipe") is not None
     assert field["recipe"]["length"] == 6
@@ -104,7 +102,7 @@ def test_field_value_generation_character_settings():
 
 
 def test_item_creation_minimum_values():
-    item_category = "custom"
+    item_category = const.ItemType.API_CREDENTIAL
     vault_id = "abc123"
 
     item = vault.assemble_item(
@@ -114,32 +112,34 @@ def test_item_creation_minimum_values():
 
     assert item["title"] is None
     assert item["vault"]["id"] == vault_id
-    assert item["category"] == item_category.upper()
-    assert item["urls"] == []
-    assert item["tags"] == []
-    assert item["fields"] == []
+    assert item["category"] == item_category
+    assert not item["urls"]
+    assert not item["tags"]
+    assert not item["fields"]
     assert "sections" not in "item"
 
 
 def test_item_with_fields_in_sections():
+    sections = ("Odds Section", "Evens Section")
+
     fieldset = [
         {
             "label": "Example1",
-            "section": "Odds Section",
+            "section": sections[0],
             "value": "test1",
             "type": const.FieldType.STRING,
             "generate_field": const.GENERATE_NEVER,
         },
         {
             "label": "Example2",
-            "section": "Evens Section",
+            "section": sections[1],
             "value": "test2",
             "generate_field": const.GENERATE_NEVER,
             "type": const.FieldType.CONCEALED
         },
         {
             "label": "Example 3",
-            "section": "Odds Section",
+            "section": sections[0],
             "type": const.FieldType.STRING,
             "generate_field": const.GENERATE_NEVER,
         }
@@ -158,8 +158,8 @@ def test_item_with_fields_in_sections():
     # Expect duplicate section names to be combined
     assert len(item.get("sections")) == 2
 
-    section_names = sorted((section["label"] for section in item.get("sections")))
-    assert section_names == sorted(["Evens Section", "Odds Section"])
+    item_sections = sorted((section["label"] for section in item.get("sections")))
+    assert item_sections == sorted(sections)
 
 
 def test_field_value_generation_on_create_only():
@@ -185,10 +185,11 @@ def test_field_value_generation_on_create_only():
     assert field.get("value") == previous_fields[0]["value"]
 
 
-def test_notes_field_is_not_updated():
+def test_notes_field_is_unchanged():
     previous_fields = [{
         "id": "123xyz",
         "label": const.NOTES_FIELD_LABEL,
+        "type": const.FieldType.STRING,
         "value": "i am a note field"
     }]
 
@@ -202,3 +203,60 @@ def test_notes_field_is_not_updated():
 
     assert field.get("value") == "i am a note field"
     assert field.get("id") == "123xyz"
+    assert field.get("type") == const.FieldType.STRING
+
+
+FIELD_PURPOSE_TESTCASES = [
+    pytest.param(
+        const.ItemType.API_CREDENTIAL, "xyz", const.FieldType.STRING, const.PURPOSE_NONE, id="default_field_purpose"
+    ),
+    pytest.param(
+        const.ItemType.PASSWORD, "password", const.FieldType.STRING, const.PURPOSE_NONE, id="wrong_field_type_for_primary_password"
+    ),
+    pytest.param(
+        const.ItemType.PASSWORD, "password", const.FieldType.CONCEALED, const.PURPOSE_PASSWORD, id="primary_password_for_password_item"
+    ),
+    pytest.param(
+        const.ItemType.SERVER, "password", const.FieldType.CONCEALED, const.PURPOSE_NONE, id="item_type_does_not_use_password_field_purpose"
+    ),
+    pytest.param(
+        const.ItemType.SERVER, "username", const.FieldType.STRING, const.PURPOSE_NONE, id="item_type_does_not_use_username_field_purpose"
+    ),
+    pytest.param(
+        const.ItemType.LOGIN, "password", const.FieldType.CONCEALED, const.PURPOSE_PASSWORD, id="primary_password_for_login_item",
+    ),
+    pytest.param(
+        const.ItemType.LOGIN, "username", const.FieldType.STRING, const.PURPOSE_USERNAME, id="primary_username_for_login_item",
+    ),
+    pytest.param(
+        const.ItemType.LOGIN, "password", const.FieldType.STRING, const.PURPOSE_NONE, id="wrong_field_type_for_login_item_primary_password",
+    ),
+    pytest.param(
+        const.ItemType.LOGIN, "username", const.FieldType.TOTP, const.PURPOSE_NONE, id="wrong_field_type_for_login_item_primary_username",
+    ),
+    pytest.param(
+        const.ItemType.API_CREDENTIAL, const.NOTES_FIELD_LABEL, const.FieldType.STRING, const.PURPOSE_NOTES, id="notes_field_is_assigned_notes_purpose"
+    ),
+]
+
+
+@pytest.mark.parametrize("item_type,label,field_type,expected_purpose", FIELD_PURPOSE_TESTCASES)
+def test_field_purpose_assignment(item_type, label, field_type, expected_purpose):
+    """Assert field purpose is set when item type and field type meet criteria"""
+
+    fields = [
+        {
+            "label": label,
+            "type": field_type,
+            "value": "example123",
+        },
+    ]
+
+    item = vault.assemble_item(
+        vault_id="1234xyz",
+        category=item_type,
+        fieldset=fields
+    )
+
+    assert len(item["fields"])
+    assert item["fields"][0]["purpose"] == expected_purpose
