@@ -43,8 +43,9 @@ options:
         If an item cannot be found, a new item is created with the C(name) value and the old item is not changed.
   category:
     type: str
-    default: password
-    description: Applies the selected category template to the item.
+    default: api_credential
+    description: 
+      - Applies the selected category template to the item. Other 1Password clients use category templates to help organize fields when rendering an item. 
     choices:
       - login
       - password
