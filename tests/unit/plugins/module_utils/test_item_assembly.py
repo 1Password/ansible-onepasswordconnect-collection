@@ -4,7 +4,7 @@ __metaclass__ = type
 
 import pytest
 
-from ansible_collections.onepassword.connect.plugins.module_utils import vault, fields, const
+from ansible_collections.onepassword.connect.plugins.module_utils import vault, fields, const, errors
 
 
 def test_field_creation_defaults():
@@ -260,3 +260,48 @@ def test_field_purpose_assignment(item_type, label, field_type, expected_purpose
 
     assert len(item["fields"])
     assert item["fields"][0]["purpose"] == expected_purpose
+
+
+def test_username_and_password_purpose_is_limited_to_one_field():
+    """Assert the field purpose assignment applies to the last field that
+    matches the purpose criteria.
+    """
+    two_primary_password_fields = [
+        {
+            "label": "password",
+            "type": const.FieldType.CONCEALED,
+            "value": "FIRST_PASSWORD_FIELD",
+        },
+        {
+            "label": "password",
+            "type": const.FieldType.CONCEALED,
+            "value": "SECOND_PASSWORD_FIELD",
+        },
+    ]
+
+    with pytest.raises(errors.PrimaryPasswordAlreadyExists):
+        vault.assemble_item(
+            vault_id="1234xyz",
+            category=const.ItemType.PASSWORD,
+            fieldset=two_primary_password_fields
+        )
+
+    two_primary_username_fields = [
+        {
+            "label": "username",
+            "type": const.FieldType.STRING,
+            "value": "FIRST_USERNAME_FIELD",
+        },
+        {
+            "label": "username",
+            "type": const.FieldType.STRING,
+            "value": "SECOND_USERNAME_FIELD",
+        },
+    ]
+
+    with pytest.raises(errors.PrimaryUsernameAlreadyExists):
+        vault.assemble_item(
+            vault_id="1234xyz",
+            category=const.ItemType.LOGIN,
+            fieldset=two_primary_username_fields
+        )

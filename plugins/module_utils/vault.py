@@ -185,22 +185,21 @@ def assemble_item(
     sections = {}
 
     if fieldset is not None:
-        for field in fieldset:
+        for field in _prepare_fields(fieldset, category):
+            section = None
+
             if field.get("section"):
-                # Squash sections with identical names
-                # with case-sensitive lookup
+                # Squash sections with case-sensitive,
+                # identical names
                 section_name = field["section"].strip()
 
                 section = sections.setdefault(
                     section_name,
                     Section(id=str(uuid4()), label=section_name)
                 )
-            else:
-                section = None
 
             field.update({
                 "section": {"id": section.id} if section else None,
-                "purpose": _get_field_purpose(field, category)
             })
 
             item["fields"].append(field)
@@ -214,6 +213,35 @@ def assemble_item(
     return item
 
 
+def _prepare_fields(fields, item_category):
+    """Adds any additional metadata if item_category requires it"""
+    primary_username_set = False
+    primary_password_set = False
+
+    for field in fields:
+        field_purpose = _get_field_purpose(field, item_category)
+
+        # Items types that assign purpose to certain fields cannot
+        # apply the purpose to more than 1 field.
+        if field_purpose == const.PURPOSE_USERNAME:
+            if primary_username_set:
+                raise errors.PrimaryUsernameAlreadyExists(
+                    f"Item type {item_category} may only have one 'username' field")
+            primary_username_set = True
+
+        if field_purpose == const.PURPOSE_PASSWORD:
+            if primary_password_set:
+                raise errors.PrimaryPasswordAlreadyExists(
+                    f"Item type {item_category} may only have one 'password' field")
+            primary_password_set = True
+
+        field.update({
+            "purpose": field_purpose
+        })
+
+        yield field
+
+
 def _get_field_purpose(field, item_category):
     """
     Assign a field purpose based on the item category and the field's type.
@@ -224,13 +252,14 @@ def _get_field_purpose(field, item_category):
     :param item_category: ItemType The category assigned to the item for this field
     :return: string
     """
+
     field_label = field.get("label")
     field_type = field.get("type", "").upper()
 
     if not field_label:
         return const.PURPOSE_NONE
 
-    # Only expect an exact match for the notes field
+    # Only use case-sensitive match for the notes field
     if field_type == const.FieldType.STRING and field_label == const.NOTES_FIELD_LABEL:
         return const.PURPOSE_NOTES
 
