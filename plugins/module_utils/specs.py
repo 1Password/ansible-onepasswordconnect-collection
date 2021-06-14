@@ -36,8 +36,8 @@ def op_item():
         ),
         category=dict(
             type="str",
-            default="password",
-            choices=list(map(str.lower, const.ItemType.choices()))
+            default=const.ItemType.API_CREDENTIAL.lower(),
+            choices=const.ItemType.choices(),
         ),
         urls=dict(
             type="list",
@@ -118,7 +118,7 @@ FIELD = dict(
     field_type=dict(
         type="str",
         default="string",
-        choices=list(map(str.lower, const.FieldType.choices()))
+        choices=const.FieldType.choices()
     ),
     generate_value=dict(
         type="str",

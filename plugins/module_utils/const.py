@@ -31,7 +31,11 @@ class FieldType:
 
     @classmethod
     def choices(cls):
-        return [v for k, v in vars(cls).items() if k.isupper() and not k.startswith("_")]
+        return [
+            v.lower()
+            for k, v in vars(cls).items()
+            if k.isupper() and not k.startswith("_")
+        ]
 
 
 class ItemType:
@@ -56,4 +60,8 @@ class ItemType:
 
     @classmethod
     def choices(cls):
-        return [v for k, v in vars(cls).items() if k.isupper() and not k.startswith("_")]
+        return [
+            v.lower()
+            for k, v in vars(cls).items()
+            if k.isupper() and not k.startswith("_")
+        ]
