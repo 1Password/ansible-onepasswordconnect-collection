@@ -46,6 +46,7 @@ options:
     default: api_credential
     description: 
       - Applies the selected category template to the item. Other 1Password clients use category templates to help organize fields when rendering an item. 
+      - The category cannot be changed after creating an item. To change an item's category, recreate it with the new category.
     choices:
       - login
       - password
