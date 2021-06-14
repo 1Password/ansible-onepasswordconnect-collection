@@ -10,7 +10,7 @@ from ansible_collections.onepassword.connect.plugins.module_utils import vault, 
 def test_create_item(mocker):
     params = {
         "vault_id": "Abc123",
-        "category": const.ItemType.PASSWORD,
+        "category": const.ItemType.API_CREDENTIAL,
         "name": "My New Item",
         "favorite": True
     }
@@ -33,7 +33,7 @@ def test_check_mode(mocker):
     mock_api = mocker.Mock()
     create_item_params = {
         "vault_id": vault_id,
-        "category": const.ItemType.PASSWORD,
+        "category": const.ItemType.API_CREDENTIAL,
         "name": "My New Item",
         "favorite": True
     }

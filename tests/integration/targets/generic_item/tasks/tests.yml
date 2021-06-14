@@ -14,7 +14,7 @@
     tags:
       - exampleTag
     fields:
-      - label: mypassword
+      - label: password
         field_type: concealed
         generate_value: always
         generator_recipe:
@@ -23,38 +23,41 @@
       - label: "{{ field_wont_exist_after_update }}"
         value: example
 
-      - label: password
+      - label: password99
         field_type: concealed
         value: this1sap4s5word
 
       - label: Generated String
         generate_value: on_create
-  register: result
+  register: original
 
+# NOTE: Connect server <= 1.2.0 changes name of the field with purpose==PASSWORD
+#   to `password`
 - name: Assert item properties returned
   assert:
     that:
-      - result.changed
-      - result.op_item is defined
-      - result.op_item.id is defined
-      - result.op_item.fields.mypassword is defined
-      - "result.op_item.fields.password.purpose == 'PASSWORD'"
+      - original.changed
+      - original.op_item is defined
+      - original.op_item.id is defined
+      - original.op_item.fields.mypassword is not defined
+      - original.op_item.fields.password is defined
+      - "original.op_item.fields.password.purpose == 'PASSWORD'"
 
 - set_fact:
-    created_item_ids: "{{ created_item_ids + [ result.op_item.id ] }}"
-    updated_item_title: "{{ result.op_item.title }} UPDATED"
+    created_item_ids: "{{ created_item_ids + [ original.op_item.id ] }}"
+    updated_item_title: "{{ original.op_item.title }} UPDATED"
 
 - name: Upsert item
   generic_item:
     state: present
     title: "{{ updated_item_title }}"
-    uuid: "{{ result.op_item.id }}"
+    uuid: "{{ original.op_item.id }}"
     category: password
     tags:
       - exampleTag
       - another-tag
     fields:
-      - label: mypassword
+      - label: password
         field_type: concealed
         generate_value: on_create
         generator_recipe:
@@ -63,19 +66,15 @@
       - label: Generated String
         generate_value: always
         section: "Collaboration Details"
-
-      - label: password
-        field_type: concealed
-        value: password
   register: updated_1p_item
 
 - name: Assert updated item properties
   assert:
     that:
       - updated_1p_item.changed
-      - updated_1p_item.op_item.id == result.op_item.id
+      - updated_1p_item.op_item.id == original.op_item.id
       - updated_1p_item.op_item.title == updated_item_title
-      - updated_1p_item.op_item.fields.mypassword.value == result.op_item.fields.mypassword.value
+      - updated_1p_item.op_item.fields.password.value == original.op_item.fields.password.value
       - field_wont_exist_after_update not in updated_1p_item.op_item.fields
 
 - name: Assert tags updated

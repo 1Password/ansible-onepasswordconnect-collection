@@ -221,18 +221,18 @@ def _prepare_fields(fields, item_category):
     for field in fields:
         field_purpose = _get_field_purpose(field, item_category)
 
-        # Items types that assign purpose to certain fields cannot
-        # apply the purpose to more than 1 field.
         if field_purpose == const.PURPOSE_USERNAME:
             if primary_username_set:
+                # Primary username may only be set once per item
                 raise errors.PrimaryUsernameAlreadyExists(
-                    f"Item type {item_category} may only have one 'username' field")
+                    f"Item type {item_category} may only have one (1) 'username' field"
+                )
             primary_username_set = True
 
         if field_purpose == const.PURPOSE_PASSWORD:
             if primary_password_set:
                 raise errors.PrimaryPasswordAlreadyExists(
-                    f"Item type {item_category} may only have one 'password' field")
+                    f"Item type {item_category} may only have one (1) 'password' field")
             primary_password_set = True
 
         field.update({
@@ -240,6 +240,11 @@ def _prepare_fields(fields, item_category):
         })
 
         yield field
+
+    if item_category == const.ItemType.PASSWORD and not primary_password_set:
+        raise errors.PrimaryPasswordUndefined(
+            f"Item type {item_category} requires a 'concealed' field named 'password'."
+        )
 
 
 def _get_field_purpose(field, item_category):
