@@ -211,31 +211,36 @@ FIELD_PURPOSE_TESTCASES = [
         const.ItemType.API_CREDENTIAL, "xyz", const.FieldType.STRING, const.PURPOSE_NONE, id="default_field_purpose"
     ),
     pytest.param(
-        const.ItemType.PASSWORD, "password", const.FieldType.STRING, const.PURPOSE_NONE, id="wrong_field_type_for_primary_password"
+        const.ItemType.PASSWORD, "password", const.FieldType.CONCEALED, const.PURPOSE_PASSWORD,
+        id="primary_password_for_password_item"
     ),
     pytest.param(
-        const.ItemType.PASSWORD, "password", const.FieldType.CONCEALED, const.PURPOSE_PASSWORD, id="primary_password_for_password_item"
+        const.ItemType.SERVER, "password", const.FieldType.CONCEALED, const.PURPOSE_NONE,
+        id="item_type_does_not_use_password_field_purpose"
     ),
     pytest.param(
-        const.ItemType.SERVER, "password", const.FieldType.CONCEALED, const.PURPOSE_NONE, id="item_type_does_not_use_password_field_purpose"
+        const.ItemType.SERVER, "username", const.FieldType.STRING, const.PURPOSE_NONE,
+        id="item_type_does_not_use_username_field_purpose"
     ),
     pytest.param(
-        const.ItemType.SERVER, "username", const.FieldType.STRING, const.PURPOSE_NONE, id="item_type_does_not_use_username_field_purpose"
+        const.ItemType.LOGIN, "password", const.FieldType.CONCEALED, const.PURPOSE_PASSWORD,
+        id="primary_password_for_login_item",
     ),
     pytest.param(
-        const.ItemType.LOGIN, "password", const.FieldType.CONCEALED, const.PURPOSE_PASSWORD, id="primary_password_for_login_item",
+        const.ItemType.LOGIN, "username", const.FieldType.STRING, const.PURPOSE_USERNAME,
+        id="primary_username_for_login_item",
     ),
     pytest.param(
-        const.ItemType.LOGIN, "username", const.FieldType.STRING, const.PURPOSE_USERNAME, id="primary_username_for_login_item",
+        const.ItemType.LOGIN, "password", const.FieldType.STRING, const.PURPOSE_NONE,
+        id="wrong_field_type_for_login_item_primary_password",
     ),
     pytest.param(
-        const.ItemType.LOGIN, "password", const.FieldType.STRING, const.PURPOSE_NONE, id="wrong_field_type_for_login_item_primary_password",
+        const.ItemType.LOGIN, "username", const.FieldType.TOTP, const.PURPOSE_NONE,
+        id="wrong_field_type_for_login_item_primary_username",
     ),
     pytest.param(
-        const.ItemType.LOGIN, "username", const.FieldType.TOTP, const.PURPOSE_NONE, id="wrong_field_type_for_login_item_primary_username",
-    ),
-    pytest.param(
-        const.ItemType.API_CREDENTIAL, const.NOTES_FIELD_LABEL, const.FieldType.STRING, const.PURPOSE_NOTES, id="notes_field_is_assigned_notes_purpose"
+        const.ItemType.API_CREDENTIAL, const.NOTES_FIELD_LABEL, const.FieldType.STRING, const.PURPOSE_NOTES,
+        id="notes_field_is_assigned_notes_purpose"
     ),
 ]
 
@@ -304,4 +309,29 @@ def test_username_and_password_purpose_is_limited_to_one_field():
             vault_id="1234xyz",
             category=const.ItemType.LOGIN,
             fieldset=two_primary_username_fields
+        )
+
+
+def test_password_item_type_requires_primary_password():
+    """Assert at least one field with type `concealed` is defined
+    when creating item with type ItemType.PASSWORD.
+    """
+    fields = [
+        {
+            "label": "Garage Code",
+            "type": const.FieldType.STRING,
+            "value": "1234",
+        },
+        {
+            "label": "Anniversary",
+            "type": const.FieldType.MONTH_YEAR,
+            "value": "12/10",
+        },
+    ]
+
+    with pytest.raises(errors.PrimaryPasswordUndefined):
+        vault.assemble_item(
+            vault_id="1234xyz",
+            category=const.ItemType.PASSWORD,
+            fieldset=fields
         )
