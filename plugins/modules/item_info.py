@@ -158,8 +158,9 @@ def _get_item(op, item, vault_id):
 
 
 def _get_item_field(item, selected_field):
+    selected_field = fields.normalize_label(selected_field)
     for field in item["fields"]:
-        if field["label"] == selected_field:
+        if fields.normalize_label(field["label"]) == selected_field:
             return field["value"]
     raise errors.NotFoundError
 
