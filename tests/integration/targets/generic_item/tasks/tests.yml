@@ -1,61 +1,81 @@
 ---
 
+- set_fact:
+    field_wont_exist_after_update: "transitoryExampleLabel"
+    original_item_title: "Example Item - ANSIBLE TEST {{ 9999 | random }}"
+    created_item_ids: []
+    default_tempalte: "API_CREDENTIAL"
+
 - name: Create new item
   generic_item:
     state: present
-    title: "Example Item - ANSIBLE TEST {{ 9999 | random }}"
-    category: server
+    title: "{{ original_item_title }}"
+    category: password
     tags:
       - exampleTag
     fields:
-      - label: mypassword
+      - label: password
         field_type: concealed
-        generate_value: on_create
+        generate_value: always
         generator_recipe:
           include_digits: no
-      - label: Test
-        value: Hello
-  register: result
 
+      - label: "{{ field_wont_exist_after_update }}"
+        value: example
+
+      - label: password99
+        field_type: concealed
+        value: this1sap4s5word
+
+      - label: Generated String
+        generate_value: on_create
+  register: original
+
+# NOTE: Connect server <= 1.2.0 changes name of the field with purpose==PASSWORD
+#   to `password`
 - name: Assert item properties returned
   assert:
     that:
-      - result.changed
-      - result.op_item is defined
-      - result.op_item.id is defined
-      - result.op_item.fields.mypassword is defined
+      - original.changed
+      - original.op_item is defined
+      - original.op_item.id is defined
+      - original.op_item.fields.mypassword is not defined
+      - original.op_item.fields.password is defined
+      - "original.op_item.fields.password.purpose == 'PASSWORD'"
 
 - set_fact:
-    updated_item_title: "{{ result.op_item.title }} UPDATED"
+    created_item_ids: "{{ created_item_ids + [ original.op_item.id ] }}"
+    updated_item_title: "{{ original.op_item.title }} UPDATED"
 
 - name: Upsert item
   generic_item:
     state: present
     title: "{{ updated_item_title }}"
-    uuid: "{{ result.op_item.id }}"
-    category: server
+    uuid: "{{ original.op_item.id }}"
+    category: password
     tags:
       - exampleTag
       - another-tag
     fields:
-      - label: mypassword
+      - label: password
         field_type: concealed
         generate_value: on_create
         generator_recipe:
           include_digits: no
-      - label: Different label this time
-        value: Hello
-      - label: Another field
-        value: qwertyuiop[]
+
+      - label: Generated String
+        generate_value: always
+        section: "Collaboration Details"
   register: updated_1p_item
 
 - name: Assert updated item properties
   assert:
     that:
       - updated_1p_item.changed
-      - updated_1p_item.op_item.id == result.op_item.id
+      - updated_1p_item.op_item.id == original.op_item.id
       - updated_1p_item.op_item.title == updated_item_title
-      - updated_1p_item.op_item.fields.mypassword.value == result.op_item.fields.mypassword.value
+      - updated_1p_item.op_item.fields.password.value == original.op_item.fields.password.value
+      - field_wont_exist_after_update not in updated_1p_item.op_item.fields
 
 - name: Assert tags updated
   assert:
@@ -65,7 +85,27 @@
     - exampleTag
     - another-tag
 
+- name: Create item with default template
+  generic_item:
+    state: present
+    title: Using Default Template
+    fields:
+      - label: Generated String
+        generate_value: always
+        section: "Collaboration Details"
+  register: item_with_default_template
+
+- name: Assert item with default template created
+  assert:
+    that:
+      - item_with_default_template.changed
+      - 'item_with_default_template.op_item.category == "API_CREDENTIAL"'
+
+- set_fact:
+    created_item_ids: "{{ created_item_ids + [ item_with_default_template.op_item.id ] }}"
+
 - name: Cleanup
   generic_item:
     state: absent
-    uuid: "{{result['op_item']['id']}}"
+    uuid: "{{ item }}"
+  with_items: "{{ created_item_ids }}"

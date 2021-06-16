@@ -118,7 +118,8 @@ FIELD = dict(
     field_type=dict(
         type="str",
         default="string",
-        choices=const.FieldType.choices()
+        choices=const.FieldType.choices(),
+        aliases=["type"]
     ),
     generate_value=dict(
         type="str",

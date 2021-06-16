@@ -44,9 +44,19 @@ options:
   category:
     type: str
     default: api_credential
-    description: 
-      - Applies the selected category template to the item. Other 1Password clients use category templates to help organize fields when rendering an item. 
-      - The category cannot be changed after creating an item. To change an item's category, recreate it with the new category.
+    description:
+      - >
+        Applies the selected category template to the item. Other 1Password clients use category templates to help
+        organize fields when rendering an item.
+      - >
+        The category cannot be changed after creating an item.
+        To change the category, recreate the item with the new category
+      - >
+        If the category is C(login) or C(password) and the item has a field named C(password),
+        that field will be the primary password when the item is displayed in 1Password clients.
+      - >
+        If the category is C(login) and the item has a field named C(username),
+        that field becomes the primary username when the item is displayed in 1Password clients.
     choices:
       - login
       - password
@@ -97,7 +107,13 @@ options:
       field_type:
         type: str
         default: string
-        description: Sets expected value type for the field.
+        aliases:
+        - type
+        description:
+            - Sets expected value type for the field.
+            - >
+                If C(generic_item.category) is C(login) or C(password), the field with type C(concealed) and
+                named C(password) becomes the item's primary password.
         choices:
           - string
           - email
@@ -227,7 +243,9 @@ EXAMPLES = '''
 
 RETURN = '''
 op_item:
-  description: Dictionary containing Item properties or an empty dictionary if I(state=absent). See 1Password Connect API specs for complete structure.
+  description: >
+    Dictionary containing Item properties or an empty dictionary if I(state=absent).
+    See 1Password Connect API for complete structure.
   type: complex
   returned: always
   contains:

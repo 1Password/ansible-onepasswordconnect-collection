@@ -19,6 +19,12 @@ GENERATE_VALUE_CHOICES = (
     GENERATE_ON_CREATE,
 )
 
+# Field purposes when using certain item categories
+PURPOSE_PASSWORD = "PASSWORD"
+PURPOSE_USERNAME = "USERNAME"
+PURPOSE_NOTES = "NOTES"
+PURPOSE_NONE = ""
+
 
 class FieldType:
     STRING = "STRING"

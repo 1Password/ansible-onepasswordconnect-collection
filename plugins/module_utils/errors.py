@@ -15,6 +15,18 @@ class MissingVaultID(Error):
     DEFAULT_MSG = "A Vault ID is required to use this module."
 
 
+class PrimaryUsernameAlreadyExists(Error):
+    DEFAULT_MSG = "Only one primary username may exist for an item."
+
+
+class PrimaryPasswordAlreadyExists(Error):
+    DEFAULT_MSG = "Only one primary password may exist for an item."
+
+
+class PrimaryPasswordUndefined(Error):
+    DEFAULT_MSG = "This item category requires at least one concealed field."
+
+
 class APIError(Error):
     DEFAULT_MSG = "Error while communicating with Secrets Server"
     STATUS_CODE = 400
