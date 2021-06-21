@@ -5,7 +5,7 @@
 - Running instance of Connect API server and Connect Syncer.
 - The `ansible` Python package & its binaries are installed on the test runner (i.e. your computer, the CI container). 
 
-Set the following environment variables:
+Set the following environment variables before running the tests:
 ```
 export OP_VAULT_ID=<id_of_target_vault>
 export OP_CONNECT_HOST=<http_url_to_connect_server> # see comment
