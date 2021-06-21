@@ -78,7 +78,13 @@ class OnePassword:
         return self._send_request(path)
 
     def get_item_by_name(self, vault_id, item_name):
-        return self._get_item_id_by_name(vault_id, item_name)
+        try:
+            item = self._get_item_id_by_name(vault_id, item_name)
+            item_id = item["id"]
+        except KeyError:
+            raise errors.NotFoundError
+
+        return self.get_item_by_id(vault_id, item_id)
 
     def create_item(self, vault_id, item):
         path = "/vaults/{vault_id}/items".format(vault_id=vault_id)

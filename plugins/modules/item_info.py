@@ -153,8 +153,7 @@ def _get_item(op, item, vault_id):
     try:
         return op.get_item_by_id(vault_id, item)
     except (errors.NotFoundError, errors.BadRequestError):
-        response = op.get_item_by_name(vault_id, item)
-        return op.get_item_by_id(vault_id, response["id"])
+        return op.get_item_by_name(vault_id, item)
 
 
 def _get_item_field(item, selected_field):
