@@ -6,7 +6,7 @@
     created_item_ids: []
     default_tempalte: "API_CREDENTIAL"
 
-- name: Create new item
+- name: Create Item
   generic_item:
     state: present
     title: "{{ original_item_title }}"
@@ -33,7 +33,7 @@
 
 # NOTE: Connect server <= 1.2.0 changes name of the field with purpose==PASSWORD
 #   to `password`
-- name: Assert item properties returned
+- name: Create Item | Assert expected item properties and fields
   assert:
     that:
       - original.changed
@@ -68,7 +68,7 @@
         section: "Collaboration Details"
   register: updated_1p_item
 
-- name: Assert updated item properties
+- name: Upsert item | Assert updated item properties
   assert:
     that:
       - updated_1p_item.changed
@@ -76,8 +76,9 @@
       - updated_1p_item.op_item.title == updated_item_title
       - updated_1p_item.op_item.fields.password.value == original.op_item.fields.password.value
       - field_wont_exist_after_update not in updated_1p_item.op_item.fields
+      - "updated_1p_item.op_item.fields['Generated String'].value != original.op_item.fields['Generated String'].value"
 
-- name: Assert tags updated
+- name: Upsert item | Assert tags updated
   assert:
     that:
       - "'{{ item }}' in updated_1p_item.op_item.tags"
@@ -85,7 +86,38 @@
     - exampleTag
     - another-tag
 
-- name: Create item with default template
+- name: Update Item by Name
+  generic_item:
+    state: present
+    title: "{{ updated_item_title }}"
+    category: password
+    tags:
+      - exampleTag
+      - another-tag
+    fields:
+      - label: password
+        field_type: concealed
+        generate_value: on_create
+        generator_recipe:
+          include_digits: no
+
+      - label: Hello
+        value: "World"
+
+      - label: Generated String
+        generate_value: always
+        section: "Collaboration Details"
+  register: updated_1p_item_by_name
+
+- name: Update Item by Name | Assert existing fields are preserved
+  assert:
+    that:
+      - "'{{ item }}' in updated_1p_item_by_name.op_item.fields"
+      - "updated_1p_item_by_name.op_item.fields['{{ item }}'].value == updated_1p_item.op_item.fields['{{ item }}'].value"
+  with_items:
+    - password
+
+- name: Default Template | Create item with default template
   generic_item:
     state: present
     title: Using Default Template
@@ -95,7 +127,7 @@
         section: "Collaboration Details"
   register: item_with_default_template
 
-- name: Assert item with default template created
+- name: Default Template | Default template was used
   assert:
     that:
       - item_with_default_template.changed
@@ -104,7 +136,7 @@
 - set_fact:
     created_item_ids: "{{ created_item_ids + [ item_with_default_template.op_item.id ] }}"
 
-- name: Cleanup
+- name: Cleanup | Remove created items
   generic_item:
     state: absent
     uuid: "{{ item }}"
