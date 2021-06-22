@@ -2,13 +2,41 @@
 # Latest
 
 ## Features
- * 
+[//]: # (* A user-friendly description of a new feature. {issue-number})
+
+* 
 
 ## Fixes
- * 
+[//]: # (* A user-friendly description of a fix. {issue-number})
+* 
 
 ## Security
- * 
+[//]: # (* A user-friendly description of a security fix. {issue-number})
+* 
+
+---
+
+[//]: # (START/v2.1.0)
+# v2.1.0
+
+This version fixes several bugs, introduces more supported item types, and improves how the module handles special fields for certain item types. 
+
+Note there is a **breaking change** when defining an Item with `type: login` or `type: password`:
+
+* Creating a `type: password` Item without a `concealed` field named **password** will raise an error
+* If the Item type is `password` and there are multiple `concealed` fields named **password**, Ansible raises an error
+* If the Item type is `login` and there are multiple string fields named **username**, Ansible raises an error.
+
+## Features
+ * Change default item type to `API_CREDENTIAL` (#25)
+ * Add more supported item type choices (#24)
+
+## Fixes
+ * `get_item_by_name` client method now returns the full item response instead of the overview. (#29)
+ * Fix field_purpose assignment when item type is `PASSWORD` or `LOGIN` (#28)  
+ * Use UTF-8 string normalization while searching for fields when updating an item. (#27)  
+ * The `generic_item` module now preserves the notes field without it being present in the module parameters (#27)  
+ * Fix sed regex for currentVersion lookup in release tool. (#23)
 
 ---
 
