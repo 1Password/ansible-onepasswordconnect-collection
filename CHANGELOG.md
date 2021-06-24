@@ -3,16 +3,28 @@
 
 ## Features
 [//]: # (* A user-friendly description of a new feature. {issue-number})
-
-* 
+  * 
 
 ## Fixes
 [//]: # (* A user-friendly description of a fix. {issue-number})
-* 
+  * 
 
 ## Security
 [//]: # (* A user-friendly description of a security fix. {issue-number})
-* 
+  * 
+
+---
+
+[//]: # (START/v2.1.1)
+# v2.1.1
+
+This release improves compatibility with all Python runtimes supported by Ansible 2.9+. 
+
+We are making this change to better support customers downloading this collection through RedHat's Ansible Automation Hub. 
+
+## Fixes
+[//]: # (* A user-friendly description of a fix. {issue-number})
+* Replace Python 3.6+ features with backwards-compatible implementations. (#31)
 
 ---
 
@@ -61,24 +73,15 @@ This release introduces two breaking changes to the `generic_item` module:
 
  * Makefile now uses the correct path to the testing script. (#14)
 
-## Security
-[//]: # (* A user-friendly description of a security fix. {issue-number})
-
 ---
 
 [//]: # (START/v1.0.1)
 # v1.0.1
 
-## Features
-[//]: # (* A user-friendly description of a new feature. {issue-number})
-
 ## Fixes
 [//]: # (* A user-friendly description of a fix. {issue-number})
 * Resolves small issues with the Ansible Galaxy manifest file
 * Exclude the `test/` directory from the build artifact.
-
-## Security
-[//]: # (* A user-friendly description of a security fix. {issue-number})
 
 ---
 
@@ -87,14 +90,9 @@ This release introduces two breaking changes to the `generic_item` module:
 
 First public release of the 1Password Ansible collection for Secrets Automation.
 
-## Features
-
 ## Fixes
 * Module documentation now adheres to Ansible standards
 * Remove Python3.6 syntax as required by [Ansible compile tests](https://docs.ansible.com/ansible/latest/dev_guide/testing_compile.html#testing-compile)
-
-## Security
-* 
 
 ---
 
