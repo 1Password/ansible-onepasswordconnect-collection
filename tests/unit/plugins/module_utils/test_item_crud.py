@@ -15,11 +15,11 @@ def test_create_item(mocker):
         "favorite": True
     }
 
+    mock_item = dict(params)
+    mock_item["id"] = "abc123xyz9325"
+
     mock_api = mocker.Mock()
-    mock_api.create_item.return_value = {
-        "id": "abc123xyz9325",
-        **params
-    }
+    mock_api.create_item.return_value = mock_item
 
     modified, new_item = vault.create_item(params, mock_api)
 
@@ -44,11 +44,8 @@ def test_check_mode(mocker):
     item["vault"] = {"id": create_item_params["vault_id"]}
     item["id"] = "987654321"
 
-    update_params = {
-        **{k: v for k, v in create_item_params.items() if k != "vault_id"},
-        "vault_id": vault_id,
-        "name": "UPDATED Title",
-    }
+    update_params = dict(create_item_params)
+    update_params.update({"vault_id": vault_id, "name": "UPDATED Title"})
 
     modified, updated_item = vault.update_item(update_params, item, mock_api, check_mode=True)
     assert modified

@@ -8,7 +8,7 @@ class Error(Exception):
 
     def __init__(self, message=None):
         self.message = message or self.DEFAULT_MSG
-        super().__init__(message)
+        super(Error, self).__init__(message)
 
 
 class MissingVaultID(Error):
@@ -33,7 +33,7 @@ class APIError(Error):
 
     def __init__(self, status_code=None, message=None):
         self.status_code = status_code or self.STATUS_CODE
-        super().__init__(message)
+        super(APIError, self).__init__(message)
 
 
 class NotFoundError(APIError):
