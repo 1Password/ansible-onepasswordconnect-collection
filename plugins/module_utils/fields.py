@@ -3,6 +3,7 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 import unicodedata
+from ansible.module_utils.six import text_type
 from ansible_collections.onepassword.connect.plugins.module_utils import const
 
 
@@ -86,7 +87,7 @@ def normalize_label(raw_str):
     if not raw_str:
         return None
 
-    unicode_normalized = unicodedata.normalize("NFKD", raw_str)
+    unicode_normalized = unicodedata.normalize("NFKD", text_type(raw_str))
     return unicode_normalized.strip()
 
 

@@ -4,9 +4,9 @@ __metaclass__ = type
 
 import json
 import sys
-from urllib import parse
 
 from ansible.module_utils.urls import fetch_url
+from ansible.module_utils.six.moves.urllib.parse import urlencode, quote, urlunparse, urlparse
 from ansible_collections.onepassword.connect.plugins.module_utils import errors, const
 
 
@@ -142,7 +142,7 @@ class OnePassword:
 
 
 def build_endpoint(hostname, path, params=None, api_version=None):
-    url_parts = list(parse.urlparse(hostname))
+    url_parts = list(urlparse(hostname))
 
     if not api_version:
         api_version = OnePassword.API_VERSION
@@ -150,11 +150,11 @@ def build_endpoint(hostname, path, params=None, api_version=None):
     # Path _may_ have a space in it if client passes item name, for example
     url_parts[2] = "{api_version}/{path}".format(
         api_version=api_version,
-        path=parse.quote(path.strip('/'))
+        path=quote(path.strip('/'))
     )
     if params:
-        url_parts[4] = parse.urlencode(params)
-    return parse.urlunparse(url_parts)
+        url_parts[4] = urlencode(params)
+    return urlunparse(url_parts)
 
 
 def raise_for_error(response_info):

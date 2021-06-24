@@ -35,7 +35,7 @@ PATH_TO_PACKAGES="$(git rev-parse --show-toplevel)"
 
 # Use a python3-compatible container
 # https://docs.ansible.com/ansible/latest/dev_guide/testing_integration.html#container-images
-DOCKER_IMG="ubuntu1804"
+DOCKER_IMG="default"
 
 function _cleanup() {
   rm -r "${TMP_DIR_PATH}"

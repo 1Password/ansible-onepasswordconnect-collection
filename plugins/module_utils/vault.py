@@ -225,14 +225,14 @@ def _prepare_fields(fields, item_category):
             if primary_username_set:
                 # Primary username may only be set once per item
                 raise errors.PrimaryUsernameAlreadyExists(
-                    f"Item type {item_category} may only have one (1) 'username' field"
+                    "Item type {0} may only have one (1) 'username' field".format(item_category)
                 )
             primary_username_set = True
 
         if field_purpose == const.PURPOSE_PASSWORD:
             if primary_password_set:
                 raise errors.PrimaryPasswordAlreadyExists(
-                    f"Item type {item_category} may only have one (1) 'password' field")
+                    "Item type {0} may only have one (1) 'password' field".format(item_category))
             primary_password_set = True
 
         field.update({
@@ -243,7 +243,7 @@ def _prepare_fields(fields, item_category):
 
     if item_category == const.ItemType.PASSWORD and not primary_password_set:
         raise errors.PrimaryPasswordUndefined(
-            f"Item type {item_category} requires a 'concealed' field named 'password'."
+            "Item type {0} requires a 'concealed' field named 'password'.".format(item_category)
         )
 
 
