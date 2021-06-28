@@ -9,12 +9,14 @@ SCRIPTS_DIR := $(CURDIR)/scripts
 
 curVersion := $$(sed -n -E 's/^version: "([0-9]+\.[0-9]+\.[0-9]+)"$$/\1/p' galaxy.yml)
 
-test: test/unit ## Run unit tests in a Docker container
-test/unit:
+test/unit:	## Run unit tests in a Docker container
 	$(SCRIPTS_DIR)/run-tests.sh units
 
 test/integration:	## Run integration tests inside a Docker container
 	$(SCRIPTS_DIR)/run-tests.sh integration
+
+test/sanity:	## Run ansible sanity tests in a Docker container
+	$(SCRIPTS_DIR)/run_tests.sh sanity
 
 build: clean	## Build collection artifact
 	ansible-galaxy collection build --output-path dist/

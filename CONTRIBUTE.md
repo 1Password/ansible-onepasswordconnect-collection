@@ -14,11 +14,8 @@ After reading this document, you will:
 
 > If you have already installed a supported version of Ansible, you can skip to the [Clone the Repo](#clone-the-repo) step.
 
-This collection supports **Python v3.6 or greater**. If you don't have Python installed, consider using [pyenv](https://github.com/pyenv/pyenv) to install the supported version:
+This collection requires **Python v3.6 or greater**. If you don't have Python installed, consider using [pyenv](https://github.com/pyenv/pyenv) to install the supported Python runtime.
 
-```shell
-pyenv install 3.6
-```
 
 Current Ansible-core and Ansible version supported:
 - `ansible-core`: **2.11**
@@ -47,7 +44,7 @@ pip3 install ansible==4.0.*
 Please create a personal fork of the repository before beginning any work. The [GitHub guide on forks and PRs](https://docs.github.com/en/github/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork) is a great place to learn more about this process.
 
 ```bash
-mkdir ~p ~/onepassword/ansible_collections/onepasswword
+mkdir -p ~/onepassword/ansible_collections/onepasswword
 cd ~/onepassword/ansible_collections/onepassword
 
 # Clone the collection repo into the namespace: {..}/ansible_collections/onepassword
