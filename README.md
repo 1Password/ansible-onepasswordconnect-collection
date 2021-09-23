@@ -214,7 +214,7 @@ When `field` is defined, the module will perform a case-sensitive search for a f
   collections:
     - onepassword.connect
   tasks:
-    - name: Get the 'Admin Password' field from the 'Staging Database' item
+    - name: Get the 'Admin Username' field from the 'Staging Database' item
       item_info:
         item: Staging Database
         vault: Staging Env 
