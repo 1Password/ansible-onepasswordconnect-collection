@@ -79,6 +79,32 @@ def op_item_info():
     return item_spec
 
 
+def op_field_info():
+    """
+    Helper that compiles the field_info argspec with common module specs
+    :return: dict
+    """
+    field_spec = dict(
+        item=dict(
+            type="str",
+            required=True
+        ),
+        field=dict(
+            type="str",
+            required=True
+        ),
+        vault=dict(
+            type="str",
+            required=True,
+        ),
+        section=dict(
+            type="str"
+        )
+    )
+    field_spec.update(common_options())
+    return field_spec
+
+
 # Configuration for the "Secure Password/Value Generator"
 GENERATOR_RECIPE_OPTIONS = dict(
     length=dict(

@@ -27,6 +27,10 @@ class PrimaryPasswordUndefined(Error):
     DEFAULT_MSG = "This item category requires at least one concealed field."
 
 
+class FieldNotUnique(Error):
+    DEFAULT_MSG = "Provided field label is not unique. Please provide a section or a more specific field label."
+
+
 class APIError(Error):
     DEFAULT_MSG = "Error while communicating with Secrets Server"
     STATUS_CODE = 400
