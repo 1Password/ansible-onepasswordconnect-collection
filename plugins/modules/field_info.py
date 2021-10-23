@@ -7,8 +7,6 @@ from __future__ import (absolute_import, division, print_function)
 
 __metaclass__ = type
 
-import unicodedata
-
 DOCUMENTATION = '''
 module: field_info
 author:
@@ -39,7 +37,7 @@ options:
   section:
     type: str
     description:
-      - An item section label or ID. 
+      - An item section label or ID.
       - If provided, the module limits the search for the field to this section.
       - If not provided, the module searches the entire item for the field.
 
@@ -54,7 +52,7 @@ EXAMPLES = '''
     item: MySQL Database
     field: username
     vault: 2zbeu4smcibizsuxmyvhdh57b6
-    
+
 - name: Find a field labeled "username" in a specific section.
   onepassword.connect.field_info:
     item: MySQL Database
@@ -68,7 +66,7 @@ field:
     description: The value and metadata of the field
     type: complex
     returned: always
-    contains: 
+    contains:
       value:
         type: str
         description: The field's stored value
@@ -76,17 +74,32 @@ field:
       section:
         type: str
         description: The section containing this field, if any.
-      field_type:
+      id:
         type: str
         returned: success
-        description: The 1Password type for the returned field
-        sample: "concealed" 
+        description: UUID for the returned field
+        sample: "fb3b40ac85f5435d26e"
 '''
 
 from ansible.module_utils.six import text_type
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.onepassword.connect.plugins.module_utils import specs, api, errors, fields, util
 from ansible.module_utils.common.text.converters import to_native
+
+
+def find_field(field_identifier, item, section=None) -> dict:
+
+    if not item.get("fields"):
+        raise errors.NotFoundError("Item has no fields")
+
+    section_uuid = None
+    if section:
+        section_uuid = _get_section_uuid(item.get("sections"), section)
+
+    if api.valid_client_uuid(field_identifier):
+        return _find_field_by_id(field_identifier, item["fields"], section_uuid)
+
+    return _find_field_by_label(field_identifier, item["fields"], section_uuid)
 
 
 def _find_section_id_by_label(sections, label):
@@ -135,20 +148,6 @@ def _find_field_by_id(field_id, fields, section_id=None):
     return None
 
 
-def find_field(field_identifier, item, section=None) -> dict:
-
-    if not item.get("fields"):
-        raise errors.NotFoundError("Item has no fields")
-
-    section_uuid = None
-    if section:
-        section_uuid = _get_section_uuid(item.get("sections"), section)
-
-    if api.valid_client_uuid(field_identifier):
-        return _find_field_by_id(field_identifier, item["fields"], section_uuid)
-    return _find_field_by_label(field_identifier, item["fields"], section_uuid)
-
-
 def get_item(vault, item, op_client):
     if not api.valid_client_uuid(vault):
         vault = _get_vault_id(vault, op_client.get_vaults())
@@ -171,7 +170,6 @@ def _to_field_info(field) -> dict:
     return {
         "value": field.get("value"),
         "section": field.get("section", {}).get("id"),
-        "field_type": field.get("type"),
         "id": field.get("id")
     }
 
@@ -191,23 +189,22 @@ def main():
     section_label = module.params.get("section")
 
     if not api.valid_client_uuid(vault_id):
-        module.fail_json({"field": {}, "msg": "Vault ID invalid. Please provide a vault UUID."})
+        module.fail_json({"field": {}, "msg": "Vault ID invalid or undefined."})
         return
 
     try:
         item = get_item(vault_id, item_id, api_client)
-    except errors.NotFoundError as e:
-        result.update({"msg": to_native("Item not found: {err}".format(err=e))})
-        module.fail_json(**result)
-        return
-
-    try:
         field = find_field(field_label, item, section=section_label)
         result.update({"field": _to_field_info(field)})
-        module.exit_json(**result)
     except errors.NotFoundError as e:
         result.update({"msg": to_native("Field not found: {err}".format(err=e))})
         module.fail_json(**result)
     except errors.Error as e:
         result.update({"msg": to_native(e)})
         module.fail_json(**result)
+
+    module.exit_json(**result)
+
+
+if __name__ == '__main__':
+    main()
