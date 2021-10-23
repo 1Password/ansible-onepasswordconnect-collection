@@ -68,8 +68,15 @@ def op_item_info():
             type="str",
             required=True
         ),
+        flatten_fields_by_label=dict(
+            type="bool",
+            default=True
+        ),
+        # Direct users to field_info module instead
         field=dict(
-            type="str"
+            type="str",
+            removed_from_collection="onepassword.connect",
+            removed_in_version="3.0.0",
         ),
         vault=dict(
             type="str"

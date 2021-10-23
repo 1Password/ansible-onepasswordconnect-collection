@@ -13,7 +13,9 @@ author:
   - 1Password (@1Password)
 requirements: []
 notes:
+version_added: 2.2.0
 short_description: Returns the value of a field in a 1Password item.
+see_also: onepassword.connect.item_info
 description:
   - Get the value a single field given its label.
   - You may provide a section label to limit the search to that item section.
@@ -88,7 +90,13 @@ from ansible.module_utils.common.text.converters import to_native
 
 
 def find_field(field_identifier, item, section=None) -> dict:
+    """
+    Tries to find the requested field within the provided item.
 
+    The field may be a valid client UUID or it may be the field's label.
+    If the section kwarg is provided, the function limits its search
+    to fields within that section.
+    """
     if not item.get("fields"):
         raise errors.NotFoundError("Item has no fields")
 
