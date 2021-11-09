@@ -18,10 +18,10 @@ This collection requires **Python v3.6 or greater**. If you don't have Python in
 
 
 Current Ansible-core and Ansible version supported:
-- `ansible-core`: **2.11**
-- `ansible`: **4.0**
+- `ansible-core`: **2.11.x**
+- `ansible`: **4.0.x**
 
-You may install Ansible in a `virtualenv` or globally. 
+We recommend installing Ansible in a `virtualenv` created specifically for this project. 
 
 #### Install Ansible via virtualenv
 
@@ -29,22 +29,21 @@ You may install Ansible in a `virtualenv` or globally.
 python3 -m venv <path_to_venv>/onepassword_ansible
 source <path_to_venv>/onepassword_ansible activate
 
-pip3 install ansible-core==2.11.*
-pip3 install ansible==4.0.*
-```
-
-#### Install Ansible System-wide 
-```bash
-pip3 install ansible-core==2.11.*
-pip3 install ansible==4.0.*
+pip3 install ansible-core==2.11.* ansible==4.0.*
 ```
 
 ### Clone the Repo
 
 Please create a personal fork of the repository before beginning any work. The [GitHub guide on forks and PRs](https://docs.github.com/en/github/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork) is a great place to learn more about this process.
 
+
+Ansible is [particular about the folder structure](https://github.com/ansible/ansible/issues/60215) for custom collections. Before Ansible can recognize the collection, its namespace must live inside a folder named `ansible_collections/`. For this repository, all `onepassword` collections must exist within the `onepassword` namespace folder.
+
+For more information about the `ANSIBLE_COLLECTIONS_PATHS` environment variable, visit the [Ansible documentation](https://docs.ansible.com/ansible/latest/reference_appendices/config.html#envvar-ANSIBLE_COLLECTIONS_PATHS).
+
 ```bash
-mkdir -p ~/onepassword/ansible_collections/onepasswword
+# Create the special ansible_collections folder and the onepassword namespace directory
+mkdir -p ~/onepassword/ansible_collections/onepassword
 cd ~/onepassword/ansible_collections/onepassword
 
 # Clone the collection repo into the namespace: {..}/ansible_collections/onepassword
@@ -56,12 +55,9 @@ cd connect
 export ANSIBLE_COLLECTIONS_PATHS=~/onepassword:$ANSIBLE_COLLECTIONS_PATHS
 
 # Verify - you should see docs for the `generic_item` module in your terminal
+# activate your virtualenv before running the following
 ansible-doc onepassword.connect.generic_item
 ```
-
-Ansible is [particular about the folder structure](https://github.com/ansible/ansible/issues/60215) for custom collections. For Ansible to recognize the collection, the collection namespace must live inside a folder named `ansible_collections/`. All `onepassword` collections must exist within the `onepassword` namespace folder.
-
-For more information about the `ANSIBLE_COLLECTIONS_PATHS` environment variable, visit the [Ansible documentation](https://docs.ansible.com/ansible/latest/reference_appendices/config.html#envvar-ANSIBLE_COLLECTIONS_PATHS).
 
 ## Running Tests
 

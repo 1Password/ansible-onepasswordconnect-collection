@@ -11,7 +11,7 @@ export OP_VAULT_ID=id_of_target_vault
 export OP_CONNECT_HOST=http_url_to_connect_server # see comment
 export OP_CONNECT_TOKEN=jwt_for_service_account
 ```
-**NOTE**: If you are running the Connect server locally, set `OP_CONNECT_HOST` to `http://docker.for.mac.host.internal:8080`.
+**NOTE (macOS)**: If you are running the Connect server locally (i.e. not within a Docker container), set `OP_CONNECT_HOST` to `http://docker.for.mac.host.internal:8080`.
 
 ## Running tests
 
