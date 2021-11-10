@@ -18,8 +18,8 @@ This collection requires **Python v3.6 or greater**. If you don't have Python in
 
 
 Current Ansible-core and Ansible version supported:
-- `ansible-core`: **2.11.x**
-- `ansible`: **4.0.x**
+- `ansible-core`: **2.11.***
+- `ansible`: **>=4.0,<5**
 
 We recommend installing Ansible in a `virtualenv` created specifically for this project. 
 
@@ -29,7 +29,7 @@ We recommend installing Ansible in a `virtualenv` created specifically for this 
 python3 -m venv <path_to_venv>/onepassword_ansible
 source <path_to_venv>/onepassword_ansible activate
 
-pip3 install ansible-core==2.11.* ansible==4.0.*
+pip3 install 'ansible-core==2.11.*' 'ansible>=4.0,<5'
 ```
 
 ### Clone the Repo
@@ -50,7 +50,7 @@ cd ~/onepassword/ansible_collections/onepassword
 git clone git@github.com:1Password/ansible-onepasswordconnect-collection.git connect
 cd connect
 
-# (OPTIONAL): Overwrite Ansible's collection lookup path 
+# Extend Ansible's collection lookup path 
 # to first look for collections inside ~/onepassword/ansible_collections/... 
 export ANSIBLE_COLLECTIONS_PATHS=~/onepassword:$ANSIBLE_COLLECTIONS_PATHS
 
