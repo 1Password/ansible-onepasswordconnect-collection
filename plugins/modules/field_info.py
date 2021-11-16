@@ -140,9 +140,7 @@ def _find_field_by_label(field_label, fields, section_id=None):
                 and label == wanted_label:
             return field
 
-        if label == wanted_label:
-            return field
-    return None
+    raise errors.NotFoundError("Field with provided label not found in item")
 
 
 def _find_field_by_id(field_id, fields, section_id=None):
@@ -155,9 +153,7 @@ def _find_field_by_id(field_id, fields, section_id=None):
                 and field["id"] == field_id:
             return field
 
-        if field["id"] == field_id:
-            return field
-    return None
+    raise errors.NotFoundError("Field not found in item")
 
 
 def get_item(vault, item, op_client):

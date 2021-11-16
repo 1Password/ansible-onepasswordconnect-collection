@@ -25,11 +25,6 @@
         value: penny
         section: MySQL
 
-#      TODO: Test with non-unique labels names
-#      - label: Password
-#        generate_value: on_create
-#        section: Postgres
-
   register: test_item
 
 - set_fact:
@@ -60,6 +55,21 @@
     that:
       "found_field_by_item_id.field.id == test_item.op_item.fields['{{ field_label_to_find }}'].id"
 
+- block:
+  - name: Find Field | Search by unknown item label
+    field_info:
+      item: "{{ test_item.op_item.id }}"
+      field: "doesNotExist"
+      vault: "{{test_item.op_item.vault.id}}"
+    register: notfound_result
+  ignore_errors: yes
+
+- name: Find Field | Assert field not found returns error
+  assert:
+    that:
+      - notfound_result.failed
+      - "{{ notfound_result.field|length }} == 0"
+
 - name: Find Field | Search with section label
   field_info:
     item: "{{ item_title }}"
@@ -73,6 +83,21 @@
     that:
       - mysql_field.field.value == "penny"
       - mysql_field.field.section
+
+- block:
+  - name: Find Field | Search with section label for undefined field
+    field_info:
+      item: "{{ item_title }}"
+      field: "doesNotExist"
+      vault: "{{test_item.op_item.vault.id}}"
+    register: notfound_bysection_result
+  ignore_errors: yes
+
+- name: Find Field | Assert field not found returns error
+  assert:
+    that:
+      - notfound_bysection_result.failed
+      - "{{ notfound_bysection_result.field|length }} == 0"
 
 - name: Cleanup | Remove test items
   generic_item:
