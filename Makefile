@@ -16,7 +16,7 @@ test/integration:	## Run integration tests inside a Docker container
 	$(SCRIPTS_DIR)/run-tests.sh integration
 
 test/sanity:	## Run ansible sanity tests in a Docker container
-	$(SCRIPTS_DIR)/run_tests.sh sanity
+	$(SCRIPTS_DIR)/run-tests.sh sanity
 
 build: clean	## Build collection artifact
 	ansible-galaxy collection build --output-path dist/

@@ -1,0 +1,105 @@
+---
+
+- set_fact:
+    field_label_to_find: "frogs frogs frogs"
+    item_title: "Test Field Lookup - ANSIBLE {{ 9999 | random }}"
+    created_item_ids: []
+
+- name: Setup | Create a test item
+  generic_item:
+    state: present
+    title: "{{ item_title }}"
+    category: api_credential
+    tags:
+      - exampleTag
+    fields:
+      - label: "{{ field_label_to_find }}"
+        field_type: concealed
+        generate_value: on_create
+
+      - label: Password
+        generate_value: on_create
+        section: MySQL
+
+      - label: Username
+        value: penny
+        section: MySQL
+
+  register: test_item
+
+- set_fact:
+    mysql_section_id: test_item.op_item.sections[0].id
+
+- name: Find Field | Field in item root
+  field_info:
+    item: "{{ item_title }}"
+    field: "{{ field_label_to_find }}"
+    vault: "{{test_item.op_item.vault.id}}"
+  register: found_root_field
+
+- name: Find Field | Assert root field was found
+  assert:
+    that:
+      - "found_root_field.field.value == test_item.op_item.fields['{{ field_label_to_find }}'].value"
+      - "found_root_field.field.id == test_item.op_item.fields['{{ field_label_to_find }}'].id"
+
+- name: Find Field | Search by item ID
+  field_info:
+    item: "{{ test_item.op_item.id }}"
+    field: "{{ field_label_to_find }}"
+    vault: "{{test_item.op_item.vault.id}}"
+  register: found_field_by_item_id
+
+- name: Find Field | Assert field was found
+  assert:
+    that:
+      "found_field_by_item_id.field.id == test_item.op_item.fields['{{ field_label_to_find }}'].id"
+
+- block:
+  - name: Find Field | Search by unknown item label
+    field_info:
+      item: "{{ test_item.op_item.id }}"
+      field: "doesNotExist"
+      vault: "{{test_item.op_item.vault.id}}"
+    register: notfound_result
+  ignore_errors: yes
+
+- name: Find Field | Assert field not found returns error
+  assert:
+    that:
+      - notfound_result.failed
+      - "{{ notfound_result.field|length }} == 0"
+
+- name: Find Field | Search with section label
+  field_info:
+    item: "{{ item_title }}"
+    field: Username
+    section: MySQL
+    vault: "{{ test_item.op_item.vault.id }}"
+  register: mysql_field
+
+- name: Find Field by Section | Assert field within MySQL section was found
+  assert:
+    that:
+      - mysql_field.field.value == "penny"
+      - mysql_field.field.section
+
+- block:
+  - name: Find Field | Search with section label for undefined field
+    field_info:
+      item: "{{ item_title }}"
+      field: "doesNotExist"
+      vault: "{{test_item.op_item.vault.id}}"
+    register: notfound_bysection_result
+  ignore_errors: yes
+
+- name: Find Field | Assert field not found returns error
+  assert:
+    that:
+      - notfound_bysection_result.failed
+      - "{{ notfound_bysection_result.field|length }} == 0"
+
+- name: Cleanup | Remove test items
+  generic_item:
+    state: absent
+    uuid: "{{ test_item.op_item.id }}"

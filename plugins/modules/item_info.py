@@ -13,6 +13,8 @@ author:
   - 1Password (@1Password)
 requirements: []
 notes:
+  - The "field" option will be deprecated in v3.0.0 of the onepassword.connect collection.
+  - Beginning in v3.0.0, the module will always return a list of fields under the "fields" key instead of a dictionary.
 short_description: Returns information about a 1Password Item
 description:
   - The name or ID of an item can be given.
@@ -33,6 +35,15 @@ options:
     description:
       - Name or ID of the Vault in which the Item is stored.
       - If not specified, the module searches through every vault accessible by the API token.
+  flatten_fields_by_label:
+    type: bool
+    default: true
+    description:
+        - Toggles whether the module returns an item's fields as a dictionary of fields keyed by the field label.
+        - If false, the item fields are returned as a list.
+        - B(WARNING) When set to C(true), non-unique field labels may overwrite each other.
+          Consider using C(onepassword.connect.field_info) instead or setting this option to C(false).
+        - Beginning in C(3.0.0) this setting will default to C(false)
 extends_documentation_fragment:
   - onepassword.connect.api_params
 '''
@@ -70,6 +81,12 @@ EXAMPLES = '''
     item: Business Visa
     field: ccNumber
     vault: Office Expenses
+
+- name: Get all fields for an item, formatted as a list
+  onepassword.connect.item_info:
+    item: Business Visa
+    vault: Office Expenses
+    flatten_fields_by_label: false
 '''
 
 RETURN = '''
@@ -119,12 +136,14 @@ op_item:
             - id: abc1234EXAMPLEvault5678
     fields:
         type: dict
-        description: Lists all defined fields for the Item. The key for each field is the field's label.
+        description:
+            - Collection of all fields for the Item. The key for each field is the field's label.
+            - If C(flatten_fields_by_label) is C(true), this value will be a list.
         returned: success
 field:
   description: Value of the field for the Item.
-  type: str
-  returned: when field option is set
+  type: complex
+  returned: when field option is defined
   contains:
     label:
         type: str
@@ -145,7 +164,7 @@ field:
 '''
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.onepassword.connect.plugins.module_utils import specs, api, errors, fields
+from ansible_collections.onepassword.connect.plugins.module_utils import specs, api, errors, fields, util
 from ansible.module_utils.common.text.converters import to_native
 
 
@@ -156,12 +175,12 @@ def _get_item(op, item, vault_id):
         return op.get_item_by_name(vault_id, item)
 
 
-def _get_item_field(item, selected_field):
-    selected_field = fields.normalize_label(selected_field)
+def _find_item_field(item, selected_field):
+    selected_field = util.utf8_normalize(selected_field)
     for field in item["fields"]:
-        if fields.normalize_label(field["label"]) == selected_field:
+        if util.utf8_normalize(field["label"]) == selected_field:
             return field["value"]
-    raise errors.NotFoundError
+    return None
 
 
 def _get_item_with_vault_id(op, item, vault_id):
@@ -179,16 +198,30 @@ def _get_item_without_vault(op, item):
 
 
 def _try_get_item(op, item, vault):
-    api_response = {}
     if vault:
         try:
-            api_response = _get_item_with_vault_id(op, item, vault)
+            return _get_item_with_vault_id(op, item, vault)
         except errors.BadRequestError:
             vault = op.get_vault_id_by_name(vault)
-            api_response = _get_item_with_vault_id(op, item, vault)
-    else:
-        api_response = _get_item_without_vault(op, item)
-    return api_response
+            return _get_item_with_vault_id(op, item, vault)
+
+    return _get_item_without_vault(op, item)
+
+
+def to_result(*, item=None, msg=None, **kwargs):
+    """Builds response dict with mandatory keys. If defined, optional keys in kwargs
+    are included.
+
+    If provided, the "msg" value is converted to the native text format with to_native.
+    """
+    result = {
+        "op_item": item or {},
+        "msg": to_native(msg or "")
+    }
+    if kwargs.get("field"):
+        result["field"] = kwargs.get("field")
+
+    return result
 
 
 def main():
@@ -200,28 +233,38 @@ def main():
     )
 
     api_client = api.create_client(module)
-    field = module.params.get("field")
+    field_label = module.params.get("field")
+    flatten_fields_by_label = module.params.get("flatten_fields_by_label")
     vault = module.params.get("vault")
-    item = module.params.get("item")
-
-    result = {"op_item": {}}
-    api_response = {}
+    # Either the item's label or its UUID
+    item_identifier = module.params.get("item")
 
     try:
-        api_response = _try_get_item(api_client, item, vault)
-        if field:
-            field_value = _get_item_field(api_response, field)
-            result.update({"field": field_value})
-        else:
-            api_response["fields"] = fields.flatten_fieldset(api_response["fields"])
-            result.update({"op_item": api_response})
+        item = _try_get_item(api_client, item_identifier, vault)
     except errors.NotFoundError:
-        result.update({"msg": "Item not found"})
+        module.fail_json(**to_result(msg="Item not found"))
+        return
     except TypeError as e:
-        result.update({"msg": to_native("Invalid Item config: {err}").format(err=e)})
+        module.fail_json(**to_result(
+            msg="Invalid Item config: {err}".format(err=e))
+        )
+        return
     except errors.Error as e:
-        result.update({"msg": to_native(e.message)})
-    module.exit_json(**result)
+        module.fail_json(**to_result(msg=e.message))
+        return
+
+    if field_label:
+        field = _find_item_field(item, field_label)
+        if not field:
+            module.fail_json(**to_result(item=item, msg="Field not found"))
+            return
+        module.exit_json(**to_result(item=item, field=field))
+        return
+
+    if flatten_fields_by_label:
+        item["fields"] = fields.flatten_fieldset(item["fields"])
+
+    module.exit_json(**to_result(item=item))
 
 
 if __name__ == '__main__':

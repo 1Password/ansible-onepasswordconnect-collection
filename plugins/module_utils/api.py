@@ -3,7 +3,11 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 import json
+import os
+import base64
+
 import sys
+import re
 
 from ansible.module_utils.urls import fetch_url
 from ansible.module_utils.six.moves.urllib.parse import urlencode, quote, urlunparse, urlparse
@@ -11,7 +15,6 @@ from ansible_collections.onepassword.connect.plugins.module_utils import errors,
 
 
 def create_client(module):
-
     if not module.params.get("hostname") or not module.params.get("token"):
         raise errors.AccessDeniedError(message="Server hostname or auth token not defined")
 
@@ -189,3 +192,22 @@ def _format_user_agent(collection_version, python_version=None, ansible_version=
         py_version=python_version or "unknown",
         ansible=ansible_version or "unknown"
     )
+
+
+# Client UUIDs must be exactly 26 characters.
+CLIENT_UUID_LENGTH = 26
+
+
+def valid_client_uuid(uuid):
+    """Checks whether a given UUID meets the client UUID spec"""
+    # triple curly braces needed to escape f-strings as regex quantifiers
+    return re.match(rf"^[0-9a-z]{{{CLIENT_UUID_LENGTH}}}$", uuid) is not None
+
+
+def create_client_uuid():
+    """Creates a valid client UUID.
+
+    The UUID is not intended to be cryptographically random."""
+    rand_bytes = os.urandom(16)
+    base32_utf8 = base64.b32encode(rand_bytes).decode("utf-8")
+    return base32_utf8.rstrip("=").lower()

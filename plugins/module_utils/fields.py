@@ -2,9 +2,7 @@ from __future__ import (absolute_import, division, print_function)
 
 __metaclass__ = type
 
-import unicodedata
-from ansible.module_utils.six import text_type
-from ansible_collections.onepassword.connect.plugins.module_utils import const
+from ansible_collections.onepassword.connect.plugins.module_utils import const, util
 
 
 def field_from_params(field_params, generate_field_value=False):
@@ -73,22 +71,12 @@ def _get_field_by_label(fields, label):
     except TypeError:
         return None
 
-    label = normalize_label(label)
+    label = util.utf8_normalize(label)
 
     return next((
         field for field in fields
-        if normalize_label(field.get("label")) == label
+        if util.utf8_normalize(field.get("label")) == label
     ), None)
-
-
-def normalize_label(raw_str):
-    """Standardizes utf-8 encoding for comparison
-     and removes leading/trailing spaces"""
-    if not raw_str:
-        return None
-
-    unicode_normalized = unicodedata.normalize("NFKD", text_type(raw_str))
-    return unicode_normalized.strip()
 
 
 def _get_generator_recipe(config):

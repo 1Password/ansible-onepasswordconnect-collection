@@ -66,3 +66,21 @@ def test_api_client_factory_creates_client(mocker):
 
     assert op_api_client.hostname == api_client_params["hostname"]
     assert op_api_client.token == api_client_params["token"]
+
+
+@pytest.mark.parametrize("uuid, expected", (
+    ("", False),
+    ("1" * api.CLIENT_UUID_LENGTH, True),
+    ("a" * api.CLIENT_UUID_LENGTH, True),
+    ("x" * (api.CLIENT_UUID_LENGTH + 1), False),
+    ("C5S3OVFSOLRWUSY1KP50ABCDEF", False),
+    ("3R99IBO3J", False),
+    ("cqdqekfpdwsb5dl2u4ljge2pdf", True)
+))
+def test_valid_client_uuid(uuid, expected):
+    assert api.valid_client_uuid(uuid) == expected
+
+
+def test_create_client_uuid():
+    uuid = api.create_client_uuid()
+    assert api.valid_client_uuid(uuid) is True
