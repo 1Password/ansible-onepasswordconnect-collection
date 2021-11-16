@@ -199,16 +199,15 @@ CLIENT_UUID_LENGTH = 26
 
 
 def valid_client_uuid(uuid):
-    if len(uuid) > CLIENT_UUID_LENGTH:
-        return False
+    """Checks whether a given UUID meets the client UUID spec"""
     # triple curly braces needed to escape f-strings as regex quantifiers
     return re.match(rf"^[0-9a-z]{{{CLIENT_UUID_LENGTH}}}$", uuid) is not None
 
 
 def create_client_uuid():
-    """Create a valid client UUID.
+    """Creates a valid client UUID.
 
-    The UUID does is not intended to be cryptographically random."""
+    The UUID is not intended to be cryptographically random."""
     rand_bytes = os.urandom(16)
     base32_utf8 = base64.b32encode(rand_bytes).decode("utf-8")
     return base32_utf8.rstrip("=").lower()
