@@ -15,7 +15,6 @@ requirements: []
 notes:
 version_added: 2.2.0
 short_description: Returns the value of a field in a 1Password item.
-see_also: onepassword.connect.item_info
 description:
   - Get the value a single field given its label.
   - You may provide a section label to limit the search to that item section.
@@ -134,9 +133,11 @@ def _find_field_by_label(field_label, fields, section_id=None):
 
     for field in fields:
         label = util.utf8_normalize(field["label"])
-        if all((section_id is not None,
-                field.get("section", {}).get("id") == section_id,
-                label == wanted_label)):
+        if section_id is None and label == wanted_label:
+            return field
+
+        if field.get("section", {}).get("id") == section_id \
+                and label == wanted_label:
             return field
 
         if label == wanted_label:
@@ -146,9 +147,12 @@ def _find_field_by_label(field_label, fields, section_id=None):
 
 def _find_field_by_id(field_id, fields, section_id=None):
     for field in fields:
-        if all((section_id is not None,
-                field.get("section", {}).get("id") == section_id,
-                field["id"] == field_id)):
+
+        if section_id is None and field["id"] == field_id:
+            return field
+
+        if field.get("section", {}).get("id") == section_id \
+                and field["id"] == field_id:
             return field
 
         if field["id"] == field_id:

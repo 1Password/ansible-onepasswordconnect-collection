@@ -15,7 +15,6 @@ requirements: []
 notes:
   - The "field" option will be deprecated in v3.0.0 of the onepassword.connect collection.
   - Beginning in v3.0.0, the module will always return a list of fields under the "fields" key instead of a dictionary.
-see_also: onepassword.connect.field_info
 short_description: Returns information about a 1Password Item
 description:
   - The name or ID of an item can be given.
@@ -44,6 +43,7 @@ options:
         - If false, the item fields are returned as a list.
         - B(WARNING) When set to C(true), non-unique field labels may overwrite each other.
           Consider using C(onepassword.connect.field_info) instead or setting this option to C(false).
+        - Beginning in C(3.0.0) this setting will default to C(false)
 extends_documentation_fragment:
   - onepassword.connect.api_params
 '''
