@@ -12,7 +12,7 @@ You can learn more about [Secrets Automation and 1Password Connect](https://1pas
 * [`generic_item` Module](#connectgeneric_item-module)
   + [Usage Examples](#usage-examples)
 * [`item_info` Module](#item_info-module)
-  + [Usage Examples](#examples)
+* [`field_info` Module](#field_info-module)
 * [Testing](#testing)
 * [About 1Password](#about-1password)
 * [Security](#security)
@@ -204,11 +204,15 @@ Get information about an Item, including fields and metadata.
 </details>
 
 
-**Find a field by name**
+## `field_info` Module
 
-This example passes a `field` value to the `item_info` module. 
+Use the `onepassword.connect.field_info` module to get the value of an item field.
 
-When `field` is defined, the module will perform a case-sensitive search for a field with a matching `label` value.
+The `field_info` module will first find the item by name or UUID, then search for the requested field by name. If a `section` is provided, the module will only search within that item section. **If no section is provided, the field name must be unique within the item**.
+
+The search method compares field names using the [`unicodedata.normalize`](https://docs.python.org/3/library/unicodedata.html#unicodedata.normalize) function and the `NKFD` form.
+
+### Example Usage
 
 ```yaml
 ---
@@ -219,19 +223,31 @@ When `field` is defined, the module will perform a case-sensitive search for a f
   collections:
     - onepassword.connect
   tasks:
-    - name: Get the 'Admin Username' field from the 'Staging Database' item
-      item_info:
-        item: Staging Database
-        vault: Staging Env 
-        field: Admin Username  # find field named "Admin Username"
-      no_log: true
-      register: op_item
+    - name: Find a field labeled "username" in an item named "MySQL Database" in a specific vault.
+      onepassword.connect.field_info:
+      item: MySQL Database
+      field: username
+      vault: 2zbeu4smcibizsuxmyvhdh57b6
+    no_log: true
+    register: op_item
 
-    - name: Print the username
+    - name: Print the field definition
       ansible.builtin.debug:
         var: "{{ op_item.field }}"
 ```
 
+<details>
+<summary>View output registered to the `op_item` variable</summary>
+<br>
+
+```
+{
+    "value": "mysql_username_example",
+    "section": "",
+    "id": "fb3b40ac85f5435d26e"
+}
+```
+</details>
 
 ## Testing
 
