@@ -2,16 +2,31 @@
 # Latest
 
 ## Features
+  * 
+
+## Fixes
+ * 
+
+## Security
+ * 
+
+---
+
+[//]: # (START/v2.2.0)
+# v2.2.0
+
+## Features
 [//]: # (* A user-friendly description of a new feature. {issue-number})
-* 
+* Introduce the `onepassword.connect.field_info` module (#39)
 
 ## Fixes
 [//]: # (* A user-friendly description of a fix. {issue-number})
-* 
+* Add `flatten_fields_by_label` option to the `onepassword.connect.field_info` module. (#34)
+    * The new option defaults to `true` and preserves the behavior seen in versions <=2.1.1.
+    * **The default behavior will change in release v3.0.0**
+    * See [PR #39](https://github.com/1Password/ansible-onepasswordconnect-collection/pull/39) for more details.
 
-## Security
-[//]: # (* A user-friendly description of a security fix. {issue-number})
-* 
+* Creating a one-time password (`OTP`) field within an item now uses the correct field type. (#46)
 
 ---
 
