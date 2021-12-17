@@ -10,19 +10,23 @@ You can learn more about [Secrets Automation and 1Password Connect](https://1pas
 * [Installation](#installation)
 * [Module & Environment Variables](#module-variables)
 * [`generic_item` Module](#connectgeneric_item-module)
-  + [Usage Examples](#usage-examples)
 * [`item_info` Module](#item_info-module)
-  + [Usage Examples](#examples)
+* [`field_info` Module](#field_info-module)
 * [Testing](#testing)
 * [About 1Password](#about-1password)
 * [Security](#security)
 
 
 ### Requirements
-- ansible >= 2.9
 - Python >= 3.6.0
 - 1Password Connect >= 1.0.0
     
+#### Supported Ansible Versions
+
+This collection has been tested against the following Ansible versions:
+* `ansible-core`: >=2.9, 2.11, 2.12
+* `ansible`: >=4.0, <5.0
+
 ## Installation
 
 You can install the Ansible collection from [Ansible Galaxy](https://galaxy.ansible.com/onepassword/connect):
@@ -37,18 +41,18 @@ All modules support the following variable definitions. You may either explicitl
 
 Environment variables are ignored if the module variable is defined for a task.
 
-Module Variable | Environment Variable | Description
----: | --- | --- |
-`hostname` | `OP_CONNECT_HOST` | URL of a 1Password Connect API Server |
-`token` | `OP_CONNECT_TOKEN` | JWT used to authenticate 1Password Connect API requests |
-`vault_id`| `OP_VAULT_ID` | (Optional) UUID of a 1Password Vault the API token is allowed to access |
+| Module Variable | Environment Variable | Description                                                             |
+|----------------:|----------------------|-------------------------------------------------------------------------|
+|      `hostname` | `OP_CONNECT_HOST`    | URL of a 1Password Connect API Server                                   |
+|         `token` | `OP_CONNECT_TOKEN`   | JWT used to authenticate 1Password Connect API requests                 |
+|      `vault_id` | `OP_VAULT_ID`        | (Optional) UUID of a 1Password Vault the API token is allowed to access |
 
 
 ## `connect.generic_item` Module
 
 > 🔥 **Warning** 🔥 It is _strongly_ recommended you define `no_log: true` on any tasks that interact with 1Password Connect. Ansible may print sensitive data if `no_log` is not set.
 
-### Usage Examples
+### Example Usage
 **Create a new Item**
 ```yaml
 ---
@@ -140,7 +144,7 @@ We recommend storing the Items created by Ansible in a Vault that only 1Password
 Get information about an Item, including fields and metadata. 
 
 
-### Examples
+### Example Usage
 
 **Find an Item by Name**
 ```yaml
@@ -199,11 +203,15 @@ Get information about an Item, including fields and metadata.
 </details>
 
 
-**Find a field by name**
+## `field_info` Module
 
-This example passes a `field` value to the `item_info` module. 
+Use the `onepassword.connect.field_info` module to get the value of an item field.
 
-When `field` is defined, the module will perform a case-sensitive search for a field with a matching `label` value.
+The `field_info` module will first find the item by name or UUID, then search for the requested field by name. If a `section` is provided, the module will only search within that item section. **If no section is provided, the field name must be unique within the item**.
+
+The search method compares field names using the [`unicodedata.normalize`](https://docs.python.org/3/library/unicodedata.html#unicodedata.normalize) function and the `NKFD` form.
+
+### Example Usage
 
 ```yaml
 ---
@@ -214,19 +222,31 @@ When `field` is defined, the module will perform a case-sensitive search for a f
   collections:
     - onepassword.connect
   tasks:
-    - name: Get the 'Admin Username' field from the 'Staging Database' item
-      item_info:
-        item: Staging Database
-        vault: Staging Env 
-        field: Admin Username  # find field named "Admin Username"
-      no_log: true
-      register: op_item
+    - name: Find a field labeled "username" in an item named "MySQL Database" in a specific vault.
+      onepassword.connect.field_info:
+      item: MySQL Database
+      field: username
+      vault: 2zbeu4smcibizsuxmyvhdh57b6
+    no_log: true
+    register: op_item
 
-    - name: Print the username
+    - name: Print the field definition
       ansible.builtin.debug:
         var: "{{ op_item.field }}"
 ```
 
+<details>
+<summary>View output registered to the `op_item` variable</summary>
+<br>
+
+```
+{
+    "value": "mysql_username_example",
+    "section": "",
+    "id": "fb3b40ac85f5435d26e"
+}
+```
+</details>
 
 ## Testing
 
