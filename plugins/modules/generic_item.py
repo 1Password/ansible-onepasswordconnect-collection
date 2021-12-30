@@ -119,7 +119,7 @@ options:
           - email
           - concealed
           - url
-          - totp
+          - otp
           - date
           - month_year
       generate_value:

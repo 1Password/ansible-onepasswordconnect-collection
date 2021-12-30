@@ -31,7 +31,7 @@ class FieldType:
     EMAIL = "EMAIL"
     CONCEALED = "CONCEALED"
     URL = "URL"
-    TOTP = "TOTP"
+    OTP = "OTP"
     DATE = "DATE"
     MONTH_YEAR = "MONTH_YEAR"
 
