@@ -1,3 +1,4 @@
 scripts/prepare-release.sh shellcheck:SC2086
 plugins/modules/generic_item.py validate-modules:missing-gplv3-license
 plugins/modules/item_info.py validate-modules:missing-gplv3-license
+plugins/modules/field_info.py validate-modules:missing-gplv3-license
