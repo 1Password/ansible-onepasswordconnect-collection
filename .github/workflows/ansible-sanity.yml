@@ -1,0 +1,54 @@
+---
+name: ansible-sanity
+
+on:
+  pull_request:
+    branches:
+      - "main"
+
+env:
+  MIN_PYTHON_VERSION: "3.8"
+  # defines where ansible will look for the collection
+  # must be a sub-directory of ansible_collections/
+  COLLECTION_PATH: ansible_collections/onepassword/connect
+
+jobs:
+  ansible-sanity:
+    name: Ansible Linter (v${{ matrix.ansible }})
+    strategy:
+      matrix:
+        ansible: ["2.9", "2.10", "2.11", "2.12"]
+        python: ["3.6", "3.7", "3.8", "3.9"]
+        exclude:
+          # python3.9 unsupported by ansible2.9
+          - ansible: "2.9"
+            python: "3.9"
+          # ansible 2.12 requires python3.8 or newer
+          # https://github.com/ansible/ansible/issues/72668
+          - ansible: "2.12"
+            python: "3.6"
+          - ansible: "2.12"
+            python: "3.7"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.COLLECTION_PATH }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+            path: ${{ env.COLLECTION_PATH }}
+
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+            python-version: ${{env.MIN_PYTHON_VERSION}}
+
+      - name: Install ansible-core stable-${{ matrix.ansible }}
+        run: pip install https://github.com/ansible/ansible/archive/stable-${{ matrix.ansible }}.tar.gz --disable-pip-version-check
+
+      # running with docker-in-docker
+      # the installed ansible-test command will know which container to use
+      # for each ansible version
+      - name: Run ansible-test sanity (v${{ matrix.ansible }}, python${{ matrix.python }})
+        run: ansible-test sanity -v --docker --redact --python ${{ matrix.python }}
