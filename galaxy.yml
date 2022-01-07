@@ -15,7 +15,7 @@ description: Modules for managing and reading 1Password Vaults with 1Password Co
 
 license_file: 'LICENSE.md'
 
-tags: ['onepassword', 'secrets', 'onepasswordconnect', 'connect']
+tags: ['security', 'onepassword', 'secrets', 'onepasswordconnect', 'connect']
 
 dependencies: {}
 
