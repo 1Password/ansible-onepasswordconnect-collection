@@ -1,5 +1,5 @@
 ---
-name: ansible-sanity
+name: ansible-tests
 
 on:
   pull_request:
@@ -8,6 +8,9 @@ on:
 
 env:
   MIN_PYTHON_VERSION: "3.8"
+  # arbitrarily choosing the latest stable version to run ansible-test units
+  # running ansible-test units for each ansible+python version isn't necessary
+  ANSIBLE_FOR_UNIT_TESTS: "2.11"
   # defines where ansible will look for the collection
   # must be a sub-directory of ansible_collections/
   COLLECTION_PATH: ansible_collections/onepassword/connect
@@ -52,3 +55,26 @@ jobs:
       # for each ansible version
       - name: Run ansible-test sanity (v${{ matrix.ansible }}, python${{ matrix.python }})
         run: ansible-test sanity -v --docker --redact --python ${{ matrix.python }}
+
+  ansible-units:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.COLLECTION_PATH }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          path: ${{ env.COLLECTION_PATH }}
+
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{env.MIN_PYTHON_VERSION}}
+
+      - name: Install ansible-core stable-${{ env.ANSIBLE_FOR_UNIT_TESTS }}
+        run: pip install https://github.com/ansible/ansible/archive/stable-${{ env.ANSIBLE_FOR_UNIT_TESTS }}.tar.gz --disable-pip-version-check
+
+      - name: Run ansible-test units
+        run: ansible-test units -v --docker --redact --python ${{ env.MIN_PYTHON_VERSION }}
