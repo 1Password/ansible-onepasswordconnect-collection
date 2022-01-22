@@ -235,7 +235,7 @@ FIELD_PURPOSE_TESTCASES = [
         id="wrong_field_type_for_login_item_primary_password",
     ),
     pytest.param(
-        const.ItemType.LOGIN, "username", const.FieldType.TOTP, const.PURPOSE_NONE,
+        const.ItemType.LOGIN, "username", const.FieldType.OTP, const.PURPOSE_NONE,
         id="wrong_field_type_for_login_item_primary_username",
     ),
     pytest.param(
