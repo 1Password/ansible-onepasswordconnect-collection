@@ -186,7 +186,8 @@ def main():
     result = {"field": {}}
 
     module = AnsibleModule(
-        argument_spec=specs.op_field_info()
+        argument_spec=specs.op_field_info(),
+        supports_check_mode=True
     )
 
     api_client = api.create_client(module)
