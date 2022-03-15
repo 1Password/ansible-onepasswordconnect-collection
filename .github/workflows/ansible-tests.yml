@@ -17,7 +17,7 @@ env:
 
 jobs:
   ansible-sanity:
-    name: Ansible Linter (v${{ matrix.ansible }}, py${{ matrix.python }})
+    name: Ansible Sanity Test (v${{ matrix.ansible }}, py${{ matrix.python }})
     strategy:
       matrix:
         ansible: ["2.9", "2.10", "2.11", "2.12"]
