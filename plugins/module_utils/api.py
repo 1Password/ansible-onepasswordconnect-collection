@@ -9,6 +9,7 @@ import base64
 import sys
 import re
 
+from urllib.error import HTTPError
 from ansible.module_utils.urls import fetch_url
 from ansible.module_utils.six.moves.urllib.parse import urlencode, quote, urlunparse, urlparse
 from ansible_collections.onepassword.connect.plugins.module_utils import errors, const
@@ -51,7 +52,7 @@ class OnePassword:
         response_body = {}
 
         resp, info = fetch_url(self._module, **fetch_kwargs)
-        if resp:
+        if type(resp) is not HTTPError:
             try:
                 response_body = json.loads(resp.read().decode("utf-8"))
             except (AttributeError, ValueError):
