@@ -17,7 +17,7 @@
 
 ## Fixes
 * HTTP errors from Connect are now properly handled. (#59)
-* Added an Ansible Automation Hub tag (`security`) to add compliance with the Automation Hub guidelines. (#52)
+* Added an Ansible Automation Hub tag (`security`) to add compliance with the Automation Hub guidelines. Credits to @JohnLieske for the contribution. (#52)
 * Added required `meta/runtime.yml` for Ansible Galaxy compat. (#50)
 * Creating a one-tome password (`OTP`) field within an item now uses the correct type label. (#47)
 
