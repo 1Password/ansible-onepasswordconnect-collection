@@ -2,13 +2,24 @@
 # Latest
 
 ## Features
-  * 
+  * A user-friendly description of a new feature. {issue-number}
 
 ## Fixes
- * 
+ * A user-friendly description of a fix. {issue-number}
 
 ## Security
- * 
+ * A user-friendly description of a security fix. {issue-number}
+
+---
+
+[//]: # (START/v2.2.1)
+# v2.2.1
+
+## Fixes
+* HTTP errors from Connect are now properly handled. (#59)
+* Added an Ansible Automation Hub tag (`security`) to add compliance with the Automation Hub guidelines. Credits to @JohnLieske for the contribution. (#52)
+* Added required `meta/runtime.yml` for Ansible Galaxy compat. (#50)
+* Creating a one-tome password (`OTP`) field within an item now uses the correct type label. (#47)
 
 ---
 
