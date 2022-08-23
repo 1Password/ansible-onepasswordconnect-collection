@@ -122,7 +122,7 @@ We recommend storing the Items created by Ansible in a Vault that only 1Password
   environment:
     OP_CONNECT_HOST: http://localhost:8001
     OP_CONNECT_TOKEN: "valid.jwt.here"
-    OP_VAULT: "zyzzyz1234example"
+    OP_VAULT_ID: "zyzzyz1234example"
   tasks:
     - onepassword.connect.generic_item:
         title: Club Membership
