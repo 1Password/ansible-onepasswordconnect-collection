@@ -52,14 +52,10 @@ class OnePassword:
         response_body = {}
 
         resp, info = fetch_url(self._module, **fetch_kwargs)
-        if type(resp) is not HTTPError:
+        if info.get("status") == 200:
             try:
                 response_body = json.loads(resp.read().decode("utf-8"))
             except (AttributeError, ValueError):
-                if info.get("status") == 204:
-                    # No Content response
-                    return {}
-
                 msg = "Server returned error with invalid JSON: {err}".format(
                     err=info.get("msg", "<Undefined error>")
                 )
