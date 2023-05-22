@@ -232,7 +232,7 @@ The search method compares field names using the [`unicodedata.normalize`](https
 
     - name: Print the field definition
       ansible.builtin.debug:
-        var: "{{ op_item.field }}"
+        msg: "{{ op_item.field }}"
 ```
 
 <details>
