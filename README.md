@@ -47,6 +47,8 @@ Environment variables are ignored if the module variable is defined for a task.
 |         `token` | `OP_CONNECT_TOKEN`   | JWT used to authenticate 1Password Connect API requests                 |
 |      `vault_id` | `OP_VAULT_ID`        | (Optional) UUID of a 1Password Vault the API token is allowed to access |
 
+> 🔥 **Warning** 🔥 [Environment variables are normally passed in clear text (shell plugin dependent) so they are not a recommended way of passing secrets to the module being executed.](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_environment.html#working-with-language-specific-version-managers)
+> In the examples below connect token is passed as variable to avoid disclosure.
 
 ## `connect.generic_item` Module
 
@@ -58,11 +60,13 @@ Environment variables are ignored if the module variable is defined for a task.
 ---
 - name: Create 1Password Secret
   hosts: localhost
+  vars:
+    connect_token: "api.jwt.here"
   environment:
     OP_CONNECT_HOST: http://localhost:8001
-    OP_CONNECT_TOKEN: "api.jwt.here"
   tasks:
     - onepassword.connect.generic_item:
+        token: "{{ connect_token }}"
         vault_id: "qwerty56789asdf"
         title: Club Membership
         state: present
@@ -119,12 +123,14 @@ We recommend storing the Items created by Ansible in a Vault that only 1Password
 ---
 - name: Update a 1Password Secret
   hosts: localhost
+  vars:
+    connect_token: "valid.jwt.here"
   environment:
     OP_CONNECT_HOST: http://localhost:8001
-    OP_CONNECT_TOKEN: "valid.jwt.here"
     OP_VAULT_ID: "zyzzyz1234example"
   tasks:
     - onepassword.connect.generic_item:
+        token: "{{ connect_token }}"
         title: Club Membership
       # uuid: 1ff75fa9fexample  -- or use an Item ID to locate an item instead
         state: present
@@ -150,14 +156,16 @@ Get information about an Item, including fields and metadata.
 ```yaml
 --- 
   hosts: localhost
+  vars:
+    connect_token: "valid.jwt.here"
   environment:
     OP_CONNECT_HOST: http://localhost:8001
-    OP_CONNECT_TOKEN: "valid.jwt.here"
   collections:
     - onepassword.connect
   tasks:
     - name: Find the item with the label "Staging Database" in the vault "Staging Env"
       item_info:
+        token: "{{ connect_token }}"
         item: Staging Database
         vault: Staging Env
       no_log: true
@@ -216,19 +224,21 @@ The search method compares field names using the [`unicodedata.normalize`](https
 ```yaml
 ---
   hosts: localhost
+  vars:
+    connect_token: "valid.jwt.here"
   environment:
     OP_CONNECT_HOST: http://localhost:8001
-    OP_CONNECT_TOKEN: "valid.jwt.here"
   collections:
     - onepassword.connect
   tasks:
     - name: Find a field labeled "username" in an item named "MySQL Database" in a specific vault.
-      onepassword.connect.field_info:
-      item: MySQL Database
-      field: username
-      vault: 2zbeu4smcibizsuxmyvhdh57b6
-    no_log: true
-    register: op_item
+      field_info:
+        token: "{{ connect_token }}"
+        item: MySQL Database
+        field: username
+        vault: 2zbeu4smcibizsuxmyvhdh57b6
+      no_log: true
+      register: op_item
 
     - name: Print the field definition
       ansible.builtin.debug:
