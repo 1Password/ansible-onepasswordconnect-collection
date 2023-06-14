@@ -15,7 +15,7 @@ def common_options():
     :return: dict
     """
     # Just API params for now
-    return API_CONFIG
+    return API_CONFIG, SERVICE_ACCOUNT_CONFIG
 
 
 def op_item():
@@ -82,7 +82,8 @@ def op_item_info():
             type="str"
         )
     )
-    item_spec.update(common_options())
+    for option in common_options():
+        item_spec.update(option)
     return item_spec
 
 
@@ -141,6 +142,14 @@ API_CONFIG = dict(
         fallback=(env_fallback, ['OP_CONNECT_TOKEN']),
         no_log=True
     ),
+)
+
+# SERVICE_ACCOUNT_CONFIG config options for all modules
+SERVICE_ACCOUNT_CONFIG = dict(
+    service_account_token=dict(
+        fallback=(env_fallback, ['OP_SERVICE_ACCOUNT_TOKEN']),
+        no_log=True
+    )
 )
 
 # User-configurable attributes for one or more fields on an Item
