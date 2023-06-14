@@ -82,9 +82,8 @@ field:
         sample: "fb3b40ac85f5435d26e"
 '''
 
-from ansible.module_utils.six import text_type
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.onepassword.connect.plugins.module_utils import specs, api, errors, fields, util
+from ansible_collections.onepassword.connect.plugins.module_utils import specs, api, errors, util, op
 from ansible.module_utils.common.text.converters import to_native
 
 
@@ -190,27 +189,43 @@ def main():
         supports_check_mode=True
     )
 
-    api_client = api.create_client(module)
-
+    hostname = module.params.get("hostname")
+    token = module.params.get("token")
+    service_account_token = module.params.get("service_account_token")
     field_label = module.params.get("field")
     vault_id = module.params.get("vault")
     item_id = module.params.get("item")
     section_label = module.params.get("section")
 
-    if not api.valid_client_uuid(vault_id):
-        module.fail_json({"field": {}, "msg": "Vault ID invalid or undefined."})
+    if (not hostname or not token) and not service_account_token:
+        module.fail_json({"field": {}, "msg": "Connect or Service Accounts credentials not defined"})
         return
 
-    try:
-        item = get_item(vault_id, item_id, api_client)
-        field = find_field(field_label, item, section=section_label)
-        result.update({"field": _to_field_info(field)})
-    except errors.NotFoundError as e:
-        result.update({"msg": to_native("Field not found: {err}".format(err=e))})
-        module.fail_json(**result)
-    except errors.Error as e:
-        result.update({"msg": to_native(e)})
-        module.fail_json(**result)
+    if hostname and token:
+        if not api.valid_client_uuid(vault_id):
+            module.fail_json({"field": {}, "msg": "Vault ID invalid or undefined."})
+            return
+
+        try:
+            api_client = api.create_client(module)
+            item = get_item(vault_id, item_id, api_client)
+            field = find_field(field_label, item, section=section_label)
+            result.update({"field": _to_field_info(field)})
+        except errors.NotFoundError as e:
+            result.update({"msg": to_native("Field not found: {err}".format(err=e))})
+            module.fail_json(**result)
+        except errors.Error as e:
+            result.update({"msg": to_native(e)})
+            module.fail_json(**result)
+    else:
+        try:
+            op_cli = op.OpCLI(service_account_token)
+            item = op_cli.item_get(item_id, vault_id)
+            field = find_field(field_label, item, section=section_label)
+            result.update({"field": _to_field_info(field)})
+        except:
+            result.update({"msg": "Failed to get item using service accounts"})
+            module.fail_json(**result)
 
     module.exit_json(**result)
 

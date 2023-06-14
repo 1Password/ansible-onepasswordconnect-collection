@@ -109,7 +109,8 @@ def op_field_info():
             type="str"
         )
     )
-    field_spec.update(common_options())
+    for option in common_options():
+        field_spec.update(option)
     return field_spec
 
 

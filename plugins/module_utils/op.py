@@ -11,9 +11,6 @@ class OpCLI:
     def item_get(self, item: str, vault: str):
         return self._execute_command(["op", "item", "get", item, "--vault", vault, "--format=json"])
 
-    def field_info(self):
-        pass
-
     def generic_item(self):
         pass
 
