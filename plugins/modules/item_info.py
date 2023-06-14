@@ -164,7 +164,7 @@ field:
 '''
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.onepassword.connect.plugins.module_utils import specs, api, errors, fields, util
+from ansible_collections.onepassword.connect.plugins.module_utils import specs, api, errors, fields, util, op
 from ansible.module_utils.common.text.converters import to_native
 
 
@@ -232,26 +232,41 @@ def main():
         supports_check_mode=True,
     )
 
-    api_client = api.create_client(module)
+    hostname = module.params.get("hostname")
+    token = module.params.get("token")
+    service_account_token = module.params.get("service_account_token")
     field_label = module.params.get("field")
     flatten_fields_by_label = module.params.get("flatten_fields_by_label")
     vault = module.params.get("vault")
     # Either the item's label or its UUID
     item_identifier = module.params.get("item")
 
-    try:
-        item = _try_get_item(api_client, item_identifier, vault)
-    except errors.NotFoundError:
-        module.fail_json(**to_result(msg="Item not found"))
+    if (not hostname or not token) and not service_account_token:
+        module.fail_json(**to_result(msg="Connect or Service Accounts credentials not defined"))
         return
-    except TypeError as e:
-        module.fail_json(**to_result(
-            msg="Invalid Item config: {err}".format(err=e))
-        )
-        return
-    except errors.Error as e:
-        module.fail_json(**to_result(msg=e.message))
-        return
+
+    if hostname and token:
+        api_client = api.create_client(module)
+        try:
+            item = _try_get_item(api_client, item_identifier, vault)
+        except errors.NotFoundError:
+            module.fail_json(**to_result(msg="Item not found"))
+            return
+        except TypeError as e:
+            module.fail_json(**to_result(
+                msg="Invalid Item config: {err}".format(err=e))
+            )
+            return
+        except errors.Error as e:
+            module.fail_json(**to_result(msg=e.message))
+            return
+    else:
+        try:
+            op_cli = op.OpCLI(service_account_token)
+            item = op_cli.item_get(item_identifier, vault)
+        except:
+            module.fail_json(**to_result(msg="Failed to get item using service accounts"))
+            return
 
     if field_label:
         field = _find_item_field(item, field_label)
