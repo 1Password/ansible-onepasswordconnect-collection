@@ -1,4 +1,4 @@
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
@@ -6,7 +6,11 @@ from collections import namedtuple
 from uuid import uuid4
 
 from ansible.module_utils.common.dict_transformations import recursive_diff
-from ansible_collections.onepassword.connect.plugins.module_utils import errors, fields, const
+from ansible_collections.onepassword.connect.plugins.module_utils import (
+    errors,
+    fields,
+    const,
+)
 
 Section = namedtuple("Section", ["id", "label"])
 
@@ -59,7 +63,7 @@ def create_item(params, api_client, check_mode=False):
         urls=params.get("urls"),
         favorite=params.get("favorite"),
         fieldset=item_fields,
-        tags=params.get("tags")
+        tags=params.get("tags"),
     )
 
     if check_mode:
@@ -89,8 +93,7 @@ def update_item(params, original_item, api_client, check_mode=False):
         raise errors.MissingVaultID("Original item missing Vault ID")
 
     item_fields = fields.create(
-        params.get("fields"),
-        previous_fields=original_item.get("fields")
+        params.get("fields"), previous_fields=original_item.get("fields")
     )
 
     updated_item = assemble_item(
@@ -100,12 +103,14 @@ def update_item(params, original_item, api_client, check_mode=False):
         urls=params.get("urls"),
         favorite=params.get("favorite"),
         tags=params.get("tags"),
-        fieldset=item_fields
+        fieldset=item_fields,
     )
 
-    updated_item.update({
-        "id": original_item["id"],
-    })
+    updated_item.update(
+        {
+            "id": original_item["id"],
+        }
+    )
     changed = recursive_diff(original_item, updated_item)
 
     if not bool(changed):
@@ -150,13 +155,13 @@ def delete_item(item, api_client, check_mode=False):
 
 
 def assemble_item(
-        vault_id,
-        category,
-        title=None,
-        urls=None,
-        tags=None,
-        favorite=None,
-        fieldset=None,
+    vault_id,
+    category,
+    title=None,
+    urls=None,
+    tags=None,
+    favorite=None,
+    fieldset=None,
 ):
     """
     Create a serialized Item from the given module parameters
@@ -179,7 +184,7 @@ def assemble_item(
         "urls": [{"href": url} for url in urls or []],
         "tags": tags or [],
         "fields": [],
-        "favorite": bool(favorite)
+        "favorite": bool(favorite),
     }
 
     sections = {}
@@ -194,13 +199,14 @@ def assemble_item(
                 section_name = field["section"].strip()
 
                 section = sections.setdefault(
-                    section_name,
-                    Section(id=str(uuid4()), label=section_name)
+                    section_name, Section(id=str(uuid4()), label=section_name)
                 )
 
-            field.update({
-                "section": {"id": section.id} if section else None,
-            })
+            field.update(
+                {
+                    "section": {"id": section.id} if section else None,
+                }
+            )
 
             item["fields"].append(field)
 
@@ -225,25 +231,30 @@ def _prepare_fields(fields, item_category):
             if primary_username_set:
                 # Primary username may only be set once per item
                 raise errors.PrimaryUsernameAlreadyExists(
-                    "Item type {0} may only have one (1) 'username' field".format(item_category)
+                    "Item type {0} may only have one (1) 'username' field".format(
+                        item_category
+                    )
                 )
             primary_username_set = True
 
         if field_purpose == const.PURPOSE_PASSWORD:
             if primary_password_set:
                 raise errors.PrimaryPasswordAlreadyExists(
-                    "Item type {0} may only have one (1) 'password' field".format(item_category))
+                    "Item type {0} may only have one (1) 'password' field".format(
+                        item_category
+                    )
+                )
             primary_password_set = True
 
-        field.update({
-            "purpose": field_purpose
-        })
+        field.update({"purpose": field_purpose})
 
         yield field
 
     if item_category == const.ItemType.PASSWORD and not primary_password_set:
         raise errors.PrimaryPasswordUndefined(
-            "Item type {0} requires a 'concealed' field named 'password'.".format(item_category)
+            "Item type {0} requires a 'concealed' field named 'password'.".format(
+                item_category
+            )
         )
 
 

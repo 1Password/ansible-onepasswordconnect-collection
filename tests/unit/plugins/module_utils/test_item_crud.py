@@ -1,4 +1,4 @@
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
@@ -12,7 +12,7 @@ def test_create_item(mocker):
         "vault_id": "Abc123",
         "category": const.ItemType.API_CREDENTIAL,
         "name": "My New Item",
-        "favorite": True
+        "favorite": True,
     }
 
     mock_item = dict(params)
@@ -35,7 +35,7 @@ def test_check_mode(mocker):
         "vault_id": vault_id,
         "category": const.ItemType.API_CREDENTIAL,
         "name": "My New Item",
-        "favorite": True
+        "favorite": True,
     }
     modified, item = vault.create_item(create_item_params, mock_api, check_mode=True)
     assert modified
@@ -47,12 +47,16 @@ def test_check_mode(mocker):
     update_params = dict(create_item_params)
     update_params.update({"vault_id": vault_id, "name": "UPDATED Title"})
 
-    modified, updated_item = vault.update_item(update_params, item, mock_api, check_mode=True)
+    modified, updated_item = vault.update_item(
+        update_params, item, mock_api, check_mode=True
+    )
     assert modified
     assert mock_api.update_item.mock_calls == []
     assert updated_item["title"] == update_params["name"]
 
-    modified, delete_response = vault.delete_item(updated_item, mock_api, check_mode=True)
+    modified, delete_response = vault.delete_item(
+        updated_item, mock_api, check_mode=True
+    )
     assert modified
     assert delete_response == {}
     assert mock_api.delete_item.mock_calls == []
@@ -63,14 +67,16 @@ def test_delete_item(mocker):
         "id": "xyz9876",
         "vault": {"id": "ABC123"},
         "category": const.ItemType.PASSWORD,
-        "title": "My New Item"
+        "title": "My New Item",
     }
     mock_api = mocker.Mock()
 
     modified, new_item = vault.delete_item(item, mock_api)
 
     assert modified is True
-    mock_api.delete_item.assert_called_once_with(item["vault"]["id"], item_id=item["id"])
+    mock_api.delete_item.assert_called_once_with(
+        item["vault"]["id"], item_id=item["id"]
+    )
 
 
 def test_delete_item_when_does_not_exist(mocker):
@@ -90,7 +96,7 @@ def test_update_item(mocker):
         "vault": {"id": vault_id},
         "title": "BEFORE_NAME",
         "category": const.ItemType.PASSWORD,
-        "favorite": True
+        "favorite": True,
     }
 
     params = {
@@ -103,9 +109,9 @@ def test_update_item(mocker):
             {
                 "label": "Password",
                 "value": "hunter2",
-                "field_type": const.FieldType.CONCEALED
+                "field_type": const.FieldType.CONCEALED,
             }
-        ]
+        ],
     }
 
     mock_api = mocker.Mock()
@@ -115,7 +121,7 @@ def test_update_item(mocker):
         "title": params["title"],
         "fields": params["fields"],
         "category": params["category"],
-        "favorite": params["favorite"]
+        "favorite": params["favorite"],
     }
 
     modified, updated_item = vault.update_item(params, original_item, mock_api)

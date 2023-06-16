@@ -1,10 +1,15 @@
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
 import pytest
 
-from ansible_collections.onepassword.connect.plugins.module_utils import vault, fields, const, errors
+from ansible_collections.onepassword.connect.plugins.module_utils import (
+    vault,
+    fields,
+    const,
+    errors,
+)
 
 
 def test_field_creation_defaults():
@@ -12,7 +17,7 @@ def test_field_creation_defaults():
         "field_type": const.FieldType.STRING,
         "label": "Test Item",
         "value": "MySecretValue",
-        "generate_value": "never"
+        "generate_value": "never",
     }
 
     field = list(fields.create([params])).pop()
@@ -31,9 +36,11 @@ def test_field_minimum_config():
     with pytest.raises(TypeError):
         list(fields.create(incomplete_field_defn))
 
-    field_defns = [{
-        "field_type": const.FieldType.STRING,
-    }]
+    field_defns = [
+        {
+            "field_type": const.FieldType.STRING,
+        }
+    ]
 
     field = list(fields.create(field_defns)).pop()
 
@@ -49,10 +56,7 @@ def test_field_value_generation_config_generate_is_false():
         "field_type": const.FieldType.STRING,
         "value": "MySecretValue",
         "generate_value": const.GENERATE_NEVER,
-        "generator_recipe": {
-            "length": 6,
-            "include_letters": False
-        }
+        "generator_recipe": {"length": 6, "include_letters": False},
     }
 
     field = list(fields.create([field_params])).pop()
@@ -68,9 +72,7 @@ def test_field_value_generation_config_generate_is_true():
         "item_type": "login",
         "value": "MySecretValue",
         "generate_value": const.GENERATE_ALWAYS,
-        "generator_recipe": {
-            "length": 6
-        }
+        "generator_recipe": {"length": 6},
     }
 
     field = list(fields.create([field_params])).pop()
@@ -83,16 +85,18 @@ def test_field_value_generation_config_generate_is_true():
 
 
 def test_field_value_generation_character_settings():
-    params = [{
-        "field_type": const.FieldType.STRING,
-        "generate_value": const.GENERATE_ALWAYS,
-        "generator_recipe": {
-            "length": 6,
-            "include_letters": True,
-            "include_symbols": False,
-            "include_digits": None  # setting to None will NOT exclude the charset
+    params = [
+        {
+            "field_type": const.FieldType.STRING,
+            "generate_value": const.GENERATE_ALWAYS,
+            "generator_recipe": {
+                "length": 6,
+                "include_letters": True,
+                "include_symbols": False,
+                "include_digits": None,  # setting to None will NOT exclude the charset
+            },
         }
-    }]
+    ]
 
     field = list(fields.create(params)).pop()
 
@@ -105,10 +109,7 @@ def test_item_creation_minimum_values():
     item_category = const.ItemType.API_CREDENTIAL
     vault_id = "abc123"
 
-    item = vault.assemble_item(
-        vault_id=vault_id,
-        category=item_category
-    )
+    item = vault.assemble_item(vault_id=vault_id, category=item_category)
 
     assert item["title"] is None
     assert item["vault"]["id"] == vault_id
@@ -135,23 +136,21 @@ def test_item_with_fields_in_sections():
             "section": sections[1],
             "value": "test2",
             "generate_field": const.GENERATE_NEVER,
-            "type": const.FieldType.CONCEALED
+            "type": const.FieldType.CONCEALED,
         },
         {
             "label": "Example 3",
             "section": sections[0],
             "type": const.FieldType.STRING,
             "generate_field": const.GENERATE_NEVER,
-        }
+        },
     ]
 
     item_category = "custom"
     vault_id = "abc123"
 
     item = vault.assemble_item(
-        vault_id=vault_id,
-        category=item_category,
-        fieldset=fieldset
+        vault_id=vault_id, category=item_category, fieldset=fieldset
     )
 
     assert item.get("sections") is not None
@@ -163,22 +162,26 @@ def test_item_with_fields_in_sections():
 
 
 def test_field_value_generation_on_create_only():
-    previous_fields = [{
-        "label": "EXAMPLE 123",
-        "value": "example/value/test",
-        "type": const.FieldType.STRING,
-    }]
-
-    params = [{
-        "label": "EXAMPLE 123",
-        "field_type": const.FieldType.STRING,
-        "generate_value": const.GENERATE_ON_CREATE,
-        "generator_recipe": {
-            "length": 6,
-            "include_letters": True,
-            "include_symbols": False,
+    previous_fields = [
+        {
+            "label": "EXAMPLE 123",
+            "value": "example/value/test",
+            "type": const.FieldType.STRING,
         }
-    }]
+    ]
+
+    params = [
+        {
+            "label": "EXAMPLE 123",
+            "field_type": const.FieldType.STRING,
+            "generate_value": const.GENERATE_ON_CREATE,
+            "generator_recipe": {
+                "length": 6,
+                "include_letters": True,
+                "include_symbols": False,
+            },
+        }
+    ]
 
     field = list(fields.create(params, previous_fields=previous_fields)).pop()
 
@@ -186,18 +189,22 @@ def test_field_value_generation_on_create_only():
 
 
 def test_notes_field_is_unchanged():
-    previous_fields = [{
-        "id": "123xyz",
-        "label": const.NOTES_FIELD_LABEL,
-        "type": const.FieldType.STRING,
-        "value": "i am a note field"
-    }]
+    previous_fields = [
+        {
+            "id": "123xyz",
+            "label": const.NOTES_FIELD_LABEL,
+            "type": const.FieldType.STRING,
+            "value": "i am a note field",
+        }
+    ]
 
-    params = [{
-        "label": const.NOTES_FIELD_LABEL,
-        "field_type": const.FieldType.CONCEALED,
-        "value": "updated notes field value"
-    }]
+    params = [
+        {
+            "label": const.NOTES_FIELD_LABEL,
+            "field_type": const.FieldType.CONCEALED,
+            "value": "updated notes field value",
+        }
+    ]
 
     field = list(fields.create(params, previous_fields=previous_fields)).pop()
 
@@ -208,44 +215,74 @@ def test_notes_field_is_unchanged():
 
 FIELD_PURPOSE_TESTCASES = [
     pytest.param(
-        const.ItemType.API_CREDENTIAL, "xyz", const.FieldType.STRING, const.PURPOSE_NONE, id="default_field_purpose"
+        const.ItemType.API_CREDENTIAL,
+        "xyz",
+        const.FieldType.STRING,
+        const.PURPOSE_NONE,
+        id="default_field_purpose",
     ),
     pytest.param(
-        const.ItemType.PASSWORD, "password", const.FieldType.CONCEALED, const.PURPOSE_PASSWORD,
-        id="primary_password_for_password_item"
+        const.ItemType.PASSWORD,
+        "password",
+        const.FieldType.CONCEALED,
+        const.PURPOSE_PASSWORD,
+        id="primary_password_for_password_item",
     ),
     pytest.param(
-        const.ItemType.SERVER, "password", const.FieldType.CONCEALED, const.PURPOSE_NONE,
-        id="item_type_does_not_use_password_field_purpose"
+        const.ItemType.SERVER,
+        "password",
+        const.FieldType.CONCEALED,
+        const.PURPOSE_NONE,
+        id="item_type_does_not_use_password_field_purpose",
     ),
     pytest.param(
-        const.ItemType.SERVER, "username", const.FieldType.STRING, const.PURPOSE_NONE,
-        id="item_type_does_not_use_username_field_purpose"
+        const.ItemType.SERVER,
+        "username",
+        const.FieldType.STRING,
+        const.PURPOSE_NONE,
+        id="item_type_does_not_use_username_field_purpose",
     ),
     pytest.param(
-        const.ItemType.LOGIN, "password", const.FieldType.CONCEALED, const.PURPOSE_PASSWORD,
+        const.ItemType.LOGIN,
+        "password",
+        const.FieldType.CONCEALED,
+        const.PURPOSE_PASSWORD,
         id="primary_password_for_login_item",
     ),
     pytest.param(
-        const.ItemType.LOGIN, "username", const.FieldType.STRING, const.PURPOSE_USERNAME,
+        const.ItemType.LOGIN,
+        "username",
+        const.FieldType.STRING,
+        const.PURPOSE_USERNAME,
         id="primary_username_for_login_item",
     ),
     pytest.param(
-        const.ItemType.LOGIN, "password", const.FieldType.STRING, const.PURPOSE_NONE,
+        const.ItemType.LOGIN,
+        "password",
+        const.FieldType.STRING,
+        const.PURPOSE_NONE,
         id="wrong_field_type_for_login_item_primary_password",
     ),
     pytest.param(
-        const.ItemType.LOGIN, "username", const.FieldType.OTP, const.PURPOSE_NONE,
+        const.ItemType.LOGIN,
+        "username",
+        const.FieldType.OTP,
+        const.PURPOSE_NONE,
         id="wrong_field_type_for_login_item_primary_username",
     ),
     pytest.param(
-        const.ItemType.API_CREDENTIAL, const.NOTES_FIELD_LABEL, const.FieldType.STRING, const.PURPOSE_NOTES,
-        id="notes_field_is_assigned_notes_purpose"
+        const.ItemType.API_CREDENTIAL,
+        const.NOTES_FIELD_LABEL,
+        const.FieldType.STRING,
+        const.PURPOSE_NOTES,
+        id="notes_field_is_assigned_notes_purpose",
     ),
 ]
 
 
-@pytest.mark.parametrize("item_type,label,field_type,expected_purpose", FIELD_PURPOSE_TESTCASES)
+@pytest.mark.parametrize(
+    "item_type,label,field_type,expected_purpose", FIELD_PURPOSE_TESTCASES
+)
 def test_field_purpose_assignment(item_type, label, field_type, expected_purpose):
     """Assert field purpose is set when item type and field type meet criteria"""
 
@@ -257,11 +294,7 @@ def test_field_purpose_assignment(item_type, label, field_type, expected_purpose
         },
     ]
 
-    item = vault.assemble_item(
-        vault_id="1234xyz",
-        category=item_type,
-        fieldset=fields
-    )
+    item = vault.assemble_item(vault_id="1234xyz", category=item_type, fieldset=fields)
 
     assert len(item["fields"])
     assert item["fields"][0]["purpose"] == expected_purpose
@@ -288,7 +321,7 @@ def test_username_and_password_purpose_is_limited_to_one_field():
         vault.assemble_item(
             vault_id="1234xyz",
             category=const.ItemType.PASSWORD,
-            fieldset=two_primary_password_fields
+            fieldset=two_primary_password_fields,
         )
 
     two_primary_username_fields = [
@@ -308,7 +341,7 @@ def test_username_and_password_purpose_is_limited_to_one_field():
         vault.assemble_item(
             vault_id="1234xyz",
             category=const.ItemType.LOGIN,
-            fieldset=two_primary_username_fields
+            fieldset=two_primary_username_fields,
         )
 
 
@@ -331,7 +364,5 @@ def test_password_item_type_requires_primary_password():
 
     with pytest.raises(errors.PrimaryPasswordUndefined):
         vault.assemble_item(
-            vault_id="1234xyz",
-            category=const.ItemType.PASSWORD,
-            fieldset=fields
+            vault_id="1234xyz", category=const.ItemType.PASSWORD, fieldset=fields
         )

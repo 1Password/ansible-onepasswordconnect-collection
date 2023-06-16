@@ -24,6 +24,12 @@ build: clean	## Build collection artifact
 clean:	## Removes dist/ directory
 	@rm -rf ./dist
 
+format: ## Run black to format the code according to PEP 8 style https://black.readthedocs.io/en/stable/the_black_code_style/index.html
+	black .
+
+check-formatting: ## Run black to check code formatting
+	black . --check
+
 help:	## Prints this help message
 	@grep -E '^[\/a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 

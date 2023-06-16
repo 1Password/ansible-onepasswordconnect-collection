@@ -3,11 +3,11 @@
 #
 # (c) 2021, 1Password & Agilebits (@1Password)
 
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 module: generic_item
 author:
   - 1Password (@1Password)
@@ -167,9 +167,9 @@ extends_documentation_fragment:
   - onepassword.connect.item_tags
   - onepassword.connect.item_state
   - onepassword.connect.api_params
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 - name: Create an Item with no fields
   onepassword.connect.generic_item:
     title: Example Item
@@ -239,9 +239,9 @@ EXAMPLES = '''
     title: Club Membership
     state: absent
   no_log: true
-'''
+"""
 
-RETURN = '''
+RETURN = """
 op_item:
   description: >
     Dictionary containing Item properties or an empty dictionary if I(state=absent).
@@ -298,24 +298,25 @@ msg:
     type: str
     returned: failure
     sample: Invalid Vault ID
-'''
+"""
 
 from ansible.module_utils.common.text.converters import to_native
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.onepassword.connect.plugins.module_utils import specs, api, vault, errors
+from ansible_collections.onepassword.connect.plugins.module_utils import (
+    specs,
+    api,
+    vault,
+    errors,
+)
 
 
 def main():
     # Name always required when creating a new Item
-    required_if = [
-        ("state", "present", ("name",))
-    ]
+    required_if = [("state", "present", ("name",))]
 
     module = AnsibleModule(
-        argument_spec=specs.op_item(),
-        supports_check_mode=True,
-        required_if=required_if
+        argument_spec=specs.op_item(), supports_check_mode=True, required_if=required_if
     )
 
     results = {"op_item": {}, "changed": False}
@@ -330,23 +331,16 @@ def main():
 
         if state == "absent":
             changed, api_response = vault.delete_item(
-                item,
-                api_client,
-                check_mode=module.check_mode
+                item, api_client, check_mode=module.check_mode
             )
         else:
             if not item:
                 changed, api_response = vault.create_item(
-                    module.params,
-                    api_client,
-                    check_mode=module.check_mode
+                    module.params, api_client, check_mode=module.check_mode
                 )
             else:
                 changed, api_response = vault.update_item(
-                    module.params,
-                    item,
-                    api_client,
-                    check_mode=module.check_mode
+                    module.params, item, api_client, check_mode=module.check_mode
                 )
     except TypeError as e:
         results.update({"msg": to_native("Invalid Item config: {err}".format(err=e))})
@@ -359,5 +353,5 @@ def main():
     module.exit_json(**results)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

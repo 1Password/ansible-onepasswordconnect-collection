@@ -9,7 +9,9 @@ class OpCLI:
         self._set_service_account_token(service_account_token)
 
     def item_get(self, item: str, vault: str):
-        return self._execute_command(["op", "item", "get", item, "--vault", vault, "--format=json"])
+        return self._execute_command(
+            ["op", "item", "get", item, "--vault", vault, "--format=json"]
+        )
 
     def generic_item(self):
         pass
@@ -19,5 +21,7 @@ class OpCLI:
         self.env["OP_SERVICE_ACCOUNT"] = service_account_token
 
     def _execute_command(self, command_args: list[str]):
-        result = subprocess.run(command_args, check=True, capture_output=True, env=self.env)
+        result = subprocess.run(
+            command_args, check=True, capture_output=True, env=self.env
+        )
         return json.loads(result.stdout)

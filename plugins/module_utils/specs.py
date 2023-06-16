@@ -1,4 +1,4 @@
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
@@ -23,14 +23,8 @@ def op_item():
     :return dict
     """
     item_spec = dict(
-        vault_id=dict(
-            required=True,
-            fallback=(env_fallback, ['OP_VAULT_ID'])
-        ),
-        name=dict(
-            type="str",
-            aliases=["title"]
-        ),
+        vault_id=dict(required=True, fallback=(env_fallback, ["OP_VAULT_ID"])),
+        name=dict(type="str", aliases=["title"]),
         uuid=dict(
             type="str",
         ),
@@ -39,21 +33,11 @@ def op_item():
             default=const.ItemType.API_CREDENTIAL.lower(),
             choices=const.ItemType.choices(),
         ),
-        urls=dict(
-            type="list",
-            elements="str"
-        ),
-        favorite=dict(
-            type="bool",
-            default=False
-        ),
-        fields=dict(
-            type="list",
-            elements="dict",
-            options=FIELD
-        ),
+        urls=dict(type="list", elements="str"),
+        favorite=dict(type="bool", default=False),
+        fields=dict(type="list", elements="dict", options=FIELD),
         tags=TAGS,
-        state=STATE
+        state=STATE,
     )
     item_spec.update(common_options())
     return item_spec
@@ -64,23 +48,15 @@ def op_item_info():
     :return dict
     """
     item_spec = dict(
-        item=dict(
-            type="str",
-            required=True
-        ),
-        flatten_fields_by_label=dict(
-            type="bool",
-            default=True
-        ),
+        item=dict(type="str", required=True),
+        flatten_fields_by_label=dict(type="bool", default=True),
         # Direct users to field_info module instead
         field=dict(
             type="str",
             removed_from_collection="onepassword.connect",
             removed_in_version="3.0.0",
         ),
-        vault=dict(
-            type="str"
-        )
+        vault=dict(type="str"),
     )
     for option in common_options():
         item_spec.update(option)
@@ -93,21 +69,13 @@ def op_field_info():
     :return: dict
     """
     field_spec = dict(
-        item=dict(
-            type="str",
-            required=True
-        ),
-        field=dict(
-            type="str",
-            required=True
-        ),
+        item=dict(type="str", required=True),
+        field=dict(type="str", required=True),
         vault=dict(
             type="str",
             required=True,
         ),
-        section=dict(
-            type="str"
-        )
+        section=dict(type="str"),
     )
     for option in common_options():
         field_spec.update(option)
@@ -116,10 +84,7 @@ def op_field_info():
 
 # Configuration for the "Secure Password/Value Generator"
 GENERATOR_RECIPE_OPTIONS = dict(
-    length=dict(
-        type="int",
-        default=32
-    ),
+    length=dict(type="int", default=32),
     include_digits=dict(
         type="bool",
         default=True,
@@ -136,20 +101,14 @@ GENERATOR_RECIPE_OPTIONS = dict(
 
 # API config options for all modules
 API_CONFIG = dict(
-    hostname=dict(
-        fallback=(env_fallback, ['OP_CONNECT_HOST'])
-    ),
-    token=dict(
-        fallback=(env_fallback, ['OP_CONNECT_TOKEN']),
-        no_log=True
-    ),
+    hostname=dict(fallback=(env_fallback, ["OP_CONNECT_HOST"])),
+    token=dict(fallback=(env_fallback, ["OP_CONNECT_TOKEN"]), no_log=True),
 )
 
 # SERVICE_ACCOUNT_CONFIG config options for all modules
 SERVICE_ACCOUNT_CONFIG = dict(
     service_account_token=dict(
-        fallback=(env_fallback, ['OP_SERVICE_ACCOUNT_TOKEN']),
-        no_log=True
+        fallback=(env_fallback, ["OP_SERVICE_ACCOUNT_TOKEN"]), no_log=True
     )
 )
 
@@ -162,30 +121,20 @@ FIELD = dict(
         type="str",
         default="string",
         choices=const.FieldType.choices(),
-        aliases=["type"]
+        aliases=["type"],
     ),
     generate_value=dict(
         type="str",
         default=const.GENERATE_NEVER,
-        choices=list(const.GENERATE_VALUE_CHOICES)
+        choices=list(const.GENERATE_VALUE_CHOICES),
     ),
-    generator_recipe=dict(
-        type="dict",
-        options=GENERATOR_RECIPE_OPTIONS
-    )
+    generator_recipe=dict(type="dict", options=GENERATOR_RECIPE_OPTIONS),
 )
 #############################################
 # Common attributes
 #############################################
 # Resource Create/Update/Delete statuses
-STATE = dict(
-    type="str",
-    default="present",
-    choices=["present", "absent"]
-)
+STATE = dict(type="str", default="present", choices=["present", "absent"])
 
 # 1Password item tags
-TAGS = dict(
-    type="list",
-    elements="str"
-)
+TAGS = dict(type="list", elements="str")

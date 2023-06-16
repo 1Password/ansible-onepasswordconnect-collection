@@ -1,4 +1,4 @@
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
@@ -11,18 +11,23 @@ import re
 
 from urllib.error import HTTPError
 from ansible.module_utils.urls import fetch_url
-from ansible.module_utils.six.moves.urllib.parse import urlencode, quote, urlunparse, urlparse
+from ansible.module_utils.six.moves.urllib.parse import (
+    urlencode,
+    quote,
+    urlunparse,
+    urlparse,
+)
 from ansible_collections.onepassword.connect.plugins.module_utils import errors, const
 
 
 def create_client(module):
     if not module.params.get("hostname") or not module.params.get("token"):
-        raise errors.AccessDeniedError(message="Server hostname or auth token not defined")
+        raise errors.AccessDeniedError(
+            message="Server hostname or auth token not defined"
+        )
 
     return OnePassword(
-        hostname=module.params["hostname"],
-        token=module.params["token"],
-        module=module
+        hostname=module.params["hostname"], token=module.params["token"], module=module
     )
 
 
@@ -36,12 +41,14 @@ class OnePassword:
         self._user_agent = _format_user_agent(
             const.COLLECTION_VERSION,
             python_version=".".join(str(i) for i in sys.version_info[:3]),
-            ansible_version=self._module.ansible_version
+            ansible_version=self._module.ansible_version,
         )
 
     def _send_request(self, path, method="GET", data=None, params=None):
         fetch_kwargs = {
-            "url": build_endpoint(self.hostname, path, params=params, api_version=self.API_VERSION),
+            "url": build_endpoint(
+                self.hostname, path, params=params, api_version=self.API_VERSION
+            ),
             "method": method,
             "headers": self._build_headers(),
         }
@@ -70,11 +77,13 @@ class OnePassword:
             "Authorization": "Bearer {token}".format(token=self.token),
             "User-Agent": self._user_agent,
             "Content-Type": "application/json",
-            "Accept": "application/json"
+            "Accept": "application/json",
         }
 
     def get_item_by_id(self, vault_id, item_id):
-        path = "/vaults/{vault_id}/items/{item_id}".format(vault_id=vault_id, item_id=item_id)
+        path = "/vaults/{vault_id}/items/{item_id}".format(
+            vault_id=vault_id, item_id=item_id
+        )
         return self._send_request(path)
 
     def get_item_by_name(self, vault_id, item_name):
@@ -91,11 +100,15 @@ class OnePassword:
         return self._send_request(path, method="POST", data=item)
 
     def update_item(self, vault_id, item):
-        path = "/vaults/{vault_id}/items/{item_id}".format(vault_id=item["vault"]["id"], item_id=item["id"])
+        path = "/vaults/{vault_id}/items/{item_id}".format(
+            vault_id=item["vault"]["id"], item_id=item["id"]
+        )
         return self._send_request(path, method="PUT", data=item)
 
     def delete_item(self, vault_id, item_id):
-        path = "/vaults/{vault_id}/items/{item_id}".format(vault_id=vault_id, item_id=item_id)
+        path = "/vaults/{vault_id}/items/{item_id}".format(
+            vault_id=vault_id, item_id=item_id
+        )
         return self._send_request(path, method="DELETE")
 
     def get_vaults(self):
@@ -149,8 +162,7 @@ def build_endpoint(hostname, path, params=None, api_version=None):
 
     # Path _may_ have a space in it if client passes item name, for example
     url_parts[2] = "{api_version}/{path}".format(
-        api_version=api_version,
-        path=quote(path.strip('/'))
+        api_version=api_version, path=quote(path.strip("/"))
     )
     if params:
         url_parts[4] = urlencode(params)
@@ -162,13 +174,13 @@ def raise_for_error(response_info):
         response_info_body = json.loads(response_info.get("body").decode("utf-8"))
         err_details = {
             "message": response_info_body.get("message"),
-            "status_code": response_info_body.get("status")
+            "status_code": response_info_body.get("status"),
         }
     except (AttributeError, ValueError):
         # `body` key not present if urllib throws an error ansible doesn't handle
         err_details = {
             "message": response_info.get("msg", "Error not defined"),
-            "status_code": response_info.get("status")
+            "status_code": response_info.get("status"),
         }
 
     if err_details["status_code"] >= 500:
@@ -187,7 +199,7 @@ def _format_user_agent(collection_version, python_version=None, ansible_version=
     return "op-connect-ansible/{version} Python/{py_version} Ansible/{ansible}".format(
         version=collection_version,
         py_version=python_version or "unknown",
-        ansible=ansible_version or "unknown"
+        ansible=ansible_version or "unknown",
     )
 
 

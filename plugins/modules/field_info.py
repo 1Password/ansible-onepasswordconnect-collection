@@ -3,11 +3,11 @@
 #
 # (c) 2021, 1Password & Agilebits (@1Password)
 
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 module: field_info
 author:
   - 1Password (@1Password)
@@ -44,9 +44,9 @@ options:
 
 extends_documentation_fragment:
   - onepassword.connect.api_params
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 ---
 - name: Find a field labeled "username" in an item named "MySQL Database" in a specific vault.
   onepassword.connect.field_info:
@@ -60,9 +60,9 @@ EXAMPLES = '''
     section: Credentials
     field: username
     vault: 2zbeu4smcibizsuxmyvhdh57b6
-'''
+"""
 
-RETURN = '''
+RETURN = """
 field:
     description: The value and metadata of the field
     type: complex
@@ -80,10 +80,16 @@ field:
         returned: success
         description: UUID for the returned field
         sample: "fb3b40ac85f5435d26e"
-'''
+"""
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.onepassword.connect.plugins.module_utils import specs, api, errors, util, op
+from ansible_collections.onepassword.connect.plugins.module_utils import (
+    specs,
+    api,
+    errors,
+    util,
+    op,
+)
 from ansible.module_utils.common.text.converters import to_native
 
 
@@ -135,8 +141,7 @@ def _find_field_by_label(field_label, fields, section_id=None):
         if section_id is None and label == wanted_label:
             return field
 
-        if field.get("section", {}).get("id") == section_id \
-                and label == wanted_label:
+        if field.get("section", {}).get("id") == section_id and label == wanted_label:
             return field
 
     raise errors.NotFoundError("Field with provided label not found in item")
@@ -144,12 +149,10 @@ def _find_field_by_label(field_label, fields, section_id=None):
 
 def _find_field_by_id(field_id, fields, section_id=None):
     for field in fields:
-
         if section_id is None and field["id"] == field_id:
             return field
 
-        if field.get("section", {}).get("id") == section_id \
-                and field["id"] == field_id:
+        if field.get("section", {}).get("id") == section_id and field["id"] == field_id:
             return field
 
     raise errors.NotFoundError("Field not found in item")
@@ -177,7 +180,7 @@ def _to_field_info(field) -> dict:
     return {
         "value": field.get("value"),
         "section": field.get("section", {}).get("id"),
-        "id": field.get("id")
+        "id": field.get("id"),
     }
 
 
@@ -185,8 +188,7 @@ def main():
     result = {"field": {}}
 
     module = AnsibleModule(
-        argument_spec=specs.op_field_info(),
-        supports_check_mode=True
+        argument_spec=specs.op_field_info(), supports_check_mode=True
     )
 
     hostname = module.params.get("hostname")
@@ -198,7 +200,9 @@ def main():
     section_label = module.params.get("section")
 
     if (not hostname or not token) and not service_account_token:
-        module.fail_json({"field": {}, "msg": "Connect or Service Accounts credentials not defined"})
+        module.fail_json(
+            {"field": {}, "msg": "Connect or Service Accounts credentials not defined"}
+        )
         return
 
     if hostname and token:
@@ -230,5 +234,5 @@ def main():
     module.exit_json(**result)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

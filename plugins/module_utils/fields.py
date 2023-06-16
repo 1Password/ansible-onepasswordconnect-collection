@@ -1,4 +1,4 @@
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
@@ -13,9 +13,11 @@ def field_from_params(field_params, generate_field_value=False):
         "type": field_params["field_type"].upper(),
         "label": field_params.get("label"),
         "section": field_params.get("section"),
-        "recipe": _get_generator_recipe(field_params.get("generator_recipe")) if generate_field_value else None,
+        "recipe": _get_generator_recipe(field_params.get("generator_recipe"))
+        if generate_field_value
+        else None,
         "generate": generate_field_value,
-        "value": None if generate_field_value else field_params.get("value")
+        "value": None if generate_field_value else field_params.get("value"),
     }
 
 
@@ -29,9 +31,7 @@ def create(field_params, previous_fields=None):
 
     # The Notes field should not be editable by Ansible,
     # and the old value is preserved if it exists
-    notes_field = _get_field_by_label(
-        previous_fields, const.NOTES_FIELD_LABEL
-    )
+    notes_field = _get_field_by_label(previous_fields, const.NOTES_FIELD_LABEL)
     if notes_field:
         yield notes_field
 
@@ -44,22 +44,19 @@ def create(field_params, previous_fields=None):
         if params.get("generate_value") == const.GENERATE_ALWAYS:
             should_generate_value = True
         elif params.get("generate_value") == const.GENERATE_ON_CREATE:
-            old_field = _get_field_by_label(
-                previous_fields, params.get("label")
-            )
+            old_field = _get_field_by_label(previous_fields, params.get("label"))
             if not old_field:
                 should_generate_value = True
             else:
-                params.update({
-                    "value": old_field.get("value"),
-                    # Don't allow user to change the preserved value's type
-                    "field_type": old_field.get("type")
-                })
+                params.update(
+                    {
+                        "value": old_field.get("value"),
+                        # Don't allow user to change the preserved value's type
+                        "field_type": old_field.get("type"),
+                    }
+                )
 
-        yield field_from_params(
-            params,
-            generate_field_value=should_generate_value
-        )
+        yield field_from_params(params, generate_field_value=should_generate_value)
 
 
 def _get_field_by_label(fields, label):
@@ -73,10 +70,10 @@ def _get_field_by_label(fields, label):
 
     label = util.utf8_normalize(label)
 
-    return next((
-        field for field in fields
-        if util.utf8_normalize(field.get("label")) == label
-    ), None)
+    return next(
+        (field for field in fields if util.utf8_normalize(field.get("label")) == label),
+        None,
+    )
 
 
 def _get_generator_recipe(config):
@@ -99,10 +96,7 @@ def _get_generator_recipe(config):
     if config.get("include_symbols") is not False:
         character_sets.append("SYMBOLS")
 
-    return dict(
-        length=config["length"],
-        characterSets=character_sets
-    )
+    return dict(length=config["length"], characterSets=character_sets)
 
 
 def flatten_fieldset(fieldset):

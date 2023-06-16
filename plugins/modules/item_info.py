@@ -3,11 +3,11 @@
 #
 # (c) 2021, 1Password & Agilebits (@1Password)
 
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 module: item_info
 author:
   - 1Password (@1Password)
@@ -46,9 +46,9 @@ options:
         - Beginning in C(3.0.0) this setting will default to C(false)
 extends_documentation_fragment:
   - onepassword.connect.api_params
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = """
 ---
 - name: Find and return Item details for "Dev-Database" in vault with ID "2zbeu4smcibizsuxmyvhdh57b6"
   onepassword.connect.item_info:
@@ -87,9 +87,9 @@ EXAMPLES = '''
     item: Business Visa
     vault: Office Expenses
     flatten_fields_by_label: false
-'''
+"""
 
-RETURN = '''
+RETURN = """
 op_item:
   description: Dictionary containing Item properties. See 1Password API specs for complete structure.
   type: complex
@@ -161,10 +161,17 @@ field:
         returned: success
         description: Type identifier for the field
         sample: "concealed"
-'''
+"""
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.onepassword.connect.plugins.module_utils import specs, api, errors, fields, util, op
+from ansible_collections.onepassword.connect.plugins.module_utils import (
+    specs,
+    api,
+    errors,
+    fields,
+    util,
+    op,
+)
 from ansible.module_utils.common.text.converters import to_native
 
 
@@ -214,10 +221,7 @@ def to_result(*, item=None, msg=None, **kwargs):
 
     If provided, the "msg" value is converted to the native text format with to_native.
     """
-    result = {
-        "op_item": item or {},
-        "msg": to_native(msg or "")
-    }
+    result = {"op_item": item or {}, "msg": to_native(msg or "")}
     if kwargs.get("field"):
         result["field"] = kwargs.get("field")
 
@@ -242,7 +246,9 @@ def main():
     item_identifier = module.params.get("item")
 
     if (not hostname or not token) and not service_account_token:
-        module.fail_json(**to_result(msg="Connect or Service Accounts credentials not defined"))
+        module.fail_json(
+            **to_result(msg="Connect or Service Accounts credentials not defined")
+        )
         return
 
     if hostname and token:
@@ -253,8 +259,8 @@ def main():
             module.fail_json(**to_result(msg="Item not found"))
             return
         except TypeError as e:
-            module.fail_json(**to_result(
-                msg="Invalid Item config: {err}".format(err=e))
+            module.fail_json(
+                **to_result(msg="Invalid Item config: {err}".format(err=e))
             )
             return
         except errors.Error as e:
@@ -265,7 +271,9 @@ def main():
             op_cli = op.OpCLI(service_account_token)
             item = op_cli.item_get(item_identifier, vault)
         except:
-            module.fail_json(**to_result(msg="Failed to get item using service accounts"))
+            module.fail_json(
+                **to_result(msg="Failed to get item using service accounts")
+            )
             return
 
     if field_label:
@@ -282,5 +290,5 @@ def main():
     module.exit_json(**to_result(item=item))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
