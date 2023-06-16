@@ -67,6 +67,8 @@ class OnePassword:
                     err=info.get("msg", "<Undefined error>")
                 )
                 return self._module.fail_json(msg=msg)
+        elif info.get("status") == 204:  # delete item response
+            response_body = {}
         else:
             raise_for_error(info)
 
