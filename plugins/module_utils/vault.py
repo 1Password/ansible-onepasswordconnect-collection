@@ -15,13 +15,13 @@ from ansible_collections.onepassword.connect.plugins.module_utils import (
 Section = namedtuple("Section", ["id", "label"])
 
 
-def find_item(params, api_client):
+def find_item(params, client):
     """
     Searches for an item by its title or UUID.
 
     The search is limited to the vault_id passed by the module parameters.
     :param params: Module parameters dictionary
-    :param api_client: Connect API client instance
+    :param client: Connect API or OP CLI client
     :return: dict | None
     """
     vault_id = params.get("vault_id")
@@ -32,20 +32,17 @@ def find_item(params, api_client):
     item_id = params.get("uuid")
 
     try:
-        if item_id:
-            return api_client.get_item_by_id(vault_id, item_id)
-        else:
-            return api_client.get_item_by_name(vault_id, item_name)
+        return client.item_get(vault_id, item_id or item_name)
     except errors.NotFoundError:
         return None
 
 
-def create_item(params, api_client, check_mode=False):
+def create_item(params, client, module, check_mode=False):
     """
     Creates a new Item in the designated Vault.
 
     :param params: dict Values and fields for the new item
-    :param api_client: Connect API client
+    :param client: Connect API or OP CLI client
     :param check_mode: Whether Ansible is running in check mode.  No changes saved if True.
     :return: (bool, dict) Where bool represents whether action created an Item in 1Password.
     """
@@ -70,19 +67,19 @@ def create_item(params, api_client, check_mode=False):
         op_item["fields"] = fields.flatten_fieldset(op_item.get("fields"))
         return True, op_item
 
-    new_item = api_client.create_item(params["vault_id"], item=op_item)
+    new_item = client.create_item(op_item, module)
     new_item["fields"] = fields.flatten_fieldset(new_item.get("fields"))
     return True, new_item
 
 
-def update_item(params, original_item, api_client, check_mode=False):
+def update_item(params, original_item, client, check_mode=False):
     """If Item with matching UUID or name exists, replaces all old Item properties. If Item not found, creates new Item.
 
     If the replacement Item is equal to the "original" item, no action is taken by Ansible.
 
     :param params: dict Values to replace the existing values.
     :param original_item The item returned by the server. Values may be copied from this item while updating.
-    :param api_client: Connect API client
+    :param client: Connect API or OP CLI client
     :param check_mode: Whether Ansible is running in check mode.  No changes saved if True.
     :return: (bool, dict) Where bool represents whether action modified an Item in 1Password.
     """
@@ -121,17 +118,17 @@ def update_item(params, original_item, api_client, check_mode=False):
         updated_item["fields"] = fields.flatten_fieldset(updated_item.get("fields"))
         return changed, updated_item
 
-    item = api_client.update_item(updated_item["vault"]["id"], item=updated_item)
+    item = client.update_item(updated_item)
     item["fields"] = fields.flatten_fieldset(item.get("fields"))
     return bool(changed), item
 
 
-def delete_item(item, api_client, check_mode=False):
+def delete_item(item, client, check_mode=False):
     """
     Deletes an item or returns an empty dict if Item not found.
 
     :param item: dict Item to be deleted
-    :param api_client: Connect API client
+    :param client: Connect API or OP CLI client
     :param check_mode: Whether Ansible is running in check_mode. No changes saved if True.
     :return: (bool, dict) Where bool represents whether action modified an Item in 1Password.
     """
@@ -148,7 +145,7 @@ def delete_item(item, api_client, check_mode=False):
         return True, {}
 
     try:
-        return True, api_client.delete_item(vault_id, item_id=item["id"])
+        return True, client.delete_item(vault_id, item["id"])
     except errors.NotFoundError:
         # Item does not exist, nothing to do
         return False, {}

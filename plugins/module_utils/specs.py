@@ -39,7 +39,8 @@ def op_item():
         tags=TAGS,
         state=STATE,
     )
-    item_spec.update(common_options())
+    for option in common_options():
+        item_spec.update(option)
     return item_spec
 
 

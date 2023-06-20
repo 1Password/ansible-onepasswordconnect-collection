@@ -224,7 +224,7 @@ def main():
     else:
         try:
             op_cli = op.OpCLI(service_account_token)
-            item = op_cli.item_get(item_id, vault_id)
+            item = op_cli.item_get(vault_id, item_id)
             field = find_field(field_label, item, section=section_label)
             result.update({"field": _to_field_info(field)})
         except:

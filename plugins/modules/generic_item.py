@@ -308,7 +308,23 @@ from ansible_collections.onepassword.connect.plugins.module_utils import (
     api,
     vault,
     errors,
+    op,
 )
+
+
+def create_client(module_params):
+    hostname = module_params.get("hostname")
+    token = module_params.get("token")
+    service_account_token = module_params.get("service_account_token")
+    if hostname and token:
+        client = api.create_client(module_params)
+    elif service_account_token:
+        client = op.OpCLI(service_account_token)
+    else:
+        raise errors.UnauthorizedError(
+            message="Connect or Service Accounts credentials not defined"
+        )
+    return client
 
 
 def main():
@@ -324,24 +340,47 @@ def main():
     changed = False
     api_response = {}
     try:
-        api_client = api.create_client(module)
         state = module.params["state"].lower()
 
-        item = vault.find_item(module.params, api_client)
+        if module.params.get("hostname") and module.params.get("token"):
+            api_client = api.create_client(module)
+            item = vault.find_item(module.params, api_client)
 
-        if state == "absent":
-            changed, api_response = vault.delete_item(
-                item, api_client, check_mode=module.check_mode
-            )
-        else:
-            if not item:
-                changed, api_response = vault.create_item(
-                    module.params, api_client, check_mode=module.check_mode
+            if state == "absent":
+                changed, api_response = vault.delete_item(
+                    item, api_client, check_mode=module.check_mode
                 )
             else:
-                changed, api_response = vault.update_item(
-                    module.params, item, api_client, check_mode=module.check_mode
+                if not item:
+                    changed, api_response = vault.create_item(
+                        module.params, api_client, check_mode=module.check_mode
+                    )
+                else:
+                    changed, api_response = vault.update_item(
+                        module.params, item, api_client, check_mode=module.check_mode
+                    )
+        else:
+            service_account_token = module.params.get("service_account_token")
+            vault_id = module.params.get("vault_id")
+            item_name = module.params.get("title")
+            item_id = module.params.get("uuid")
+            op_cli = op.OpCLI(service_account_token)
+            # TODO: ability to pass vault title
+            item = op_cli.item_get(vault_id, item_id or item_name)
+
+            if state == "absent":
+                changed, api_response = vault.delete_item(
+                    item, op_cli, check_mode=module.check_mode
                 )
+            else:
+                if not item:
+                    # TODO: implement create_item
+                    changed, api_response = vault.create_item(
+                        module.params, op_cli, module, check_mode=module.check_mode
+                    )
+                else:
+                    # TODO: implement update_item
+                    changed, api_response = op_cli.update_item(module, item)
     except TypeError as e:
         results.update({"msg": to_native("Invalid Item config: {err}".format(err=e))})
         module.fail_json(**results)

@@ -97,11 +97,17 @@ class OnePassword:
 
         return self.get_item_by_id(vault_id, item_id)
 
-    def create_item(self, vault_id, item):
-        path = "/vaults/{vault_id}/items".format(vault_id=vault_id)
+    def item_get(self, vault: str, item: str):
+        if valid_client_uuid(item):
+            return self.get_item_by_id(vault, item)
+        else:
+            return self.get_item_by_name(vault, item)
+
+    def create_item(self, item):
+        path = "/vaults/{vault_id}/items".format(vault_id=item["vault"]["id"])
         return self._send_request(path, method="POST", data=item)
 
-    def update_item(self, vault_id, item):
+    def update_item(self, item):
         path = "/vaults/{vault_id}/items/{item_id}".format(
             vault_id=item["vault"]["id"], item_id=item["id"]
         )

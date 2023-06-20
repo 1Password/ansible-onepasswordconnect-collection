@@ -269,7 +269,7 @@ def main():
     else:
         try:
             op_cli = op.OpCLI(service_account_token)
-            item = op_cli.item_get(item_identifier, vault)
+            item = op_cli.item_get(vault, item_identifier)
         except:
             module.fail_json(
                 **to_result(msg="Failed to get item using service accounts")

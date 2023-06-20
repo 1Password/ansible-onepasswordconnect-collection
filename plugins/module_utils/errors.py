@@ -58,3 +58,8 @@ class ServerError(APIError):
 class AccessDeniedError(APIError):
     DEFAULT_MSG = "Token invalid or access to Vault not granted by token."
     STATUS_CODE = 403
+
+
+class UnauthorizedError(APIError):
+    DEFAULT_MSG = "Unauthorized"
+    STATUS_CODE = 401
