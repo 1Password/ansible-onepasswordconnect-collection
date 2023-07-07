@@ -374,9 +374,8 @@ def main():
                 )
             else:
                 if not item:
-                    # TODO: implement create_item
                     changed, api_response = vault.create_item(
-                        module.params, op_cli, module, check_mode=module.check_mode
+                        module.params, op_cli, check_mode=module.check_mode
                     )
                 else:
                     # TODO: implement update_item

@@ -37,7 +37,7 @@ def find_item(params, client):
         return None
 
 
-def create_item(params, client, module, check_mode=False):
+def create_item(params, client, check_mode=False):
     """
     Creates a new Item in the designated Vault.
 
@@ -67,7 +67,7 @@ def create_item(params, client, module, check_mode=False):
         op_item["fields"] = fields.flatten_fieldset(op_item.get("fields"))
         return True, op_item
 
-    new_item = client.create_item(op_item, module)
+    new_item = client.create_item(op_item)
     new_item["fields"] = fields.flatten_fieldset(new_item.get("fields"))
     return True, new_item
 
