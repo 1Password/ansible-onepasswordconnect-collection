@@ -3,7 +3,7 @@
 <div align="center">
   <h1>1Password Connect Ansible Collection</h1>
   <p>Use the <a href="https://developer.1password.com/docs/connect">1Password Connect</a> Ansible Collection to access and manage items in your 1Password vaults.</p>
-  <a href="https://github.com/1Password/ansible-onepasswordconnect-collection#getstarted">
+  <a href="https://github.com/1Password/ansible-onepasswordconnect-collection#-get-started">
     <img alt="Get started" src="https://user-images.githubusercontent.com/45081667/226940040-16d3684b-60f4-4d95-adb2-5757a8f1bc15.png" height="37"/>
   </a>
 </div>
