@@ -21,10 +21,8 @@ The 1Password Connect collection contains modules that interact with your 1Passw
 ansible-galaxy collection install onepassword.connect
 ```
 
-2. Get information about an Item, including fields and metadata: 
+2. Example of getting information about an Item, including fields and metadata: 
 
-
-**Example of finding an Item by Name**
 ```yaml
 --- 
   hosts: localhost
