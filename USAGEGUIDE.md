@@ -1,3 +1,9 @@
+<img alt="" role="img" src="https://blog.1password.com/posts/2021/secrets-automation-launch/header.svg"/>
+
+<div align="center">
+  <h1>Usage Guide</h1>
+</div>
+
 ## Table of Contents
 
 * [Requirements](#requirements)
@@ -7,9 +13,6 @@
 * [`item_info` Module](#item_info-module)
 * [`field_info` Module](#field_info-module)
 * [Testing](#testing)
-* [About 1Password](#about-1password)
-* [Security](#security)
-
 
 ### Requirements
 - Python >= 3.6.0
