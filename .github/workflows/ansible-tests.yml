@@ -7,7 +7,7 @@ on:
       - "main"
 
 env:
-  MIN_PYTHON_VERSION: "3.8"
+  MIN_PYTHON_VERSION: "3.9"
   # arbitrarily choosing the latest stable version to run ansible-test units
   # running 'ansible-test units' for each ansible+python version isn't necessary
   ANSIBLE_FOR_UNIT_TESTS: "2.15"
@@ -19,6 +19,7 @@ jobs:
   ansible-sanity:
     name: Ansible Sanity Test (v${{ matrix.ansible }}, py${{ matrix.python }})
     strategy:
+      # https://docs.ansible.com/ansible/latest/reference_appendices/release_and_maintenance.html#ansible-core-support-matrix
       matrix:
         ansible: ["2.13", "2.14", "2.15"]
         python: ["3.8", "3.9", "3.10", "3.11"]
