@@ -82,7 +82,6 @@ field:
         sample: "fb3b40ac85f5435d26e"
 '''
 
-from ansible.module_utils.six import text_type
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.onepassword.connect.plugins.module_utils import specs, api, errors, fields, util
 from ansible.module_utils.common.text.converters import to_native

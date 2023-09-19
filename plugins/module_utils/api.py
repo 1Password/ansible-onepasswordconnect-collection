@@ -9,7 +9,6 @@ import base64
 import sys
 import re
 
-from urllib.error import HTTPError
 from ansible.module_utils.urls import fetch_url
 from ansible.module_utils.six.moves.urllib.parse import urlencode, quote, urlunparse, urlparse
 from ansible_collections.onepassword.connect.plugins.module_utils import errors, const
