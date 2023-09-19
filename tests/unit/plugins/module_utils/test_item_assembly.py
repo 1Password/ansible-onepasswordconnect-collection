@@ -116,7 +116,7 @@ def test_item_creation_minimum_values():
     assert not item["urls"]
     assert not item["tags"]
     assert not item["fields"]
-    assert "sections" not in "item"  # pylint: disable=C0103
+    assert "sections" not in "item"  # pylint: disable=comparison-of-constants
 
 
 def test_item_with_fields_in_sections():
