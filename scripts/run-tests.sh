@@ -37,8 +37,8 @@ PATH_TO_PACKAGES="$(git rev-parse --show-toplevel)"
 # https://docs.ansible.com/ansible/latest/dev_guide/testing_integration.html#container-images
 DOCKER_IMG="default"
 
-# Minimum python version we support
-MIN_PYTHON_VERSION="3.9"
+# Minimum python version that is compatible with ansible versions in test matrix
+PYTHON_VERSION="3.9"
 
 function _cleanup() {
   rm -r "${TMP_DIR_PATH}"
@@ -87,7 +87,7 @@ function do_tests() {
   cd "${TMP_COLLECTIONS_PATH}/"
 
   echo "Initializing ansible-test ${TEST_SUITE} runner..........."
-  ANSIBLE_COLLECTIONS_PATH="${collection_path}" ansible-test "${TEST_SUITE}" --docker "${DOCKER_IMG}" --python "${MIN_PYTHON_VERSION}"
+  ANSIBLE_COLLECTIONS_PATH="${collection_path}" ansible-test "${TEST_SUITE}" --docker "${DOCKER_IMG}" --python "${PYTHON_VERSION}"
 }
 
 trap _cleanup EXIT

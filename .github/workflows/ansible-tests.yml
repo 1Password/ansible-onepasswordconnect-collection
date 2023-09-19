@@ -7,7 +7,7 @@ on:
       - "main"
 
 env:
-  MIN_PYTHON_VERSION: "3.9"
+  PYTHON_VERSION: "3.9"
   # arbitrarily choosing the latest stable version to run ansible-test units
   # running 'ansible-test units' for each ansible+python version isn't necessary
   ANSIBLE_FOR_UNIT_TESTS: "2.15"
@@ -43,7 +43,7 @@ jobs:
       - name: Setup python
         uses: actions/setup-python@v4
         with:
-            python-version: ${{env.MIN_PYTHON_VERSION}}
+            python-version: ${{env.PYTHON_VERSION}}
 
       - name: Install ansible-core stable-${{ matrix.ansible }}
         run: |
@@ -72,10 +72,10 @@ jobs:
       - name: Setup python
         uses: actions/setup-python@v4
         with:
-          python-version: ${{env.MIN_PYTHON_VERSION}}
+          python-version: ${{env.PYTHON_VERSION}}
 
       - name: Install ansible-core stable-${{ env.ANSIBLE_FOR_UNIT_TESTS }}
         run: pip install https://github.com/ansible/ansible/archive/stable-${{ env.ANSIBLE_FOR_UNIT_TESTS }}.tar.gz --disable-pip-version-check
 
       - name: Run ansible-test units
-        run: ansible-test units -v --docker --redact --python ${{ env.MIN_PYTHON_VERSION }}
+        run: ansible-test units -v --docker --redact --python ${{ env.PYTHON_VERSION }}

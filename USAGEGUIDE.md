@@ -15,7 +15,7 @@
 * [Testing](#testing)
 
 ### Requirements
-- Python >= 3.6.0
+- Python >= 3.8.0
 - 1Password Connect >= 1.0.0
     
 #### Supported Ansible Versions
