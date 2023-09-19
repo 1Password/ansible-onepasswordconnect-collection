@@ -38,7 +38,7 @@ PATH_TO_PACKAGES="$(git rev-parse --show-toplevel)"
 DOCKER_IMG="default"
 
 # Minimum python version we support
-MIN_PYTHON_VERSION="3.6"
+MIN_PYTHON_VERSION="3.8"
 
 function _cleanup() {
   rm -r "${TMP_DIR_PATH}"
