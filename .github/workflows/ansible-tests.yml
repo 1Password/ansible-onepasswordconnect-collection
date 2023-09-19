@@ -7,7 +7,7 @@ on:
       - "main"
 
 env:
-  MIN_PYTHON_VERSION: "3.9"
+  MIN_PYTHON_VERSION: "3.8"
   # arbitrarily choosing the latest stable version to run ansible-test units
   # running 'ansible-test units' for each ansible+python version isn't necessary
   ANSIBLE_FOR_UNIT_TESTS: "2.15"
