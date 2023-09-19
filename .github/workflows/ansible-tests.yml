@@ -7,10 +7,10 @@ on:
       - "main"
 
 env:
-  MIN_PYTHON_VERSION: "3.8"
+  PYTHON_VERSION: "3.9"
   # arbitrarily choosing the latest stable version to run ansible-test units
   # running 'ansible-test units' for each ansible+python version isn't necessary
-  ANSIBLE_FOR_UNIT_TESTS: "2.11"
+  ANSIBLE_FOR_UNIT_TESTS: "2.15"
   # defines where ansible will look for the collection
   # must be a sub-directory of ansible_collections/
   COLLECTION_PATH: ansible_collections/onepassword/connect
@@ -19,33 +19,31 @@ jobs:
   ansible-sanity:
     name: Ansible Sanity Test (v${{ matrix.ansible }}, py${{ matrix.python }})
     strategy:
+      # https://docs.ansible.com/ansible/latest/reference_appendices/release_and_maintenance.html#ansible-core-support-matrix
       matrix:
-        ansible: ["2.9", "2.10", "2.11", "2.12"]
-        python: ["3.6", "3.7", "3.8", "3.9"]
+        ansible: ["2.13", "2.14", "2.15"]
+        python: ["3.8", "3.9", "3.10", "3.11"]
         exclude:
-          # python3.9 unsupported by ansible2.9
-          - ansible: "2.9"
-            python: "3.9"
-          # ansible 2.12 requires python3.8 or newer
-          # https://github.com/ansible/ansible/issues/72668
-          - ansible: "2.12"
-            python: "3.6"
-          - ansible: "2.12"
-            python: "3.7"
+          - ansible: "2.13"
+            python: "3.11"
+          - ansible: "2.14"
+            python: "3.8"
+          - ansible: "2.15"
+            python: "3.8"
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ${{ env.COLLECTION_PATH }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
             path: ${{ env.COLLECTION_PATH }}
 
       - name: Setup python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
-            python-version: ${{env.MIN_PYTHON_VERSION}}
+            python-version: ${{env.PYTHON_VERSION}}
 
       - name: Install ansible-core stable-${{ matrix.ansible }}
         run: |
@@ -67,17 +65,17 @@ jobs:
         working-directory: ${{ env.COLLECTION_PATH }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           path: ${{ env.COLLECTION_PATH }}
 
       - name: Setup python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
-          python-version: ${{env.MIN_PYTHON_VERSION}}
+          python-version: ${{env.PYTHON_VERSION}}
 
       - name: Install ansible-core stable-${{ env.ANSIBLE_FOR_UNIT_TESTS }}
         run: pip install https://github.com/ansible/ansible/archive/stable-${{ env.ANSIBLE_FOR_UNIT_TESTS }}.tar.gz --disable-pip-version-check
 
       - name: Run ansible-test units
-        run: ansible-test units -v --docker --redact --python ${{ env.MIN_PYTHON_VERSION }}
+        run: ansible-test units -v --docker --redact --python ${{ env.PYTHON_VERSION }}

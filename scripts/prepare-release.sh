@@ -48,7 +48,7 @@ function updateChangelog() {
 
     # Replace "Latest" in the top-most changelog block with new version
     # Then push a new "latest" block to top of the changelog
-    awk 'NR==1, /---/{ sub(/START\/LATEST/, "START/v'${VERSION_NUM}'"); sub(/# Latest/, "# v'${VERSION_NUM}'") } {print}' \
+    awk 'NR==1, /---/{ sub(/START\/LATEST/, "START/v'"${VERSION_NUM}"'"); sub(/# Latest/, "# v'"${VERSION_NUM}"'") } {print}' \
      "${changelogFile}" > "${tmpfile}"
 
     # Inserts "Latest" changelog HEREDOC at the top of the file

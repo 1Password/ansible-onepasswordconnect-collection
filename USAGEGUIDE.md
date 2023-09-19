@@ -15,14 +15,14 @@
 * [Testing](#testing)
 
 ### Requirements
-- Python >= 3.6.0
+- Python >= 3.8.0
 - 1Password Connect >= 1.0.0
     
 #### Supported Ansible Versions
 
 This collection has been tested against the following Ansible versions:
-* `ansible-core`: >=2.9, 2.11, 2.12
-* `ansible`: >=4.0, <5.0
+* `ansible-core`: >=2.13
+* `ansible`: >=6.x
 
 ## Installation
 
