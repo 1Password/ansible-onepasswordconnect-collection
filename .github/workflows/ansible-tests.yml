@@ -38,12 +38,12 @@ jobs:
         working-directory: ${{ env.COLLECTION_PATH }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
             path: ${{ env.COLLECTION_PATH }}
 
       - name: Setup python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
             python-version: ${{env.MIN_PYTHON_VERSION}}
 
@@ -67,12 +67,12 @@ jobs:
         working-directory: ${{ env.COLLECTION_PATH }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           path: ${{ env.COLLECTION_PATH }}
 
       - name: Setup python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{env.MIN_PYTHON_VERSION}}
 
