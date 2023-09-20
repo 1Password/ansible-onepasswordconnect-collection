@@ -5,6 +5,19 @@ onepassword.connect Release Notes
 .. contents:: Topics
 
 
+v2.2.2
+======
+
+Release Summary
+---------------
+
+This release contains small bugfixes and README changes. It also intends to go through new Ansible Automation Hub release process to keep the collection certified.
+
+Bugfixes
+--------
+
+- Improve error handling (https://github.com/1Password/ansible-onepasswordconnect-collection/pull/64)
+
 v2.2.1
 ======
 

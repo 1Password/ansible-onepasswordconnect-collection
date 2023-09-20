@@ -107,3 +107,13 @@ releases:
     - 58-bad-request-using-item-field-name.yaml
     - 64_handle_response_better.yaml
     release_date: '2022-08-30'
+  2.2.2:
+    changes:
+      bugfixes:
+      - Improve error handling (https://github.com/1Password/ansible-onepasswordconnect-collection/pull/64)
+      release_summary: This release contains small bugfixes and README changes. It
+        also intends to go through new Ansible Automation Hub release process to keep
+        the collection certified.
+    fragments:
+    - release-2.2.2.yaml
+    release_date: '2023-09-20'
