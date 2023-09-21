@@ -18,7 +18,7 @@ This collection requires **Python v3.8 or greater**. If you don't have Python in
 
 
 Current Ansible-core and Ansible version supported:
-- `ansible-core`: **2.15***
+- `ansible-core`: **>=2.13**
 - `ansible`: **>=6.x**
 
 We recommend installing Ansible in a `virtualenv` created specifically for this project. 

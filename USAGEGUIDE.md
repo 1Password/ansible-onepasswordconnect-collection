@@ -14,16 +14,6 @@
 * [`field_info` Module](#field_info-module)
 * [Testing](#testing)
 
-### Requirements
-- Python >= 3.8.0
-- 1Password Connect >= 1.0.0
-    
-#### Supported Ansible Versions
-
-This collection has been tested against the following Ansible versions:
-* `ansible-core`: >=2.13
-* `ansible`: >=6.x
-
 ## Installation
 
 You can install the Ansible collection from [Ansible Galaxy](https://galaxy.ansible.com/onepassword/connect):
