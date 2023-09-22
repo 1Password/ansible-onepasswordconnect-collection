@@ -4,7 +4,7 @@ namespace: onepassword
 name: connect
 
 # The version of the collection. Must be compatible with semantic versioning
-version: "2.2.2"
+version: "2.2.3"
 
 readme: README.md
 
