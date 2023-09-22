@@ -32,4 +32,4 @@ issues: https://github.com/1Password/ansible-onepasswordconnect-collection/issue
 
 # A list of file glob-like patterns used to filter any files or directories that should not be included in the build
 # artifact.
-build_ignore: ['scripts', '.venv', '.*', 'tests']
+build_ignore: ['scripts', '.venv', 'venv', '.*', 'tests']
