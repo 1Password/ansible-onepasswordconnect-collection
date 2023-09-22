@@ -117,3 +117,10 @@ releases:
     fragments:
       - release-2.2.2.yaml
     release_date: '2023-09-20'
+  2.2.3:
+    changes:
+      release_summary: This release is to address the issues found durin Automation
+        Hub release process
+    fragments:
+      - release-v2.2.3.yml
+    release_date: '2023-09-22'

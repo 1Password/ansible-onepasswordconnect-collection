@@ -5,6 +5,14 @@ onepassword.connect Release Notes
 .. contents:: Topics
 
 
+v2.2.3
+======
+
+Release Summary
+---------------
+
+This release is to address the issues found durin Automation Hub release process
+
 v2.2.2
 ======
 
