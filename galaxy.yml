@@ -1,10 +1,11 @@
+---
 namespace: onepassword
 
 # The name of the collection.
 name: connect
 
 # The version of the collection. Must be compatible with semantic versioning
-version: "2.2.3"
+version: 2.2.3
 
 readme: README.md
 
@@ -13,12 +14,10 @@ authors:
 
 description: Modules for managing and reading 1Password Vaults with 1Password Connect.
 
-license_file: 'LICENSE.md'
+license_file: LICENSE.md
 
-tags: ['security', 'onepassword', 'secrets', 'onepasswordconnect', 'connect']
-
+tags: [security, onepassword, secrets, onepasswordconnect, connect]
 dependencies: {}
-
 repository: https://github.com/1Password/ansible-onepasswordconnect-collection
 
 # The URL to any online docs
@@ -32,4 +31,4 @@ issues: https://github.com/1Password/ansible-onepasswordconnect-collection/issue
 
 # A list of file glob-like patterns used to filter any files or directories that should not be included in the build
 # artifact.
-build_ignore: ['scripts', '.venv', 'venv', '.*', 'tests']
+build_ignore: [scripts, .venv, venv, .*, tests]
