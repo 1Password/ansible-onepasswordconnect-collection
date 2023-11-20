@@ -9,6 +9,12 @@ SCRIPTS_DIR := $(CURDIR)/scripts
 
 curVersion := $$(sed -n -E 's/^version: "([0-9]+\.[0-9]+\.[0-9]+)"$$/\1/p' galaxy.yml)
 
+lint:
+	@ansible-lint --offline
+
+lint/fix:
+	@ansible-lint --offline --fix
+
 test/unit:	## Run unit tests in a Docker container
 	$(SCRIPTS_DIR)/run-tests.sh units
 
