@@ -45,7 +45,7 @@ jobs:
       - name: Setup python
         uses: actions/setup-python@v4
         with:
-            python-version: ${{env.PYTHON_VERSION}}
+            python-version: ${{ matrix.python }}
 
       - name: Install ansible-core stable-${{ matrix.ansible }}
         run: |
