@@ -13,8 +13,8 @@
 The 1Password Connect collection contains modules that interact with your 1Password Connect deployment. The modules communicate with the 1Password Connect API to support Vault Item create/read/update/delete operations.
 
 ## Requirements
-- `ansible`: **>=6.x**
-- `ansible-core`: **>=2.13**
+- `ansible`: **>=7.x**
+- `ansible-core`: **>=2.14**
 - `python`: **>=3.8**
 - `1Password Connect`: **>= 1.0.0**
 

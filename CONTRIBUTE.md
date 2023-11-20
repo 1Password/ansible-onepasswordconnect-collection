@@ -18,8 +18,8 @@ This collection requires **Python v3.8 or greater**. If you don't have Python in
 
 
 Current Ansible-core and Ansible version supported:
-- `ansible-core`: **>=2.13**
-- `ansible`: **>=6.x**
+- `ansible-core`: **>=2.14**
+- `ansible`: **>=7.x**
 
 We recommend installing Ansible in a `virtualenv` created specifically for this project. 
 
@@ -29,7 +29,7 @@ We recommend installing Ansible in a `virtualenv` created specifically for this 
 python3 -m venv <path_to_venv>/onepassword_ansible
 source <path_to_venv>/onepassword_ansible activate
 
-pip3 install 'ansible-core==2.11.*' 'ansible>=4.0,<5'
+pip3 install 'ansible-core==2.14.*' 'ansible>=7.x'
 ```
 
 ### Clone the Repo
