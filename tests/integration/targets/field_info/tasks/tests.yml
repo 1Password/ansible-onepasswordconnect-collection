@@ -1,9 +1,8 @@
 ---
-
 - name: Set Fact
   ansible.builtin.set_fact:
-    field_label_to_find: "frogs frogs frogs"
-    item_title: "Test Field Lookup - ANSIBLE {{ 9999 | random }}"
+    field_label_to_find: frogs frogs frogs
+    item_title: Test Field Lookup - ANSIBLE {{ 9999 | random }}
     created_item_ids: []
 
 - name: Setup | Create a test item
@@ -42,8 +41,8 @@
 - name: Find Field | Assert root field was found
   ansible.builtin.assert:
     that:
-      - "found_root_field.field.value == test_item.op_item.fields['{{ field_label_to_find }}'].value"
-      - "found_root_field.field.id == test_item.op_item.fields['{{ field_label_to_find }}'].id"
+      - found_root_field.field.value == test_item.op_item.fields['{{ field_label_to_find }}'].value
+      - found_root_field.field.id == test_item.op_item.fields['{{ field_label_to_find }}'].id
 
 - name: Find Field | Search by item ID
   field_info:
@@ -54,13 +53,12 @@
 
 - name: Find Field | Assert field was found
   ansible.builtin.assert:
-    that:
-      "found_field_by_item_id.field.id == test_item.op_item.fields['{{ field_label_to_find }}'].id"
+    that: found_field_by_item_id.field.id == test_item.op_item.fields['{{ field_label_to_find }}'].id
 
 - name: Find Field | Search by unknown item label
   field_info:
     item: "{{ test_item.op_item.id }}"
-    field: "doesNotExist"
+    field: doesNotExist
     vault: "{{ test_item.op_item.vault.id }}"
   register: notfound_result
   ignore_errors: true
@@ -88,7 +86,7 @@
 - name: Find Field | Search with section label for undefined field
   field_info:
     item: "{{ item_title }}"
-    field: "doesNotExist"
+    field: doesNotExist
     vault: "{{ test_item.op_item.vault.id }}"
   register: notfound_bysection_result
   ignore_errors: true

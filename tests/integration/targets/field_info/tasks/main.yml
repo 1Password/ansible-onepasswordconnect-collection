@@ -6,6 +6,6 @@
 - name: Field Info task
   ansible.builtin.import_tasks: tests.yml
   environment:
-    OP_CONNECT_HOST: "__OP_CONNECT_HOST__"
-    OP_CONNECT_TOKEN: "__OP_CONNECT_TOKEN__"
-    OP_VAULT_ID: "__OP_VAULT_ID__"
+    OP_CONNECT_HOST: __OP_CONNECT_HOST__
+    OP_CONNECT_TOKEN: __OP_CONNECT_TOKEN__
+    OP_VAULT_ID: __OP_VAULT_ID__

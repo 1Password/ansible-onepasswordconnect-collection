@@ -1,9 +1,8 @@
 ---
-
 - name: Create a test item
   generic_item:
     state: present
-    title: "Test Item - ANSIBLETEST {{ 9999 | random }}"
+    title: Test Item - ANSIBLETEST {{ 9999 | random }}
     category: server
     tags:
       - exampleTag
@@ -15,7 +14,7 @@
 - name: Create a second test item
   generic_item:
     state: present
-    title: "Test Item 2 - ANSIBLETEST {{ 9999 | random }}"
+    title: Test Item 2 - ANSIBLETEST {{ 9999 | random }}
     category: server
     tags:
       - exampleTag
@@ -106,7 +105,6 @@
   generic_item:
     state: absent
     uuid: "{{ test_item.op_item.id }}"
-
 
 - name: Delete test item
   generic_item:
