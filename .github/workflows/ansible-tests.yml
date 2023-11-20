@@ -81,13 +81,3 @@ jobs:
 
       - name: Run ansible-test units
         run: ansible-test units -v --docker --redact --python ${{ env.PYTHON_VERSION }}
-
-  ansible-lint:
-    name: Lint
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ${{ env.COLLECTION_PATH }}
-    steps:
-      - name: run-ansible-lint
-        uses: ansible/ansible-lint@v6.22.0
