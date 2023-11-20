@@ -197,10 +197,10 @@ EXAMPLES = '''
         field_type: concealed
         generate_value: on_create
         generator_recipe:
-            length: 16
-            include_letters: yes
-            include_digits: yes
-            include_symbols: no
+          length: 16
+          include_letters: true
+          include_digits: true
+          include_symbols: false
         section: Club Card Details
   register: op_item  # Access item values through `op_item['data']`
   no_log: true       # Hide the output - it will contain the secret value you just stored
@@ -212,13 +212,13 @@ EXAMPLES = '''
     fields:
       - label: Secret Code
         field_type: concealed
-        overwrite: no
+        overwrite: false
         generate_value: never
         generator_recipe: # ignored because generate_value == never
-            length: 16
-            include_letters: yes
-            include_digits: yes
-            include_symbols: no
+          length: 16
+          include_letters: true
+          include_digits: true
+          include_symbols: false
         section: Club Card Details
   no_log: true
 
@@ -230,13 +230,13 @@ EXAMPLES = '''
     fields:
       - label: Secret Code
         field_type: concealed
-        overwrite: no
+        overwrite: false
         generate_value: on_create
         generator_recipe: # ignored because generate_value == never
-            length: 16
-            include_letters: yes
-            include_digits: yes
-            include_symbols: no
+          length: 16
+          include_letters: true
+          include_digits: true
+          include_symbols: false
         section: Club Card Details
   no_log: true
 

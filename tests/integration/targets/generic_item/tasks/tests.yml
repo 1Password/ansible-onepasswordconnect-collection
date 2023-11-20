@@ -1,6 +1,7 @@
 ---
 
-- set_fact:
+- name: Set Facts
+  ansible.builtin.set_fact:
     field_wont_exist_after_update: "transitoryExampleLabel"
     original_item_title: "Example Item - ANSIBLE TEST {{ 9999 | random }}"
     created_item_ids: []
@@ -18,7 +19,7 @@
         field_type: concealed
         generate_value: always
         generator_recipe:
-          include_digits: no
+          include_digits: false
 
       - label: "{{ field_wont_exist_after_update }}"
         value: example
@@ -34,7 +35,7 @@
 # NOTE: Connect server <= 1.2.0 changes name of the field with purpose==PASSWORD
 #   to `password`
 - name: Create Item | Assert expected item properties and fields
-  assert:
+  ansible.builtin.assert:
     that:
       - original.changed
       - original.op_item is defined
@@ -43,8 +44,9 @@
       - original.op_item.fields.password is defined
       - "original.op_item.fields.password.purpose == 'PASSWORD'"
 
-- set_fact:
-    created_item_ids: "{{ created_item_ids + [ original.op_item.id ] }}"
+- name: Set facts
+  ansible.builtin.set_fact:
+    created_item_ids: "{{ created_item_ids + [original.op_item.id] }}"
     updated_item_title: "{{ original.op_item.title }} UPDATED"
 
 - name: Upsert item
@@ -61,7 +63,7 @@
         field_type: concealed
         generate_value: on_create
         generator_recipe:
-          include_digits: no
+          include_digits: false
 
       - label: Generated String
         generate_value: always
@@ -69,7 +71,7 @@
   register: updated_1p_item
 
 - name: Upsert item | Assert updated item properties
-  assert:
+  ansible.builtin.assert:
     that:
       - updated_1p_item.changed
       - updated_1p_item.op_item.id == original.op_item.id
@@ -79,7 +81,7 @@
       - "updated_1p_item.op_item.fields['Generated String'].value != original.op_item.fields['Generated String'].value"
 
 - name: Upsert item | Assert tags updated
-  assert:
+  ansible.builtin.assert:
     that:
       - "'{{ item }}' in updated_1p_item.op_item.tags"
   with_items:
@@ -99,7 +101,7 @@
         field_type: concealed
         generate_value: on_create
         generator_recipe:
-          include_digits: no
+          include_digits: false
 
       - label: Hello
         value: "World"
@@ -110,7 +112,7 @@
   register: updated_1p_item_by_name
 
 - name: Update Item by Name | Assert existing fields are preserved
-  assert:
+  ansible.builtin.assert:
     that:
       - "'{{ item }}' in updated_1p_item_by_name.op_item.fields"
       - "updated_1p_item_by_name.op_item.fields['{{ item }}'].value == updated_1p_item.op_item.fields['{{ item }}'].value"
@@ -128,13 +130,14 @@
   register: item_with_default_template
 
 - name: Default Template | Default template was used
-  assert:
+  ansible.builtin.assert:
     that:
       - item_with_default_template.changed
       - 'item_with_default_template.op_item.category == "API_CREDENTIAL"'
 
-- set_fact:
-    created_item_ids: "{{ created_item_ids + [ item_with_default_template.op_item.id ] }}"
+- name: Set Facts
+  ansible.builtin.set_fact:
+    created_item_ids: "{{ created_item_ids + [item_with_default_template.op_item.id] }}"
 
 - name: Cleanup | Remove created items
   generic_item:

@@ -1,3 +1,7 @@
 # This is a "fake" JWT; its decoded form does not adhere to the Server spec nor does it contain any valid data.
-op_api_token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2MDMzMDUyMTgsImV4cCI6MTYzNDg0MTIxOCwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsIkdpdmVuTmFtZSI6IkpvaG5ueSIsIlN1cm5hbWUiOiJSb2NrZXQiLCJFbWFpbCI6Impyb2NrZXRAZXhhbXBsZS5jb20iLCJSb2xlIjpbIk1hbmFnZXIiLCJQcm9qZWN0IEFkbWluaXN0cmF0b3IiXX0.vJ7uaGuJ3Gn1gTgwjs96pUp4YiOjoH9zaSO0dT77uAY"
+op_api_token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.\
+               eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2MDMzMDUyMTgsImV4cCI6MTYzNDg0MTIxOCwiYXVkIjoid3d3LmV4\
+               YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsIkdpdmVuTmFtZSI6IkpvaG5ueSIsIlN1cm5hbWUiOiJSb2Nr\
+               ZXQiLCJFbWFpbCI6Impyb2NrZXRAZXhhbXBsZS5jb20iLCJSb2xlIjpbIk1hbmFnZXIiLCJQcm9qZWN0IEFkbWluaXN0cmF0b3IiXX0.\
+               vJ7uaGuJ3Gn1gTgwjs96pUp4YiOjoH9zaSO0dT77uAY"
 op_server_url: http://localhost:8080"
