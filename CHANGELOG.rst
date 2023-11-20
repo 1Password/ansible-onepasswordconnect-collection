@@ -5,6 +5,14 @@ onepassword.connect Release Notes
 .. contents:: Topics
 
 
+v2.2.4
+======
+
+Release Summary
+---------------
+
+This release is to update documentation and pipelines due to ansible-core@2.13 end of life.
+
 v2.2.3
 ======
 
