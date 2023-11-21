@@ -124,3 +124,10 @@ releases:
     fragments:
       - release-v2.2.3.yml
     release_date: '2023-09-22'
+  2.2.4:
+    changes:
+      release_summary: This release is to update documentation and pipelines due to
+        ansible-core@2.13 end of life.
+    fragments:
+      - release-v2.2.4.yaml
+    release_date: '2023-11-20'
