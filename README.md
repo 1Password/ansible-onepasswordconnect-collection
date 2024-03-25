@@ -14,7 +14,7 @@ The 1Password Connect collection contains modules that interact with your 1Passw
 
 ## Requirements
 - `ansible`: **>=7.x**
-- `ansible-core`: **>=2.14**
+- `ansible-core`: **>=2.15**
 - `python`: **>=3.8**
 - `1Password Connect`: **>= 1.0.0**
 
