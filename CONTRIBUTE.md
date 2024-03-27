@@ -14,7 +14,7 @@ After reading this document, you will:
 
 > If you have already installed a supported version of Ansible, you can skip to the [Clone the Repo](#clone-the-repo) step.
 
-This collection requires **Python v3.8 or greater**. If you don't have Python installed, consider using [pyenv](https://github.com/pyenv/pyenv) to install the supported Python runtime.
+This collection requires **Python v3.9 or greater**. If you don't have Python installed, consider using [pyenv](https://github.com/pyenv/pyenv) to install the supported Python runtime.
 
 
 Current Ansible-core and Ansible version supported:
