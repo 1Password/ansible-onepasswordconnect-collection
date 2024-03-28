@@ -14,11 +14,11 @@ After reading this document, you will:
 
 > If you have already installed a supported version of Ansible, you can skip to the [Clone the Repo](#clone-the-repo) step.
 
-This collection requires **Python v3.8 or greater**. If you don't have Python installed, consider using [pyenv](https://github.com/pyenv/pyenv) to install the supported Python runtime.
+This collection requires **Python v3.9 or greater**. If you don't have Python installed, consider using [pyenv](https://github.com/pyenv/pyenv) to install the supported Python runtime.
 
 
 Current Ansible-core and Ansible version supported:
-- `ansible-core`: **>=2.14**
+- `ansible-core`: **>=2.15**
 - `ansible`: **>=7.x**
 
 We recommend installing Ansible in a `virtualenv` created specifically for this project. 
@@ -29,7 +29,7 @@ We recommend installing Ansible in a `virtualenv` created specifically for this 
 python3 -m venv <path_to_venv>/onepassword_ansible
 source <path_to_venv>/onepassword_ansible activate
 
-pip3 install 'ansible-core==2.14.*' 'ansible>=7.x'
+pip3 install 'ansible-core==2.15.*' 'ansible>=7.x'
 ```
 
 ### Clone the Repo

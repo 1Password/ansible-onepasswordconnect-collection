@@ -21,17 +21,13 @@ jobs:
     strategy:
       # https://docs.ansible.com/ansible/latest/reference_appendices/release_and_maintenance.html#ansible-core-support-matrix
       matrix:
-        ansible: ["2.14", "2.15", "2.16"]
-        python: ["3.8", "3.9", "3.10", "3.11"]
+        ansible: ["2.15", "2.16"]
+        python: ["3.9", "3.10", "3.11", "3.12"]
         exclude:
-          - ansible: "2.14"
-            python: "3.8"
-          - ansible: "2.15"
-            python: "3.8"
-          - ansible: "2.16"
-            python: "3.8"
           - ansible: "2.16"
             python: "3.9"
+          - ansible: "2.15"
+            python: "3.12"
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -40,12 +36,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-            path: ${{ env.COLLECTION_PATH }}
+          path: ${{ env.COLLECTION_PATH }}
 
       - name: Setup python
         uses: actions/setup-python@v4
         with:
-            python-version: ${{ matrix.python }}
+          python-version: ${{ matrix.python }}
 
       - name: Install ansible-core stable-${{ matrix.ansible }}
         run: |

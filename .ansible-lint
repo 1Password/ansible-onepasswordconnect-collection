@@ -1,3 +1,4 @@
+---
 exclude_paths:
-    - .github/
-    - tests/integration/targets/generic_item/vars/main.yml
+  - .github/
+  - tests/integration/targets/generic_item/vars/main.yml

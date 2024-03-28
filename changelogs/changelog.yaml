@@ -1,45 +1,45 @@
-ancestor: null
+---
+ancestor:
 releases:
   1.0.0:
     changes:
       bugfixes:
         - Module documentation now adheres to Ansible standards.
         - Remove Python 3.6 syntax as required by Ansible compile tests.
-      release_summary: First public release of the 1Password Ansible collection for
-        Secrets Automation.
+      release_summary: First public release of the 1Password Ansible collection for Secrets Automation.
     fragments:
       - module-documentation.yaml
       - remove-python-3.6.yaml
       - v1.0.0_summary.yaml
-    release_date: '2021-04-13'
+    release_date: "2021-04-13"
   1.0.1:
     changes:
       bugfixes:
         - Exclude the `test/` directory from the build artifact.
         - Resolve small issues with the Ansible Galaxy manifest file.
-    release_date: '2021-04-13'
+    release_date: "2021-04-13"
   2.0.0:
     changes:
       breaking_changes:
         - generic_item - ``generate_value`` setting accepts ``on_create``, ``always``,
           and ``never`` (default). This enables fine-grained controls for defining when
           1Password Connect should generate a field's value. (https://github.com/1Password/ansible-onepasswordconnect-collection/pull/15)
-        - 'generic_item - item options ``state: upserted`` and ``state: created`` are
-          replaced by ``state: present``. (https://github.com/1Password/ansible-onepasswordconnect-collection/pull/15)'
+        - "generic_item - item options ``state: upserted`` and ``state: created`` are
+          replaced by ``state: present``. (https://github.com/1Password/ansible-onepasswordconnect-collection/pull/15)"
       bugfixes:
         - Makefile now uses the correct path to the testing script. (https://github.com/1Password/ansible-onepasswordconnect-collection/pull/14)
       minor_changes:
         - module_utils - Add support for ``API_CREDENTIAL`` item type. (https://github.com/1Password/ansible-onepasswordconnect-collection/pull/17)
-    release_date: '2021-05-25'
+    release_date: "2021-05-25"
   2.1.0:
     changes:
       breaking_changes:
-        - 'generic_item - if an Item of ``type: password`` has multiple ``concealed``
-          fields named ``password``, Ansible raises an error. (https://github.com/1Password/ansible-onepasswordconnect-collection/issues/20)'
-        - 'generic_item - if an Item of ``type: password`` is created without a ``concealed``
-          field named ``password``, Ansible raises an error. (https://github.com/1Password/ansible-onepasswordconnect-collection/issues/20)'
-        - 'generic_item - if an item of ``type: login`` has multiple ``string`` fields
-          named ``username``, Ansible raises an error. (https://github.com/1Password/ansible-onepasswordconnect-collection/issues/20)'
+        - "generic_item - if an Item of ``type: password`` has multiple ``concealed``
+          fields named ``password``, Ansible raises an error. (https://github.com/1Password/ansible-onepasswordconnect-collection/issues/20)"
+        - "generic_item - if an Item of ``type: password`` is created without a ``concealed``
+          field named ``password``, Ansible raises an error. (https://github.com/1Password/ansible-onepasswordconnect-collection/issues/20)"
+        - "generic_item - if an item of ``type: login`` has multiple ``string`` fields
+          named ``username``, Ansible raises an error. (https://github.com/1Password/ansible-onepasswordconnect-collection/issues/20)"
       bugfixes:
         - Fix sed regex for currentVersion lookup in release tool. (https://github.com/1Password/ansible-onepasswordconnect-collection/pull/23)
         - generic_item - preserve ``notesField`` regardless of playbook parameters.
@@ -51,12 +51,9 @@ releases:
       minor_changes:
         - generic_item - add more supported item types (https://github.com/1Password/ansible-onepasswordconnect-collection/issues/22)
         - generic_item - default item type is now ``API_CREDENTIAL``. (https://github.com/1Password/ansible-onepasswordconnect-collection/pull/25)
-      release_summary: 'This version fixes several bugs, introduces more supported
-        item types, and improves how the module handles special fields for certain
-        item types.
-
-        Note there is a **breaking change** when defining an Item with ``type: login``
-        or ``type: password``'
+      release_summary:
+        "This version fixes several bugs, introduces more supported item types, and improves how the module handles special fields for certain item types.\n
+        Note there is a **breaking change** when defining an Item with ``type: login`` or ``type: password``"
     fragments:
       - 20-fix-field_purpose-assignment.yaml
       - 22-add-more-item-types.yaml
@@ -66,20 +63,18 @@ releases:
       - 27-use-utf8-normalization.yaml
       - 29-get-item-by-name-return-full-item.yaml
       - v2.1.0_summary.yaml
-    release_date: '2021-06-23'
+    release_date: "2021-06-23"
   2.1.1:
     changes:
       bugfixes:
         - Replace Python 3.6+ features with backwards-compatible implementations.
-      release_summary: 'This release improves compatibility with all Python runtimes
-        supported by Ansible 2.9+.
-
-        We are making this change to better support customers downloading this collection
-        through RedHat''s Ansible Automation Hub.'
+      release_summary:
+        "This release improves compatibility with all Python runtimes supported by Ansible 2.9+.\n
+        We are making this change to better support customers downloading this collection through RedHat's Ansible Automation Hub."
     fragments:
       - 31-improve-python2-andpython3.5-compatibility.yaml
       - v2.1.1_summary.yaml
-    release_date: '2021-06-25'
+    release_date: "2021-06-25"
   2.2.0:
     changes:
       bugfixes:
@@ -90,7 +85,7 @@ releases:
           now fixed by addding the ``flatten_fields_by_label`` option. (https://github.com/1Password/ansible-onepasswordconnect-collection/issues/34)
       minor_changes:
         - Add ``connect.field_info`` module (https://github.com/1Password/ansible-onepasswordconnect-collection/pull/39)
-    release_date: '2022-01-05'
+    release_date: "2022-01-05"
   2.2.1:
     changes:
       bugfixes:
@@ -106,28 +101,26 @@ releases:
       - 52-add-security-AH-tag.yaml
       - 58-bad-request-using-item-field-name.yaml
       - 64_handle_response_better.yaml
-    release_date: '2022-08-30'
+    release_date: "2022-08-30"
   2.2.2:
     changes:
       bugfixes:
         - Improve error handling (https://github.com/1Password/ansible-onepasswordconnect-collection/pull/64)
-      release_summary: This release contains small bugfixes and README changes. It
-        also intends to go through new Ansible Automation Hub release process to keep
-        the collection certified.
+      release_summary:
+        This release contains small bugfixes and README changes. It also intends to go through new Ansible Automation Hub release process to keep the
+        collection certified.
     fragments:
       - release-2.2.2.yaml
-    release_date: '2023-09-20'
+    release_date: "2023-09-20"
   2.2.3:
     changes:
-      release_summary: This release is to address the issues found durin Automation
-        Hub release process
+      release_summary: This release is to address the issues found durin Automation Hub release process
     fragments:
       - release-v2.2.3.yml
-    release_date: '2023-09-22'
+    release_date: "2023-09-22"
   2.2.4:
     changes:
-      release_summary: This release is to update documentation and pipelines due to
-        ansible-core@2.13 end of life.
+      release_summary: This release is to update documentation and pipelines due to ansible-core@2.13 end of life.
     fragments:
       - release-v2.2.4.yaml
-    release_date: '2023-11-20'
+    release_date: "2023-11-20"
