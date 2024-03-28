@@ -51,14 +51,15 @@ class OnePassword:
         response_body = {}
 
         resp, info = fetch_url(self._module, **fetch_kwargs)
-        if info.get("status") == 200:
-            try:
-                response_body = json.loads(resp.read().decode("utf-8"))
-            except (AttributeError, ValueError):
-                msg = "Server returned error with invalid JSON: {err}".format(
-                    err=info.get("msg", "<Undefined error>")
-                )
-                return self._module.fail_json(msg=msg)
+        if info.get("status") in [200, 204]:
+            if info.get("status") == 200:
+                try:
+                    response_body = json.loads(resp.read().decode("utf-8"))
+                except (AttributeError, ValueError):
+                    msg = "Server returned error with invalid JSON: {err}".format(
+                        err=info.get("msg", "<Undefined error>")
+                    )
+                    return self._module.fail_json(msg=msg)
         else:
             raise_for_error(info)
 
