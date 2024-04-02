@@ -7,7 +7,7 @@ NOTES_FIELD_LABEL = "notesPlain"
 
 # 1Password Connect Ansible Collection Version
 # Auto-updated during release process
-COLLECTION_VERSION = "2.2.4"
+COLLECTION_VERSION = "2.3.0"
 
 GENERATE_NEVER = "never"
 GENERATE_ALWAYS = "always"
