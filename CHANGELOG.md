@@ -15,7 +15,7 @@
 [//]: # (START/v2.3.0)
 # v2.3.0
 
-This release updates the collection based on the [`asnible-core` support matrix](https://docs.ansible.com/ansible/latest/reference_appendices/release_and_maintenance.html#ansible-core-support-matrix). This involves the following:
+This release updates the collection based on the [`ansible-core` support matrix](https://docs.ansible.com/ansible/latest/reference_appendices/release_and_maintenance.html#ansible-core-support-matrix). This involves the following:
 - Dropping support for `ansible-core` 2.14 since it will reach its end of life on May 20th 2024.
 - Dropping support for Python 3.8 since it's no longer supported in `ansible-core` 2.15 and above.
 
