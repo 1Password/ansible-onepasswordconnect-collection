@@ -1,0 +1,32 @@
+---
+objects: {}
+plugins:
+  become: {}
+  cache: {}
+  callback: {}
+  cliconf: {}
+  connection: {}
+  httpapi: {}
+  inventory: {}
+  lookup: {}
+  module:
+    field_info:
+      description: Returns the value of a field in a 1Password item.
+      name: field_info
+      namespace: ""
+      version_added: 2.2.0
+    generic_item:
+      description: Creates a customizable 1Password Item
+      name: generic_item
+      namespace: ""
+      version_added:
+    item_info:
+      description: Returns information about a 1Password Item
+      name: item_info
+      namespace: ""
+      version_added:
+  netconf: {}
+  shell: {}
+  strategy: {}
+  vars: {}
+version: 2.2.3

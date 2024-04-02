@@ -5,6 +5,31 @@ onepassword.connect Release Notes
 .. contents:: Topics
 
 
+v2.3.0
+======
+
+Release Summary
+---------------
+
+This release updates the collection based on the `asnible-core` support matrix (https://docs.ansible.com/ansible/latest/reference_appendices/release_and_maintenance.html#ansible-core-support-matrix). 
+
+This involves the following:
+- Dropping support for `ansible-core` 2.14 since it will reach its end of life on May 20th 2024.
+- Dropping support for Python 3.8 since it's no longer supported in `ansible-core` 2.15 and above.
+
+To be able to use the latest version of the collection, please update your `ansible-core` and Python versions. 
+
+No breaking changes have been made in terms of usability of the collection. 
+
+Breaking Changes / Porting Guide
+--------------------------------
+- Set Ansible core 2.15 as minimum required version. (https://github.com/1Password/ansible-onepasswordconnect-collection/pull/91)
+- Set Python 3.9 as minimum required version. (https://github.com/1Password/ansible-onepasswordconnect-collection/pull/91)
+
+Bugfixes
+--------
+- Add 204 as a valid status code for DELETE operation. (https://github.com/1Password/ansible-onepasswordconnect-collection/pull/82)
+
 v2.2.4
 ======
 
