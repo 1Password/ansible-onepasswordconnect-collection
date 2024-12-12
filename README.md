@@ -13,44 +13,45 @@
 The 1Password Connect collection contains modules that interact with your 1Password Connect deployment. The modules communicate with the 1Password Connect API to support Vault Item create/read/update/delete operations.
 
 ## Requirements
+
 - `ansible`: **>=7.x**
 - `ansible-core`: **>=2.15**
 - `python`: **>=3.9**
 - `1Password Connect`: **>= 1.0.0**
 
-
 ## ✨ Get started
 
 ### 🚀 Quickstart
+
 1. You can install the Ansible collection from [Ansible Galaxy](https://galaxy.ansible.com/onepassword/connect):
 
 ```
 ansible-galaxy collection install onepassword.connect
 ```
 
-2. Example of getting information about an Item, including fields and metadata: 
+2. Example of getting information about an Item, including fields and metadata:
 
 ```yaml
---- 
-  hosts: localhost
-  vars:
-    connect_token: "valid.jwt.here"
-  environment:
-    OP_CONNECT_HOST: http://localhost:8001
-  collections:
-    - onepassword.connect
-  tasks:
-    - name: Find the item with the label "Staging Database" in the vault "Staging Env"
-      item_info:
-        token: "{{ connect_token }}"
-        item: Staging Database
-        vault: Staging Env
-      no_log: true
-      register: op_item
+---
+hosts: localhost
+vars:
+  connect_token: "valid.jwt.here"
+environment:
+  OP_CONNECT_HOST: http://localhost:8001
+collections:
+  - onepassword.connect
+tasks:
+  - name: Find the item with the label "Staging Database" in the vault "Staging Env"
+    item_info:
+      token: "{{ connect_token }}"
+      item: Staging Database
+      vault: Staging Env
+    no_log: true
+    register: op_item
 ```
 
-
 ### 📄 Usage
+
 Refer to the [Usage Guide](USAGEGUIDE.md) for documentation for example usage.
 
 ## 💙 Community & Support
@@ -63,7 +64,4 @@ Refer to the [Usage Guide](USAGEGUIDE.md) for documentation for example usage.
 
 1Password requests you practice responsible disclosure if you discover a vulnerability.
 
-Please file requests via [**BugCrowd**](https://bugcrowd.com/agilebits).
-
-For information about security practices, please visit the [1Password Bug Bounty Program](https://bugcrowd.com/agilebits).
-
+Please file requests by sending an email to bugbounty@agilebits.com.
