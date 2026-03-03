@@ -209,10 +209,6 @@ def main():
     item_id = module.params.get("item")
     section_label = module.params.get("section")
 
-    if not api.valid_client_uuid(vault_id):
-        module.fail_json({"field": {}, "msg": "Vault ID invalid or undefined."})
-        return
-
     try:
         item = get_item(vault_id, item_id, api_client)
         field = find_field(field_label, item, section=section_label)
