@@ -29,4 +29,4 @@ plugins:
   shell: {}
   strategy: {}
   vars: {}
-version: 2.2.3
+version: 2.3.1
