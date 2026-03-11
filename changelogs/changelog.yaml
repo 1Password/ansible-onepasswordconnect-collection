@@ -124,3 +124,15 @@ releases:
     fragments:
       - release-v2.2.4.yaml
     release_date: "2023-11-20"
+  2.3.1:
+    changes:
+      bugfixes:
+      - field_info - allow vault name in addition to UUID; remove premature UUID-only
+        check. (https://github.com/1Password/ansible-onepasswordconnect-collection/pull/96)
+      minor_changes:
+      - Update README Security section to point to the new bug bounty reporting process.
+        (https://github.com/1Password/ansible-onepasswordconnect-collection/pull/95)
+      - Update developer Slack link in README. (https://github.com/1Password/ansible-onepasswordconnect-collection/pull/97)
+      release_summary: This release includes documentation updates and allows field_info
+        to accept vault name in addition to UUID.
+    release_date: '2026-03-12'

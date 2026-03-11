@@ -12,6 +12,16 @@
 
 ---
 
+[//]: # (START/v2.3.1)
+# v2.3.1
+
+## Fixes
+ * Update README Security section to point to the new bug bounty reporting process. (#95)
+ * Update developer Slack link in README. (#97)
+ * field_info: allow vault name in addition to UUID; remove premature UUID-only check. (#96)
+
+---
+
 [//]: # (START/v2.3.0)
 # v2.3.0
 
@@ -19,9 +29,9 @@ This release updates the collection based on the [`ansible-core` support matrix]
 - Dropping support for `ansible-core` 2.14 since it will reach its end of life on May 20th 2024.
 - Dropping support for Python 3.8 since it's no longer supported in `ansible-core` 2.15 and above.
 
-To be able to use the latest version of the collection, please update your `ansible-core` and Python versions. 
+To be able to use the latest version of the collection, please update your `ansible-core` and Python versions.
 
-No breaking changes have been made in terms of usability of the collection. 
+No breaking changes have been made in terms of usability of the collection.
 
 ## Features
   * :warning: Set Ansible core 2.15 as minimum required version. {#91}
@@ -63,9 +73,9 @@ No breaking changes have been made in terms of usability of the collection.
 [//]: # (START/v2.1.1)
 # v2.1.1
 
-This release improves compatibility with all Python runtimes supported by Ansible 2.9+. 
+This release improves compatibility with all Python runtimes supported by Ansible 2.9+.
 
-We are making this change to better support customers downloading this collection through RedHat's Ansible Automation Hub. 
+We are making this change to better support customers downloading this collection through RedHat's Ansible Automation Hub.
 
 ## Fixes
 [//]: # (* A user-friendly description of a fix. {issue-number})
@@ -76,7 +86,7 @@ We are making this change to better support customers downloading this collectio
 [//]: # (START/v2.1.0)
 # v2.1.0
 
-This version fixes several bugs, introduces more supported item types, and improves how the module handles special fields for certain item types. 
+This version fixes several bugs, introduces more supported item types, and improves how the module handles special fields for certain item types.
 
 Note there is a **breaking change** when defining an Item with `type: login` or `type: password`:
 
@@ -90,9 +100,9 @@ Note there is a **breaking change** when defining an Item with `type: login` or 
 
 ## Fixes
  * `get_item_by_name` client method now returns the full item response instead of the overview. (#29)
- * Fix field_purpose assignment when item type is `PASSWORD` or `LOGIN` (#28)  
- * Use UTF-8 string normalization while searching for fields when updating an item. (#27)  
- * The `generic_item` module now preserves the notes field without it being present in the module parameters (#27)  
+ * Fix field_purpose assignment when item type is `PASSWORD` or `LOGIN` (#28)
+ * Use UTF-8 string normalization while searching for fields when updating an item. (#27)
+ * The `generic_item` module now preserves the notes field without it being present in the module parameters (#27)
  * Fix sed regex for currentVersion lookup in release tool. (#23)
 
 ---
