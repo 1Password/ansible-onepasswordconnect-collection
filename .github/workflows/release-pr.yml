@@ -16,7 +16,7 @@ jobs:
     steps:
       - id: is_release_branch_without_pr
         name: Find matching PR
-        uses: actions/github-script@v6
+        uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -42,11 +42,11 @@ jobs:
     name: Create Release Pull Request
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Parse release version
         id: get_version
-        run: echo "::set-output name=version::`echo "${GITHUB_REF}" | sed 's|^refs/heads/release/v?*||g'`"
+        run: echo "version=$(echo "${GITHUB_REF}" | sed 's|^refs/heads/release/v?*||g')" >> "$GITHUB_OUTPUT"
 
       - name: Prepare Pull Request
         id: prep_pr
@@ -65,16 +65,15 @@ jobs:
           ${LOG_ENTRY}
           EOF
           )
-
-          # Sanitizes multiline strings for action outputs (https://medium.com/agorapulse-stories/23f56447d209)
-          PR_BODY="${PR_BODY//'%'/'%25'}"
-          PR_BODY="${PR_BODY//$'\n'/'%0A'}"
-          PR_BODY="${PR_BODY//$'\r'/'%0D'}"
-          echo "::set-output name=pr_body::$(echo "$PR_BODY")"
+          {
+            echo "pr_body<<PR_BODY_EOF"
+            echo "$PR_BODY"
+            echo "PR_BODY_EOF"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Create Pull Request via API
         id: post_pr
-        uses: octokit/request-action@v2.x
+        uses: octokit/request-action@v3
         with:
           route: POST /repos/${{ github.repository }}/pulls
           title: ${{ format('Prepare Release - v{0}', steps.get_version.outputs.version) }}
