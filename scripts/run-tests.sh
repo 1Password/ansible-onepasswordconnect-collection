@@ -38,7 +38,7 @@ PATH_TO_PACKAGES="$(git rev-parse --show-toplevel)"
 DOCKER_IMG="default"
 
 # Minimum python version that is compatible with ansible versions in test matrix
-PYTHON_VERSION="3.9"
+PYTHON_VERSION="3.12"
 
 function _cleanup() {
   rm -r "${TMP_DIR_PATH}"

@@ -1,9 +1,9 @@
 # Contributing
 
-Thank you taking the time to improve the 1Password Ansible collection! 
+Thank you taking the time to improve the 1Password Ansible collection!
 
-After reading this document, you will: 
-- have set up a development environment; 
+After reading this document, you will:
+- have set up a development environment;
 - know how to file issues;
 - understand the pull request process.
 
@@ -14,14 +14,14 @@ After reading this document, you will:
 
 > If you have already installed a supported version of Ansible, you can skip to the [Clone the Repo](#clone-the-repo) step.
 
-This collection requires **Python v3.9 or greater**. If you don't have Python installed, consider using [pyenv](https://github.com/pyenv/pyenv) to install the supported Python runtime.
+This collection requires **Python v3.10 or greater**. If you don't have Python installed, consider using [pyenv](https://github.com/pyenv/pyenv) to install the supported Python runtime.
 
 
 Current Ansible-core and Ansible version supported:
-- `ansible-core`: **>=2.15**
-- `ansible`: **>=7.x**
+- `ansible-core`: **>=2.16.0**
+- `ansible` (community package): **>=9.x** (includes ansible-core 2.16)
 
-We recommend installing Ansible in a `virtualenv` created specifically for this project. 
+We recommend installing Ansible in a `virtualenv` created specifically for this project.
 
 #### Install Ansible via virtualenv
 
@@ -29,7 +29,7 @@ We recommend installing Ansible in a `virtualenv` created specifically for this 
 python3 -m venv <path_to_venv>/onepassword_ansible
 source <path_to_venv>/onepassword_ansible activate
 
-pip3 install 'ansible-core==2.15.*' 'ansible>=7.x'
+pip3 install 'ansible-core>=2.16,<2.17' 'ansible>=9,<10'
 ```
 
 ### Clone the Repo
@@ -50,8 +50,8 @@ cd ~/onepassword/ansible_collections/onepassword
 git clone git@github.com:1Password/ansible-onepasswordconnect-collection.git connect
 cd connect
 
-# Extend Ansible's collection lookup path 
-# to first look for collections inside ~/onepassword/ansible_collections/... 
+# Extend Ansible's collection lookup path
+# to first look for collections inside ~/onepassword/ansible_collections/...
 export ANSIBLE_COLLECTIONS_PATHS=~/onepassword:$ANSIBLE_COLLECTIONS_PATHS
 
 # Verify - you should see docs for the `generic_item` module in your terminal
@@ -66,7 +66,7 @@ We run our tests using Docker images. See [tests/README.md](tests/README.md) for
 
 ## Filing Issues
 
-We welcome you to file bug reports and feature requests through GitHub issues. 
+We welcome you to file bug reports and feature requests through GitHub issues.
 
 There are templates for issues and feature requests, but if the issue does not fall into either category, please use an empty issue and be as specific as possible.
 
