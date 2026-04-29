@@ -4,6 +4,31 @@ onepassword.connect Release Notes
 
 .. contents:: Topics
 
+v2.4.0
+======
+
+Release Summary
+---------------
+
+This release requires ``ansible-core`` 2.16 or newer, updates documentation for Ansible and Python (including Python 3.12), refreshes README links, and fixes ``field_info`` vault lookup when using a vault name.
+
+Breaking Changes / Porting Guide
+--------------------------------
+
+- Collection now requires ``ansible-core`` >=2.16.0 (``meta/runtime.yml``). (https://github.com/1Password/ansible-onepasswordconnect-collection/pull/100)
+
+Minor Changes
+-------------
+
+- Documentation updated for current Ansible and Python support, including Python 3.12. (https://github.com/1Password/ansible-onepasswordconnect-collection/pull/100)
+- Update README Security section to point to the new bug bounty reporting process. (https://github.com/1Password/ansible-onepasswordconnect-collection/pull/95)
+- Update developer Slack link in README. (https://github.com/1Password/ansible-onepasswordconnect-collection/pull/97)
+
+Bugfixes
+--------
+
+- field_info - allow vault name in addition to UUID; remove premature UUID-only check. (https://github.com/1Password/ansible-onepasswordconnect-collection/pull/96)
+
 
 v2.3.0
 ======
@@ -11,15 +36,15 @@ v2.3.0
 Release Summary
 ---------------
 
-This release updates the collection based on the `ansible-core` support matrix (https://docs.ansible.com/ansible/latest/reference_appendices/release_and_maintenance.html#ansible-core-support-matrix). 
+This release updates the collection based on the `ansible-core` support matrix (https://docs.ansible.com/ansible/latest/reference_appendices/release_and_maintenance.html#ansible-core-support-matrix).
 
 This involves the following:
 - Dropping support for `ansible-core` 2.14 since it will reach its end of life on May 20th 2024.
 - Dropping support for Python 3.8 since it's no longer supported in `ansible-core` 2.15 and above.
 
-To be able to use the latest version of the collection, please update your `ansible-core` and Python versions. 
+To be able to use the latest version of the collection, please update your `ansible-core` and Python versions.
 
-No breaking changes have been made in terms of usability of the collection. 
+No breaking changes have been made in terms of usability of the collection.
 
 Breaking Changes / Porting Guide
 --------------------------------
