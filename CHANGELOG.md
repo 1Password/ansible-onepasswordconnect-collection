@@ -23,8 +23,6 @@ To be able to use the latest version of the collection, please update your `ansi
  * :warning: **Drop support for ansible-core below 2.16** — `requires_ansible` is now `>=2.16.0` in `meta/runtime.yml`. (#100)
  * Align **Python** requirements and docs with current Ansible support, **including Python 3.12**. (#100)
 
-## Features
-  * A user-friendly description of a new feature. {issue-number}
 
 # Fixes
  * Update README Security section to point to the new bug bounty reporting process. (#95)
