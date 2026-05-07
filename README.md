@@ -52,16 +52,25 @@ tasks:
 
 ### 📄 Usage
 
-Refer to the [Usage Guide](USAGEGUIDE.md) for documentation for example usage.
+Refer to the [Usage Guide](https://github.com/1Password/ansible-onepasswordconnect-collection/blob/main/USAGEGUIDE.md) for usage examples.
+
+## 📝 Changelog
+
+Release notes for each version are documented in the [Changelog](https://github.com/1Password/ansible-onepasswordconnect-collection/blob/main/CHANGELOG.md).
 
 ## 💙 Community & Support
 
 - File an [issue](https://github.com/1Password/ansible-onepasswordconnect-collection/issues) for bugs and feature requests.
 - Join the [Developer Slack workspace](https://developer.1password.com/joinslack).
 - Subscribe to the [Developer Newsletter](https://1password.com/dev-subscribe/).
+- **Red Hat customers:** Open a support case through the "Create issue" link on the collection's [Automation Hub](https://console.redhat.com/ansible/automation-hub/collections/published/onepassword/connect/details) page.
 
 ## 🔐 Security
 
 1Password requests you practice responsible disclosure if you discover a vulnerability.
 
 Please file requests by sending an email to bugbounty@agilebits.com.
+
+## 📜 License
+
+This collection is licensed under [GPL-3.0-or-later](https://github.com/1Password/ansible-onepasswordconnect-collection/blob/main/LICENSE.md).
