@@ -52,7 +52,7 @@ tasks:
 
 ### 📄 Usage
 
-Refer to the [Usage Guide](https://github.com/1Password/ansible-onepasswordconnect-collection/blob/main/USAGEGUIDE.md) for documentation for example usage.
+Refer to the [Usage Guide](https://github.com/1Password/ansible-onepasswordconnect-collection/blob/main/USAGEGUIDE.md) for usage examples.
 
 ## 📝 Changelog
 
