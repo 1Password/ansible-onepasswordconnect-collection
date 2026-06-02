@@ -12,6 +12,8 @@
 
 The 1Password Connect collection contains modules that interact with your 1Password Connect deployment. The modules communicate with the 1Password Connect API to support Vault Item create/read/update/delete operations.
 
+*By accessing or using 1Password Developer Tools, you agree to the [API and SDK Terms of Service](https://1password.com/legal/api-sdk-terms-of-service).*
+
 ## Requirements
 
 - `ansible` (community package): **>=9.x** (includes ansible-core 2.16)
@@ -74,6 +76,3 @@ Please file requests by sending an email to bugbounty@agilebits.com.
 ## 📜 License
 
 This collection is licensed under [GPL-3.0-or-later](https://github.com/1Password/ansible-onepasswordconnect-collection/blob/main/LICENSE.md).
-
-*By accessing or using 1Password Developer Tools, you agree to the [API and SDK Terms of Service](https://1password.com/legal/api-sdk-terms-of-service).*
-
