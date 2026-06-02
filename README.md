@@ -74,3 +74,6 @@ Please file requests by sending an email to bugbounty@agilebits.com.
 ## 📜 License
 
 This collection is licensed under [GPL-3.0-or-later](https://github.com/1Password/ansible-onepasswordconnect-collection/blob/main/LICENSE.md).
+
+*By accessing or using 1Password Developer Tools, you agree to the [API and SDK Terms of Service](https://1password.com/legal/api-sdk-terms-of-service).*
+
