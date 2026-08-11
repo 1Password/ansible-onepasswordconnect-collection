@@ -36,7 +36,7 @@ jobs:
         working-directory: ${{ env.COLLECTION_PATH }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           path: ${{ env.COLLECTION_PATH }}
 
@@ -65,7 +65,7 @@ jobs:
         working-directory: ${{ env.COLLECTION_PATH }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           path: ${{ env.COLLECTION_PATH }}
 
