@@ -41,7 +41,7 @@ jobs:
           path: ${{ env.COLLECTION_PATH }}
 
       - name: Setup python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python }}
 
@@ -70,7 +70,7 @@ jobs:
           path: ${{ env.COLLECTION_PATH }}
 
       - name: Setup python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: ${{env.PYTHON_VERSION}}
 
